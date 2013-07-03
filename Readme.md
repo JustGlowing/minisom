@@ -34,11 +34,13 @@ In order to use MiniSom you need your data organized as a Numpy matrix where eac
     som.train_random(data,100) # trains the SOM with 100 iterations
     print "...ready!"
 
-#### Result interpretation and visualization
+#### Results
 
-After the training, the method `winner(x)` computes the coordinates of the mapping of `x` on the map and it can be used to plot:
+After the training MiniSom makes you able to
 
-
+* Compute the coordinate of a sample `x` on the map with the method `winner(x)`.
+* Compute the average distance map of the weights on the map.*the number of times with the method `distance_map`
+* Compute the number of times that each neuron is winner for a new data set with the method `activation_response(data)`.
 
 ### Other features
 
@@ -48,7 +50,7 @@ MiniSom initializes the neurons weights at random. A data driven initialization 
 
 Planned improvements
 ---------------------
-*Implement a classification method.
+* Implement a classification method.
 
 License
 ---------------------
