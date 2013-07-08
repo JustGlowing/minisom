@@ -1,7 +1,9 @@
 from numpy import meshgrid,sqrt,sqrt,array,unravel_index,nditer,linalg,random,subtract,power,exp,pi,zeros
 
 """
-Minimalistic implementation of the Self Organizing Maps (SOM)
+    Minimalistic implementation of the Self Organizing Maps (SOM)
+
+    Giuseppe Vettigli 2013.
 """
 
 class MiniSom:
@@ -74,22 +76,27 @@ class MiniSom:
 
     def train_random(self,data,num_iteration):        
         """ Trains the SOM picking samples at random from data """
-        self.T = num_iteration/2 # keeps the learning rate nearly constant for the first half of the iterations        
+        self._init_T(num_iteration)        
         for iteration in range(num_iteration):
-            rand_i = int(round(random.rand()*len(data)-1)) # pick a random sampleprint data[rand_i]           
+            rand_i = int(round(random.rand()*len(data)-1)) # pick a random sample          
             self.update(data[rand_i],self.winner(data[rand_i]),iteration)
 
     def train_batch(self,data,num_iteration):
         """ Trains using all the vectors in data sequentially """
-        self.T = num_iteration/2 # keeps the learning rate nearly constant for the first half of the iterations
+        self._init_T(num_iteration)
         iteration = 0
         while iteration < num_iteration:
             idx = iteration % (len(data)-1)
             self.update(data[idx],self.winner(data[idx]),iteration)
             iteration += 1
 
+    def _init_T(self,num_iteration):
+        """ Initializes the parameter T needed to adjust the learning rate """
+        self.T = num_iteration/2 # keeps the learning rate nearly constant for the first half of the iterations
+
     def distance_map(self):
-        """ Returns the average distance map of the weights """
+        """ Returns the average distance map of the weights.
+            (Each mean is normalized in order to sum up to 1) """
         um = zeros((self.weights.shape[0],self.weights.shape[1]))
         it = nditer(um, flags=['multi_index'])
         while not it.finished:
@@ -98,7 +105,7 @@ class MiniSom:
                     if ii >= 0 and ii < self.weights.shape[0] and jj >= 0 and jj < self.weights.shape[1]:
                         um[it.multi_index] += linalg.norm(self.weights[ii,jj,:]-self.weights[it.multi_index])
             it.iternext()
-        um = um/8 # should be different at the borders
+        um = um/um.max()
         return um
 
     def activation_response(self,data):
