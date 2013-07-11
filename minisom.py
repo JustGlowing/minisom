@@ -117,44 +117,4 @@ class MiniSom:
         for x in data:
             a[self.winner(x)] += 1
         return a
-
-if __name__ == '__main__':
-    """
-    This main contains a usage example of each feature implemented. Soon will be moved in the documentation.
-    """
-    import sys
-    # reading the data from a csv file
-    from numpy import genfromtxt
-    # http://aima.cs.berkeley.edu/data/iris.csv
-    data = genfromtxt('iris.csv', delimiter=',',usecols=(0,1,2,3))    
-    data = array([x/linalg.norm(x) for x in data]) # normalization
-        
-    # initialization and training
-    som = MiniSom(7,7,4,sigma=0.1,learning_rate=0.5)
-    som.random_weights_init(data)
-    print "Training..."
-    som.train_random(data,500)
-    #som.train_batch(data,150*5)
-    print "\n...ready!"
-    
-    from pylab import plot,axis,show,pcolor,colorbar,bone
-    bone()
-    pcolor(som.distance_map().T) # plotting the distance map as background
-    #pcolor(som.activate(data[1]).T)
-    #pcolor(som.activation_response(data).T)
-    colorbar()
-    # plotting the response for each pattern in the iris dataset
-    target = genfromtxt('iris.csv',delimiter=',',usecols=(4),dtype=str) # loading the labels
-    t = zeros(len(target),dtype=int)
-    t[target == 'setosa'] = 0
-    t[target == 'versicolor'] = 1
-    t[target == 'virginica'] = 2
-    # different colors and markers for each label
-    markers = ['o','s','D']
-    colors = ['r','g','b']
-    for cnt,xx in enumerate(data):
-     w = som.winner(xx) # getting the winner
-     plot(w[0]+.5,w[1]+.5,markers[t[cnt]],markerfacecolor='None',markeredgecolor=colors[t[cnt]],markersize=12,markeredgewidth=2)
-    axis([0,som.weights.shape[0],0,som.weights.shape[1]])
-    show()
     
