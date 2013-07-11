@@ -50,10 +50,17 @@ MiniSom implements two types of training. The random training (implemented by th
 
 MiniSom initializes the neurons weights at random. A data driven initialization is also provided by the method `random_weights_init` which initializes the weights picking random samples from the data.
 
+Examples
+---------------------
+In examples/example_iris.py you can find an example that shows how to train MiniSom and visualize the result using the <a href="http://en.wikipedia.org/wiki/Iris_flower_data_set">Iris flower dataset</a>. Here is the result of the script:
+
+<img src="http://1.bp.blogspot.com/-j6L__LOB-UI/Ud7BXLLonBI/AAAAAAAAAqU/yf7RYfAoGWM/s1600/iris.png" height="312" width="412" alt="Iris example">
+
+For each winner neuron we have a marker. Each type of marker represents a class of the iris data. The average distance map of the weights is used as backgroud (see the color bar on the right to associate the value). 
+
 Planned improvements
 ---------------------
 * Implement a classification mechanism.
-* Extend the documentation with a visualization example.
 
 License
 ---------------------
