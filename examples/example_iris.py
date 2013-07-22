@@ -15,9 +15,9 @@ data = array([x/linalg.norm(x) for x in data]) # data normalization
 ### Initialization and training ###
 som = MiniSom(7,7,4,sigma=0.1,learning_rate=0.5)
 som.random_weights_init(data)
-print "Training..."
+print("Training...")
 som.train_random(data,500) # random training
-print "\n...ready!"
+print("\n...ready!")
 
 ### Plotting the response for each pattern in the iris dataset ###
 from pylab import plot,axis,show,pcolor,colorbar,bone

@@ -71,7 +71,7 @@ NOTE: the examples require pylab for the visualization of the results.
 Planned improvements
 ---------------------
 * Implement a classification mechanism.
-* Move to Python 3
+* Check the compatibility Python 3.
 
 License
 ---------------------
