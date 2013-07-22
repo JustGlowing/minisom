@@ -18,13 +18,13 @@ How to use it
 
 In order to use MiniSom you need your data organized as a Numpy matrix where each row corresponds to an observation or an as list of lists like the following:
 
-	data = [[ 5.1  3.5  1.4  0.2],
-	        [ 4.9  3.   1.4  0.2],
-	        [ 4.7  3.2  1.3  0.2], # <-- single observation
-	        [ 4.6  3.1  1.5  0.2],
-	        [ 5.   3.6  1.4  0.2],
-	        [ 4.1  3.3  1.4  0.2],
-	        [ 4.2  3.2  1.2  0.2]]	       
+    data = [[ 5.1  3.5  1.4  0.2],
+            [ 4.9  3.   1.4  0.2],
+            [ 4.7  3.2  1.3  0.2], # <-- single observation
+            [ 4.6  3.1  1.5  0.2],
+            [ 5.   3.6  1.4  0.2],
+            [ 4.1  3.3  1.4  0.2],
+            [ 4.2  3.2  1.2  0.2]]         
 
  Then you can run MiniSom just as follows:
 
@@ -34,7 +34,7 @@ In order to use MiniSom you need your data organized as a Numpy matrix where eac
     som.train_random(data,100) # trains the SOM with 100 iterations
     print "...ready!"
 
-#### Using the trained SOM
+### Using the trained SOM
 
 After the training MiniSom makes you able to
 
@@ -42,13 +42,17 @@ After the training MiniSom makes you able to
 * Compute the average distance map of the weights on the map with the method `distance_map`.
 * Compute the number of times that each neuron have been considered winner for the observations of a new data set with the method `activation_response(data)`.
 
-### Training algorithms
+#### Training algorithms
 
 MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples from your data, and the batch training (implemented by the method `train_batch`), where the samples are used in the order they are stored.
 
-### Weights initialization
+#### Weights initialization
 
 MiniSom initializes the neurons weights at random. A data driven initialization is also provided by the method `random_weights_init` which initializes the weights picking random samples from the data.
+
+#### Vector quantization
+
+The data can be quantized by assigning a code book (weights vector of the winning neuron) to each sample in data. This kind of vector quantization is implemented by the method `quantization`.
 
 Examples
 ---------------------
@@ -56,11 +60,18 @@ In examples/example_iris.py you can find an example that shows how to train Mini
 
 <img src="http://1.bp.blogspot.com/-j6L__LOB-UI/Ud7BXLLonBI/AAAAAAAAAqU/yf7RYfAoGWM/s1600/iris.png" height="312" width="412" alt="Iris example">
 
-For each winner neuron we have a marker. Each type of marker represents a class of the iris data. The average distance map of the weights is used as backgroud (see the color bar on the right to associate the value). 
+For each winning neuron we have a marker. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background (see the color bar on the right to associate the value). 
+
+In examples/example_color.py you can find an example of how to use MiniSom for color quantization. Here's one of the possible results:
+
+<img src="http://2.bp.blogspot.com/--b04KEYZPyo/UepdhilpH2I/AAAAAAAAAq4/TefYKHi_uZ8/s1600/qnt_res.png" height="312" width="412" alt="Color quantization example">
+
+NOTE: the examples require pylab for the visualization of the results.
 
 Planned improvements
 ---------------------
 * Implement a classification mechanism.
+* Move to Python 3
 
 License
 ---------------------

@@ -19,7 +19,6 @@ class MiniSom:
         self.learning_rate = learning_rate
         self.sigma = sigma
         self.weights = random.rand(x,y,input_len)*2-1 # random initialization
-        self.weights = array([v/linalg.norm(v) for v in self.weights]) # normalization
         self.activation_map = zeros((x,y))
         self.neigx,self.neigy = meshgrid(range(y),range(x)) # used to evaluate the neighborhood function    
 
@@ -66,6 +65,14 @@ class MiniSom:
             self.weights[it.multi_index] = self.weights[it.multi_index] / linalg.norm(self.weights[it.multi_index])
             it.iternext()
 
+    def quantization(self,data):
+        """ Assigns a code book (weights vector of the winning neuron) to each sample in data. """
+        q = zeros(data.shape)
+        for i,x in enumerate(data):
+            q[i] = self.weights[self.winner(x)]
+        return q
+
+
     def random_weights_init(self,data):
         """ Initializes the weights of the SOM picking random samples from data """
         it = nditer(self.activation_map, flags=['multi_index'])
@@ -83,7 +90,7 @@ class MiniSom:
 
     def train_batch(self,data,num_iteration):
         """ Trains using all the vectors in data sequentially """
-        self._init_T(num_iteration)
+        self._init_T(len(data)*num_iteration)
         iteration = 0
         while iteration < num_iteration:
             idx = iteration % (len(data)-1)
