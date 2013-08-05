@@ -66,11 +66,7 @@ In examples/example_color.py you can find an example of how to use MiniSom for c
 
 <img src="http://2.bp.blogspot.com/--b04KEYZPyo/UepdhilpH2I/AAAAAAAAAq4/TefYKHi_uZ8/s1600/qnt_res.png" height="312" width="412" alt="Color quantization example">
 
-NOTE: the examples require pylab for the visualization of the results.
-
-Planned improvements
----------------------
-* Implement a classification mechanism.
+(the examples require matplotlib for the visualization of the results).
 
 Notes
 ---------------------
