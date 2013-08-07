@@ -14,7 +14,7 @@ class MiniSom:
             input_len - number of the elements of the vectors in input
             sigma - spread of the neighborhood function (Gaussian)
             learning_rate - initial learning rate
-            (at the iteration t we have learning_rate(t) = learning_rate / (1 + t/T) where is #num_iteration/2)
+            (at the iteration t we have learning_rate(t) = learning_rate / (1 + t/T) where T is #num_iteration/2)
         """
         self.learning_rate = learning_rate
         self.sigma = sigma
