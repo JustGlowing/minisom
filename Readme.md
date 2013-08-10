@@ -34,25 +34,26 @@ In order to use MiniSom you need your data organized as a Numpy matrix where eac
     som.train_random(data,100) # trains the SOM with 100 iterations
     print "...ready!"
 
+MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples from your data, and the batch training (implemented by the method `train_batch`), where the samples are used in the order they are stored.
+
+A data driven initialization of the weights is also provided by the method `random_weights_init` which initializes the weights picking random samples from the data.
+
 ### Using the trained SOM
 
 After the training MiniSom makes you able to
 
 * Compute the coordinate assigned to an observation `x` on the map with the method `winner(x)`.
-* Compute the average distance map of the weights on the map with the method `distance_map`.
+* Compute the average distance map of the weights on the map with the method `distance_map()`.
 * Compute the number of times that each neuron have been considered winner for the observations of a new data set with the method `activation_response(data)`.
-
-#### Training algorithms
-
-MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples from your data, and the batch training (implemented by the method `train_batch`), where the samples are used in the order they are stored.
-
-#### Weights initialization
-
-MiniSom initializes the neurons weights at random. A data driven initialization is also provided by the method `random_weights_init` which initializes the weights picking random samples from the data.
+* Compute the quantization error with the method `quantization_error(data)`.
 
 #### Vector quantization
 
-The data can be quantized by assigning a code book (weights vector of the winning neuron) to each sample in data. This kind of vector quantization is implemented by the method `quantization`.
+The data can be quantized by assigning a code book (weights vector of the winning neuron) to each sample in data. This kind of vector quantization is implemented by the method `quantization` that can be called as follows:
+
+    qnt = som.quantization(data)
+
+In this example we have that `qnt[i]` is the quantized version of `data[i]`.
 
 Examples
 ---------------------
