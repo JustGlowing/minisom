@@ -124,4 +124,11 @@ class MiniSom:
         for x in data:
             a[self.winner(x)] += 1
         return a
+
+    def quantization_error(self,data):
+        """ TODO 
+            Returns the quantization error computed as the average distance between
+            each input sample and its best matching unit.
+        """
+        pass
     
