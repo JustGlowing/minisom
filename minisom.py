@@ -19,6 +19,7 @@ class MiniSom:
         self.learning_rate = learning_rate
         self.sigma = sigma
         self.weights = random.rand(x,y,input_len)*2-1 # random initialization
+        self.weights = array([v/linalg.norm(v) for v in self.weights]) # normalization
         self.activation_map = zeros((x,y))
         self.neigx,self.neigy = meshgrid(range(y),range(x)) # used to evaluate the neighborhood function    
 
@@ -126,9 +127,11 @@ class MiniSom:
         return a
 
     def quantization_error(self,data):
-        """ TODO 
+        """ 
             Returns the quantization error computed as the average distance between
-            each input sample and its best matching unit.
+            each input sample and its best matching unit.            
         """
-        pass
-    
+        error = 0
+        for x in data:
+            error += linalg.norm(x-self.weights[self.winner(x)])
+        return error/len(data)
