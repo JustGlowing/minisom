@@ -40,7 +40,7 @@ A data driven initialization of the weights is also provided by the method `rand
 
 ### Using the trained SOM
 
-After the training MiniSom makes you able to
+After the training you are able to
 
 * Compute the coordinate assigned to an observation `x` on the map with the method `winner(x)`.
 * Compute the average distance map of the weights on the map with the method `distance_map()`.
