@@ -1,13 +1,13 @@
 from numpy import meshgrid,sqrt,sqrt,array,unravel_index,nditer,linalg,random,subtract,power,exp,pi,zeros
 
 """
-    Minimalistic implementation of the Self Organizing Maps (SOM)
+    Minimalistic implementation of the Self Organizing Maps (SOM).
 
     Giuseppe Vettigli 2013.
 """
 
 class MiniSom:
-    def __init__(self,x,y,input_len,sigma=0.1,learning_rate=0.5):
+    def __init__(self,x,y,input_len,sigma=1,learning_rate=0.5,inhibition=False):
         """
             Initializes a Self Organizing Maps.
             x,y - dimensions of the SOM
@@ -16,13 +16,18 @@ class MiniSom:
             (at the iteration t we have sigma(t) = sigma / (1 + t/T) where T is #num_iteration/2)
             learning_rate - initial learning rate
             (at the iteration t we have learning_rate(t) = learning_rate / (1 + t/T) where T is #num_iteration/2)
+            inhibition - if True a difference of Gaussians will be use as neighborhood function.
         """
         self.learning_rate = learning_rate
         self.sigma = sigma
         self.weights = random.rand(x,y,input_len)*2-1 # random initialization
         self.weights = array([v/linalg.norm(v) for v in self.weights]) # normalization
         self.activation_map = zeros((x,y))
-        self.neigx,self.neigy = meshgrid(range(y),range(x)) # used to evaluate the neighborhood function    
+        self.neigx,self.neigy = meshgrid(range(y),range(x)) # used to evaluate the neighborhood function
+        if inhibition: # set the neighborhood function to use
+            self.neighborhood = self.diff_gaussian
+        else:
+            self.neighborhood = self.gaussian
 
     def _activate(self,x):
         """ Updates matrix activation_map, in this matrix the element i,j is the response of the neuron i,j to x """
@@ -37,9 +42,13 @@ class MiniSom:
         self._activate(x)
         return self.activation_map
 
-    def gaussian(self,c,sigma=0.1):
+    def gaussian(self,c,sigma=1):
         """ Bidimentional Gaussian centered in c """
         return exp(-(power((c[0]-self.neigx),2) + power((c[1]-self.neigy),2))/(2*pi*sigma)) # a matrix is returned
+
+    def diff_gaussian(self,c,sigma):
+        """ Differece of Gaussians """
+        return self.gaussian(c,sigma)-self.gaussian(c,sigma/3)+self.gaussian(c,sigma)
 
     def winner(self,x):
         """ Computes the coordinates of the winning neuron for the sample x """
@@ -49,7 +58,7 @@ class MiniSom:
     def update(self,x,win,t):
         """
             Updates the weights of the neurons.
-            x - current pattern to learning
+            x - current pattern to learn
             win - position of the winning neuron for x (array or tuple).
             eta - learning rate
             t - iteration index
@@ -58,7 +67,7 @@ class MiniSom:
         # keeps the learning rate nearly constant for the first T iterations and then adjusts it
         eta = self.learning_rate/(1+t/self.T)
         sig = self.sigma/(1+t/self.T) # sigma and learning rate decrease with the same rule
-        g = self.gaussian(win,sig)*eta # improves the performances
+        g = self.neighborhood(win,sig)*eta # improves the performances
         it = nditer(g, flags=['multi_index'])
         while not it.finished:
             # eta * neighborhood_function * (x-w)

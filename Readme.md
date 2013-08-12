@@ -63,13 +63,21 @@ In examples/example_iris.py you can find an example that shows how to train Mini
 
 For each winning neuron we have a marker. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background (see the color bar on the right to associate the value). 
 
-In examples/example_color.py you can find an example of how to use MiniSom for color quantization. Here's one of the possible results:
+In examples/example_digits.py there is an example of how to use MiniSom for images clustering. The example uses the scitkits-learn wrapper to the handwritten digits dataset. Here is one of the result that MiniSom can achieve in digits recognition:
+
+<img src="http://1.bp.blogspot.com/-GDZpxhlLOdc/UgjBiZK_b8I/AAAAAAAAAro/oQ9RySvllx0/s1600/digitis_res.png" height="312" width="412" alt="handwritten digitts recognition">
+
+The graph above represent each image with the handwritten digit it contains. The position corresponds to the position of the winning neuron for the image. Here we also have a version of this graphs that shows the original images:
+
+<img src="http://4.bp.blogspot.com/-z4_zhZAeVgs/UgjBf6sZ0uI/AAAAAAAAArg/tHQOAPTKTtw/s1600/digitis_mosaic.png" height="312" width="412" alt="handwritten digitts recognition">
+
+In examples/example_color.py you can find an example of how to use MiniSom for color quantization. Here is one of the possible results:
 
 <img src="http://2.bp.blogspot.com/--b04KEYZPyo/UepdhilpH2I/AAAAAAAAAq4/TefYKHi_uZ8/s1600/qnt_res.png" height="312" width="412" alt="Color quantization example">
 
 (the examples require matplotlib for the visualization of the results).
 
-Notes
+Compatibility notes
 ---------------------
 Minisom have been tested under python 2.7.3 and 3.2.3.
 
