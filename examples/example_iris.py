@@ -13,7 +13,7 @@ data = genfromtxt('iris.csv', delimiter=',',usecols=(0,1,2,3))
 data = array([x/linalg.norm(x) for x in data]) # data normalization
     
 ### Initialization and training ###
-som = MiniSom(7,7,4,sigma=0.1,learning_rate=0.5)
+som = MiniSom(7,7,4,sigma=1.0,learning_rate=0.5)
 som.random_weights_init(data)
 print("Training...")
 som.train_random(data,500) # random training

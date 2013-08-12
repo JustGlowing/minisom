@@ -13,6 +13,7 @@ class MiniSom:
             x,y - dimensions of the SOM
             input_len - number of the elements of the vectors in input
             sigma - spread of the neighborhood function (Gaussian)
+            (at the iteration t we have sigma(t) = sigma / (1 + t/T) where T is #num_iteration/2)
             learning_rate - initial learning rate
             (at the iteration t we have learning_rate(t) = learning_rate / (1 + t/T) where T is #num_iteration/2)
         """
@@ -38,8 +39,7 @@ class MiniSom:
 
     def gaussian(self,c,sigma=0.1):
         """ Bidimentional Gaussian centered in c """
-        d = sqrt( power((c[0]-self.neigx),2) + power((c[1]-self.neigy),2) )
-        return exp(-(d*d))/(2*pi*sigma) # a matrix is returned
+        return exp(-(power((c[0]-self.neigx),2) + power((c[1]-self.neigy),2))/(2*pi*sigma)) # a matrix is returned
 
     def winner(self,x):
         """ Computes the coordinates of the winning neuron for the sample x """
@@ -57,7 +57,8 @@ class MiniSom:
         # eta(t) = eta(0) / (1 + t/T) 
         # keeps the learning rate nearly constant for the first T iterations and then adjusts it
         eta = self.learning_rate/(1+t/self.T)
-        g = self.gaussian(win,self.sigma)*eta # improves the performances
+        sig = self.sigma/(1+t/self.T) # sigma and learning rate decrease with the same rule
+        g = self.gaussian(win,sig)*eta # improves the performances
         it = nditer(g, flags=['multi_index'])
         while not it.finished:
             # eta * neighborhood_function * (x-w)
