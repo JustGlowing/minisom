@@ -1,4 +1,4 @@
-from numpy import meshgrid,sqrt,sqrt,array,unravel_index,nditer,linalg,random,subtract,power,exp,pi,zeros
+from numpy import sqrt,sqrt,array,unravel_index,nditer,linalg,random,subtract,power,exp,pi,zeros,arange,outer,meshgrid
 
 """
     Minimalistic implementation of the Self Organizing Maps (SOM).
@@ -7,7 +7,7 @@ from numpy import meshgrid,sqrt,sqrt,array,unravel_index,nditer,linalg,random,su
 """
 
 class MiniSom:
-    def __init__(self,x,y,input_len,sigma=1,learning_rate=0.5,inhibition=False):
+    def __init__(self,x,y,input_len,sigma=1,learning_rate=0.5):
         """
             Initializes a Self Organizing Maps.
             x,y - dimensions of the SOM
@@ -16,18 +16,15 @@ class MiniSom:
             (at the iteration t we have sigma(t) = sigma / (1 + t/T) where T is #num_iteration/2)
             learning_rate - initial learning rate
             (at the iteration t we have learning_rate(t) = learning_rate / (1 + t/T) where T is #num_iteration/2)
-            inhibition - if True a difference of Gaussians will be use as neighborhood function.
         """
         self.learning_rate = learning_rate
         self.sigma = sigma
         self.weights = random.rand(x,y,input_len)*2-1 # random initialization
         self.weights = array([v/linalg.norm(v) for v in self.weights]) # normalization
         self.activation_map = zeros((x,y))
-        self.neigx,self.neigy = meshgrid(range(y),range(x)) # used to evaluate the neighborhood function
-        if inhibition: # set the neighborhood function to use
-            self.neighborhood = self.diff_gaussian
-        else:
-            self.neighborhood = self.gaussian
+        self.neigx = arange(x)
+        self.neigy = arange(y) # used to evaluate the neighborhood function
+        self.neighborhood = self.gaussian
 
     def _activate(self,x):
         """ Updates matrix activation_map, in this matrix the element i,j is the response of the neuron i,j to x """
@@ -42,13 +39,19 @@ class MiniSom:
         self._activate(x)
         return self.activation_map
 
-    def gaussian(self,c,sigma=1):
-        """ Bidimentional Gaussian centered in c """
-        return exp(-(power((c[0]-self.neigx),2) + power((c[1]-self.neigy),2))/(2*pi*sigma)) # a matrix is returned
+    def gaussian(self,c,sigma):
+        """ Returns a Gaussian centered in c """
+        d = 2*pi*sigma*sigma
+        ax = exp(-power(self.neigx-c[0],2)/d)
+        ay = exp(-power(self.neigy-c[1],2)/d)
+        return outer(ax,ay) # the external product gives a matrix
 
     def diff_gaussian(self,c,sigma):
-        """ Differece of Gaussians """
-        return self.gaussian(c,sigma)-self.gaussian(c,sigma/3)+self.gaussian(c,sigma)
+        """ Mexican hat centered in c (unused) """
+        xx,yy = meshgrid(self.neigx,self.neigy)
+        p = power(xx-c[0],2) + power(yy-c[1],2)
+        d = 2*pi*sigma*sigma
+        return exp(-(p)/d)*(1-2/d*p)
 
     def winner(self,x):
         """ Computes the coordinates of the winning neuron for the sample x """
