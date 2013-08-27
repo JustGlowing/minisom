@@ -1,5 +1,5 @@
 from minisom import MiniSom
-from numpy import genfromtxt,array,linalg,zeros
+from numpy import genfromtxt,array,linalg,zeros,mean,std,apply_along_axis
 
 """
     This script shows how to use MiniSom on the Iris dataset.
@@ -9,14 +9,14 @@ from numpy import genfromtxt,array,linalg,zeros
 
 # reading the iris dataset in the csv format    
 # (downloaded from http://aima.cs.berkeley.edu/data/iris.csv)
-data = genfromtxt('iris.csv', delimiter=',',usecols=(0,1,2,3))    
-data = array([x/linalg.norm(x) for x in data]) # data normalization
-    
+data = genfromtxt('iris.csv', delimiter=',',usecols=(0,1,2,3))
+data = apply_along_axis(lambda x: x/linalg.norm(x),1,data) # data normalization
+
 ### Initialization and training ###
 som = MiniSom(7,7,4,sigma=1.0,learning_rate=0.5)
-som.random_weights_init(data)
+#som.random_weights_init(data)
 print("Training...")
-som.train_random(data,500) # random training
+som.train_random(data,100) # random training
 print("\n...ready!")
 
 ### Plotting the response for each pattern in the iris dataset ###
