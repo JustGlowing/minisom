@@ -65,11 +65,11 @@ For each winning neuron we have a marker. Each type of marker represents a class
 
 In examples/example_digits.py there is an example of how to use MiniSom for images clustering. The example uses the scitkits-learn wrapper to the handwritten digits dataset. Here is one of the result that MiniSom can achieve in digits recognition:
 
-<img src="http://1.bp.blogspot.com/-GDZpxhlLOdc/UgjBiZK_b8I/AAAAAAAAAro/oQ9RySvllx0/s1600/digitis_res.png" height="312" width="412" alt="handwritten digitts recognition">
+<img src="http://1.bp.blogspot.com/-DOfulhSC7b8/UjHgeP6oasI/AAAAAAAAAso/t1cChUJZpVg/s1600/digits_mrk.png" height="312" width="412" alt="handwritten digitts recognition">
 
 The graph above represent each image with the handwritten digit it contains. The position corresponds to the position of the winning neuron for the image. Here we also have a version of this graphs that shows the original images:
 
-<img src="http://4.bp.blogspot.com/-z4_zhZAeVgs/UgjBf6sZ0uI/AAAAAAAAArg/tHQOAPTKTtw/s1600/digitis_mosaic.png" height="312" width="412" alt="handwritten digitts recognition">
+<img src="http://1.bp.blogspot.com/-VxpdlXkeXfc/UjHgePQIvuI/AAAAAAAAAss/1jOaJRswqzM/s1600/digits_imgs.png" height="312" width="412" alt="handwritten digitts recognition">
 
 In examples/example_color.py you can find an example of how to use MiniSom for color quantization. Here is one of the possible results:
 
