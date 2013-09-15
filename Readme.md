@@ -61,7 +61,7 @@ In examples/example_iris.py you can find an example that shows how to train Mini
 
 <img src="http://1.bp.blogspot.com/-j6L__LOB-UI/Ud7BXLLonBI/AAAAAAAAAqU/yf7RYfAoGWM/s1600/iris.png" height="312" width="412" alt="Iris example">
 
-For each winning neuron we have a marker. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background (see the color bar on the right to associate the value). 
+For each observation we have a marker placed on the position of the winning neuron on the map. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background (see the color bar on the right to associate the value). 
 
 In examples/example_digits.py there is an example of how to use MiniSom for images clustering. The example uses the scitkits-learn wrapper to the handwritten digits dataset. Here is one of the result that MiniSom can achieve in digits recognition:
 
