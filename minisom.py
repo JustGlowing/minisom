@@ -1,4 +1,5 @@
 from numpy import sqrt,sqrt,array,unravel_index,nditer,linalg,random,subtract,power,exp,pi,zeros,arange,outer,meshgrid
+from collections import defaultdict
 
 """
     Minimalistic implementation of the Self Organizing Maps (SOM).
@@ -7,7 +8,7 @@ from numpy import sqrt,sqrt,array,unravel_index,nditer,linalg,random,subtract,po
 """
 
 class MiniSom:
-    def __init__(self,x,y,input_len,sigma=1,learning_rate=0.5):
+    def __init__(self,x,y,input_len,sigma=1.0,learning_rate=0.5):
         """
             Initializes a Self Organizing Maps.
             x,y - dimensions of the SOM
@@ -148,3 +149,19 @@ class MiniSom:
         for x in data:
             error += linalg.norm(x-self.weights[self.winner(x)])
         return error/len(data)
+
+    def win_map(self,data):
+    	"""
+    	    Returns a dictionary wm where wm[(i,j)] is a list with all the patterns
+    	    that have been mapped in the position i,j.
+    	"""
+    	winmap = defaultdict(list)
+    	for x in data:
+    		winmap[self.winner(x)].append(x)
+    	return winmap
+
+
+if __name__ == '__main__':
+	data = random.rand(100,3)
+	som = MiniSom(5,5,3)
+	som.train_random(data,50)
