@@ -77,6 +77,13 @@ In examples/example_color.py you can find an example of how to use MiniSom for c
 
 (the examples require matplotlib for the visualization of the results).
 
+Dependencies
+------------
+
+MiniSom has the following dependencies:
+
+* <a href="http://pypi.python.org/pypi/numpy">Numpy</a>
+
 Compatibility notes
 ---------------------
 Minisom have been tested under python 2.7.3 and 3.2.3.
