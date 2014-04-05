@@ -77,6 +77,14 @@ In examples/example_color.py you can find an example of how to use MiniSom for c
 
 (the examples require matplotlib for the visualization of the results).
 
+Who uses Minisom?
+------------
+
+<ul>
+<li>Ivana Kajić, Guido Schillaci, Saša Bodiroža, Verena V. Hafner, <a href="">Learning hand-eye coordination for a humanoid robot using SOMs</a>. Proceedings of the 2014 ACM/IEEE international conference on Human-robot interaction
+Pages 192-193.</li>
+</ul>
+
 Dependencies
 ------------
 
