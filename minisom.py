@@ -8,7 +8,7 @@ from collections import defaultdict
 """
 
 class MiniSom:
-    def __init__(self,x,y,input_len,sigma=1.0,learning_rate=0.5):
+    def __init__(self,x,y,input_len,sigma=1.0,learning_rate=0.5,random_seed=None):
         """
             Initializes a Self Organizing Maps.
             x,y - dimensions of the SOM
@@ -17,7 +17,10 @@ class MiniSom:
             (at the iteration t we have sigma(t) = sigma / (1 + t/T) where T is #num_iteration/2)
             learning_rate - initial learning rate
             (at the iteration t we have learning_rate(t) = learning_rate / (1 + t/T) where T is #num_iteration/2)
+            random_seed, random seed to use.
         """
+        if random_seed:
+             random.seed(random_seed)
         self.learning_rate = learning_rate
         self.sigma = sigma
         self.weights = random.rand(x,y,input_len)*2-1 # random initialization
@@ -160,7 +163,7 @@ class MiniSom:
         return winmap
 
 ### unit tests
-from numpy.testing import assert_almost_equal
+from numpy.testing import assert_almost_equal, assert_array_almost_equal
 
 class TestMinisom:
     def setup_method(self, method):
@@ -194,4 +197,21 @@ class TestMinisom:
         q = self.som.quantization(array([4,2]))
         assert q[0] == 5.0
         assert q[1] == 2.0
+
+    def test_random_seed(self):
+        som1 = MiniSom(5,5,2,sigma=1.0,learning_rate=0.5,random_seed=1)
+        som2 = MiniSom(5,5,2,sigma=1.0,learning_rate=0.5,random_seed=1)
+        assert_array_almost_equal(som1.weights,som2.weights) # same initialization
+        data = random.rand(100,2)
+        som1 = MiniSom(5,5,2,sigma=1.0,learning_rate=0.5,random_seed=1)
+        som1.train_random(data,10)
+        som2 = MiniSom(5,5,2,sigma=1.0,learning_rate=0.5,random_seed=1)
+        som2.train_random(data,10)
+        assert_array_almost_equal(som1.weights,som2.weights) # same state after training
+
+if __name__ == '__main__':
+    som = MiniSom(5,5,2,sigma=1.0,learning_rate=0.5,random_seed=None)
+    data = random.rand(100,2)
+    som.train_batch(data,10)
+    print som.quantization_error([.5])
 
