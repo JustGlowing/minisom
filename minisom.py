@@ -64,7 +64,6 @@ class MiniSom:
             Updates the weights of the neurons.
             x - current pattern to learn
             win - position of the winning neuron for x (array or tuple).
-            eta - learning rate
             t - iteration index
         """
         # eta(t) = eta(0) / (1 + t/T) 
@@ -151,17 +150,48 @@ class MiniSom:
         return error/len(data)
 
     def win_map(self,data):
-    	"""
-    	    Returns a dictionary wm where wm[(i,j)] is a list with all the patterns
-    	    that have been mapped in the position i,j.
-    	"""
-    	winmap = defaultdict(list)
-    	for x in data:
-    		winmap[self.winner(x)].append(x)
-    	return winmap
+        """
+            Returns a dictionary wm where wm[(i,j)] is a list with all the patterns
+            that have been mapped in the position i,j.
+        """
+        winmap = defaultdict(list)
+        for x in data:
+            winmap[self.winner(x)].append(x)
+        return winmap
 
+### unit tests
+from numpy.testing import assert_almost_equal
 
-if __name__ == '__main__':
-	data = random.rand(100,3)
-	som = MiniSom(5,5,3)
-	som.train_random(data,50)
+class TestMinisom:
+    def setup_method(self, method):
+        self.som = MiniSom(5,5,1)
+        for w in self.som.weights: # checking weights normalization
+            assert_almost_equal(1.0,linalg.norm(w))
+        self.som.weights = zeros((5,5)) # fake weights
+        self.som.weights[2,3] = 5.0
+        self.som.weights[1,1] = 2.0
+
+    def test_gaussian(self):
+        bell = self.som.gaussian((2,2),1)
+        assert bell.max() == 1.0
+        assert bell.argmax() == 12
+
+    def test_win_map(self):
+        winners = self.som.win_map([5.0,2.0])
+        assert winners[(2,3)][0] == 5.0
+        assert winners[(1,1)][0] == 2.0
+
+    def test_activation_reponse(self):
+        response = self.som.activation_response([5.0,2.0])
+        assert response[2,3] == 1
+        assert response[1,1] == 1
+     
+    def test_quantization_error(self):
+        self.som.quantization_error([5,2]) == 0.0
+        self.som.quantization_error([4,1]) == 0.5
+
+    def test_quantization(self):
+        q = self.som.quantization(array([4,2]))
+        assert q[0] == 5.0
+        assert q[1] == 2.0
+
