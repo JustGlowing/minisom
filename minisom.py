@@ -13,7 +13,7 @@ class MiniSom:
             Initializes a Self Organizing Maps.
             x,y - dimensions of the SOM
             input_len - number of the elements of the vectors in input
-            sigma - spread of the neighborhood function (Gaussian)
+            sigma - spread of the neighborhood function (Gaussian), needs to be adequate to the dimensions of the map.
             (at the iteration t we have sigma(t) = sigma / (1 + t/T) where T is #num_iteration/2)
             learning_rate - initial learning rate
             (at the iteration t we have learning_rate(t) = learning_rate / (1 + t/T) where T is #num_iteration/2)
@@ -177,7 +177,7 @@ class TestMinisom:
     def test_gaussian(self):
         bell = self.som.gaussian((2,2),1)
         assert bell.max() == 1.0
-        assert bell.argmax() == 12
+        assert bell.argmax() == 12 # unravel(12) = (2,2)
 
     def test_win_map(self):
         winners = self.som.win_map([5.0,2.0])
@@ -188,6 +188,9 @@ class TestMinisom:
         response = self.som.activation_response([5.0,2.0])
         assert response[2,3] == 1
         assert response[1,1] == 1
+
+    def test_activate(self):
+        assert self.som.activate(5.0).argmin() == 13 # unravel(13) = (2,3)
      
     def test_quantization_error(self):
         self.som.quantization_error([5,2]) == 0.0
@@ -208,10 +211,4 @@ class TestMinisom:
         som2 = MiniSom(5,5,2,sigma=1.0,learning_rate=0.5,random_seed=1)
         som2.train_random(data,10)
         assert_array_almost_equal(som1.weights,som2.weights) # same state after training
-
-if __name__ == '__main__':
-    som = MiniSom(5,5,2,sigma=1.0,learning_rate=0.5,random_seed=None)
-    data = random.rand(100,2)
-    som.train_batch(data,10)
-    print som.quantization_error([.5])
 
