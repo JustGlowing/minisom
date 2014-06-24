@@ -1,5 +1,6 @@
 from numpy import sqrt,sqrt,array,unravel_index,nditer,linalg,random,subtract,power,exp,pi,zeros,arange,outer,meshgrid
 from collections import defaultdict
+from warnings import warn
 
 """
     Minimalistic implementation of the Self Organizing Maps (SOM).
@@ -19,8 +20,10 @@ class MiniSom:
             (at the iteration t we have learning_rate(t) = learning_rate / (1 + t/T) where T is #num_iteration/2)
             random_seed, random seed to use.
         """
+        if sigma >= x/2.0 or sigma >= y/2.0:
+            warn('Warning: sigma is too high for the dimension of the map.')
         if random_seed:
-             random.seed(random_seed)
+            random.seed(random_seed)
         self.learning_rate = learning_rate
         self.sigma = sigma
         self.weights = random.rand(x,y,input_len)*2-1 # random initialization
@@ -211,4 +214,3 @@ class TestMinisom:
         som2 = MiniSom(5,5,2,sigma=1.0,learning_rate=0.5,random_seed=1)
         som2.train_random(data,10)
         assert_array_almost_equal(som1.weights,som2.weights) # same state after training
-
