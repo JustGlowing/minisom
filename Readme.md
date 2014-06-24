@@ -11,6 +11,8 @@ MiniSom is a minimalistic and Numpy based implementation of the Self Organizing 
 Installation
 ---------------------
 
+Download MiniSom to the directory of your choice, enter it and run (may require root privileges):
+
     python setup.py install
 
 How to use it
@@ -34,13 +36,13 @@ In order to use MiniSom you need your data organized as a Numpy matrix where eac
     som.train_random(data,100) # trains the SOM with 100 iterations
     print "...ready!"
 
-MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples from your data, and the batch training (implemented by the method `train_batch`), where the samples are used in the order they are stored.
+MiniSom implements two types of trainings. The random training (implemented by the method `train_random`), where the model is trained picking random samples from your data, and the batch training (implemented by the method `train_batch`), where the samples are used in the order they are stored.
 
 A data driven initialization of the weights is also provided by the method `random_weights_init` which initializes the weights picking random samples from the data.
 
 ### Using the trained SOM
 
-After the training you are able to
+After the training you will be able to
 
 * Compute the coordinate assigned to an observation `x` on the map with the method `winner(x)`.
 * Compute the average distance map of the weights on the map with the method `distance_map()`.
@@ -84,13 +86,6 @@ Who uses Minisom?
 <li>Ivana Kajić, Guido Schillaci, Saša Bodiroža, Verena V. Hafner, <a href="">Learning hand-eye coordination for a humanoid robot using SOMs</a>. Proceedings of the 2014 ACM/IEEE international conference on Human-robot interaction
 Pages 192-193.</li>
 </ul>
-
-Dependencies
-------------
-
-MiniSom has the following dependencies:
-
-* <a href="http://pypi.python.org/pypi/numpy">Numpy</a>
 
 Compatibility notes
 ---------------------
