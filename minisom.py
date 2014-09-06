@@ -23,10 +23,12 @@ class MiniSom:
         if sigma >= x/2.0 or sigma >= y/2.0:
             warn('Warning: sigma is too high for the dimension of the map.')
         if random_seed:
-            random.seed(random_seed)
+            self.random_generator = random.RandomState(random_seed)
+        else:
+            self.random_generator = random.RandomState(random_seed)
         self.learning_rate = learning_rate
         self.sigma = sigma
-        self.weights = random.rand(x,y,input_len)*2-1 # random initialization
+        self.weights = self.random_generator.rand(x,y,input_len)*2-1 # random initialization
         self.weights = array([v/linalg.norm(v) for v in self.weights]) # normalization
         self.activation_map = zeros((x,y))
         self.neigx = arange(x)
@@ -97,7 +99,7 @@ class MiniSom:
         """ Initializes the weights of the SOM picking random samples from data """
         it = nditer(self.activation_map, flags=['multi_index'])
         while not it.finished:
-            self.weights[it.multi_index] = data[int(random.rand()*len(data)-1)]
+            self.weights[it.multi_index] = data[int(self.random_generator.rand()*len(data)-1)]
             self.weights[it.multi_index] = self.weights[it.multi_index]/linalg.norm(self.weights[it.multi_index])
             it.iternext()
 
@@ -105,7 +107,7 @@ class MiniSom:
         """ Trains the SOM picking samples at random from data """
         self._init_T(num_iteration)        
         for iteration in range(num_iteration):
-            rand_i = int(round(random.rand()*len(data)-1)) # pick a random sample          
+            rand_i = int(round(self.random_generator.rand()*len(data)-1)) # pick a random sample
             self.update(data[rand_i],self.winner(data[rand_i]),iteration)
 
     def train_batch(self,data,num_iteration):
