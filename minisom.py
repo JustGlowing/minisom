@@ -1,12 +1,26 @@
-from numpy import sqrt,sqrt,array,unravel_index,nditer,linalg,random,subtract,power,exp,pi,zeros,arange,outer,meshgrid
+from math import sqrt
+
+from numpy import (array, unravel_index, nditer, linalg, random, subtract,
+                   power, exp, pi, zeros, arange, outer, meshgrid, dot)
 from collections import defaultdict
 from warnings import warn
+
 
 """
     Minimalistic implementation of the Self Organizing Maps (SOM).
 
     Giuseppe Vettigli 2013.
 """
+
+
+def fast_norm(x):
+    """Returns a norm of a 1-D array/vector `x`.
+
+    Turns out it's much faster than linalg.norm in case of 1-D arrays.
+    Measured with up to ~80% increase in speed.
+    """
+    return sqrt(dot(x, x.conj()))
+
 
 class MiniSom:
     def __init__(self,x,y,input_len,sigma=1.0,learning_rate=0.5,random_seed=None):
@@ -40,7 +54,7 @@ class MiniSom:
         s = subtract(x,self.weights) # x - w
         it = nditer(self.activation_map, flags=['multi_index'])
         while not it.finished:
-            self.activation_map[it.multi_index] = linalg.norm(s[it.multi_index]) # || x - w ||
+            self.activation_map[it.multi_index] = fast_norm(s[it.multi_index]) # || x - w ||
             it.iternext()
 
     def activate(self,x):
@@ -84,7 +98,7 @@ class MiniSom:
             # eta * neighborhood_function * (x-w)
             self.weights[it.multi_index] += g[it.multi_index]*(x-self.weights[it.multi_index])            
             # normalization
-            self.weights[it.multi_index] = self.weights[it.multi_index] / linalg.norm(self.weights[it.multi_index])
+            self.weights[it.multi_index] = self.weights[it.multi_index] / fast_norm(self.weights[it.multi_index])
             it.iternext()
 
     def quantization(self,data):
@@ -100,7 +114,7 @@ class MiniSom:
         it = nditer(self.activation_map, flags=['multi_index'])
         while not it.finished:
             self.weights[it.multi_index] = data[int(self.random_generator.rand()*len(data)-1)]
-            self.weights[it.multi_index] = self.weights[it.multi_index]/linalg.norm(self.weights[it.multi_index])
+            self.weights[it.multi_index] = self.weights[it.multi_index]/fast_norm(self.weights[it.multi_index])
             it.iternext()
 
     def train_random(self,data,num_iteration):        
@@ -132,7 +146,7 @@ class MiniSom:
             for ii in range(it.multi_index[0]-1,it.multi_index[0]+2):
                 for jj in range(it.multi_index[1]-1,it.multi_index[1]+2):
                     if ii >= 0 and ii < self.weights.shape[0] and jj >= 0 and jj < self.weights.shape[1]:
-                        um[it.multi_index] += linalg.norm(self.weights[ii,jj,:]-self.weights[it.multi_index])
+                        um[it.multi_index] += fast_norm(self.weights[ii,jj,:]-self.weights[it.multi_index])
             it.iternext()
         um = um/um.max()
         return um
@@ -154,7 +168,7 @@ class MiniSom:
         """
         error = 0
         for x in data:
-            error += linalg.norm(x-self.weights[self.winner(x)])
+            error += fast_norm(x-self.weights[self.winner(x)])
         return error/len(data)
 
     def win_map(self,data):
