@@ -14,12 +14,11 @@ from warnings import warn
 
 
 def fast_norm(x):
-    """Returns a norm of a 1-D array/vector `x`.
+    """Returns norm-2 of a 1-D numpy array.
 
-    Turns out it's much faster than linalg.norm in case of 1-D arrays.
-    Measured with up to ~80% increase in speed.
+    * faster than linalg.norm in case of 1-D arrays (numpy 1.9.2rc1).
     """
-    return sqrt(dot(x, x.conj()))
+    return sqrt(dot(x, x.T))
 
 
 class MiniSom:
@@ -192,6 +191,9 @@ class TestMinisom:
         self.som.weights = zeros((5,5)) # fake weights
         self.som.weights[2,3] = 5.0
         self.som.weights[1,1] = 2.0
+
+    def test_fast_norm(self):
+        assert fast_norm(array([1,3])) == sqrt(1+9)
 
     def test_gaussian(self):
         bell = self.som.gaussian((2,2),1)
