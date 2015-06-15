@@ -1,5 +1,5 @@
 # load the digits dataset from scikit-learn
-# 901 samples, about 180 samples per class 
+# 901 samples, about 180 samples per class
 # the digits represented 0,1,2,3,4
 from sklearn import datasets
 digits = datasets.load_digits(n_class=4)
@@ -29,7 +29,7 @@ figure(2,facecolor='white')
 cnt = 0
 for i in range(20): # images mosaic
 	for j in range(20):
-		subplot(20,20,cnt,frameon=False, xticks=[], yticks=[])
+		subplot(20,20,cnt+1,frameon=False, xticks=[], yticks=[])
 		if (i,j) in wmap:
 			imshow(digits.images[wmap[(i,j)]], cmap='Greys',  interpolation='nearest')
 		else:
