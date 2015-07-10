@@ -89,8 +89,10 @@ class MiniSom:
         """
         # eta(t) = eta(0) / (1 + t/T) 
         # keeps the learning rate nearly constant for the first T iterations and then adjusts it
-        eta = self.learning_rate/(1+t/self.T)
-        sig = self.sigma/(1+t/self.T) # sigma and learning rate decrease with the same rule
+        #eta = self.learning_rate/(1+t/self.T)
+        #sig = self.sigma/(1+t/self.T) # sigma and learning rate decrease with the same rule
+        eta = self.learning_rate * np.exp((-1)*t/T)
+        sig = self.sigma * np.exp((-1)*t/T)
         g = self.neighborhood(win,sig)*eta # improves the performances
         it = nditer(g, flags=['multi_index'])
         while not it.finished:
@@ -135,6 +137,7 @@ class MiniSom:
     def _init_T(self,num_iteration):
         """ Initializes the parameter T needed to adjust the learning rate """
         self.T = num_iteration/2 # keeps the learning rate nearly constant for the first half of the iterations
+        self.sigmaT = num_iteration/(self.sigma) 
 
     def distance_map(self):
         """ Returns the average distance map of the weights.
