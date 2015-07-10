@@ -91,8 +91,8 @@ class MiniSom:
         # keeps the learning rate nearly constant for the first T iterations and then adjusts it
         #eta = self.learning_rate/(1+t/self.T)
         #sig = self.sigma/(1+t/self.T) # sigma and learning rate decrease with the same rule
-        eta = self.learning_rate * np.exp((-1)*t/T)
-        sig = self.sigma * np.exp((-1)*t/T)
+        eta = self.learning_rate * exp((-1)*t/T)
+        sig = self.sigma * exp((-1)*t/T)
         g = self.neighborhood(win,sig)*eta # improves the performances
         it = nditer(g, flags=['multi_index'])
         while not it.finished:
