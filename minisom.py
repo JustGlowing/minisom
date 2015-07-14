@@ -41,6 +41,7 @@ class MiniSom:
             self.random_generator = random.RandomState(random_seed)
         self.learning_rate = learning_rate
         self.sigma = sigma
+        self.mode = 'inverse' #setting a default mode for the behavior of eta and sigma
         self.weights = self.random_generator.rand(x,y,input_len)*2-1 # random initialization
         self.weights = array([v/linalg.norm(v) for v in self.weights]) # normalization
         self.activation_map = zeros((x,y))
@@ -80,6 +81,16 @@ class MiniSom:
         self._activate(x)
         return unravel_index(self.activation_map.argmin(),self.activation_map.shape)
 
+    def update_params(self, t):
+        """ Updates the sigma and learning rate based on the behavior specified """
+        if self.mode == 'exp':
+            eta = self.learning_rate * exp((-1)*t/self.T)
+            sig = self.sigma * exp((-1)*t/self.T)
+        if self.mode == 'inverse':
+            eta = self.learning_rate/(1+t/self.T)
+            sig = self.sigma/(1+t/self.T)
+        return eta,sig
+
     def update(self,x,win,t):
         """
             Updates the weights of the neurons.
@@ -89,8 +100,7 @@ class MiniSom:
         """
         # eta(t) = eta(0) / (1 + t/T)
         # keeps the learning rate nearly constant for the first T iterations and then adjusts it
-        eta = self.learning_rate * exp((-1)*t/self.T)
-        sig = self.sigma * exp((-1)*t/self.sigmaT)
+        eta, sig = self.update_params(t)
         g = self.neighborhood(win,sig)*eta # improves the performances
         it = nditer(g, flags=['multi_index'])
         while not it.finished:
@@ -116,16 +126,18 @@ class MiniSom:
             self.weights[it.multi_index] = self.weights[it.multi_index]/fast_norm(self.weights[it.multi_index])
             it.iternext()
 
-    def train_random(self,data,num_iteration):
-        """ Trains the SOM picking samples at random from data """
+    def train_random(self,data,num_iteration, mode = 'inverse'):
+        """ Trains the SOM picking samples at random from data, mode can be one among 'inverse' or 'exp' """
         self._init_T(num_iteration)
+        self.mode = mode
         for iteration in range(num_iteration):
             rand_i = int(round(self.random_generator.rand()*len(data)-1)) # pick a random sample
             self.update(data[rand_i],self.winner(data[rand_i]),iteration)
 
-    def train_batch(self,data,num_iteration):
-        """ Trains using all the vectors in data sequentially """
+    def train_batch(self,data,num_iteration, mode = 'inverse'):
+        """ Trains using all the vectors in data sequentially, mode can be one among 'inverse' or 'exp' """
         self._init_T(len(data)*num_iteration)
+        self.mode = mode
         iteration = 0
         while iteration < num_iteration:
             idx = iteration % (len(data)-1)
@@ -135,7 +147,6 @@ class MiniSom:
     def _init_T(self,num_iteration):
         """ Initializes the parameter T needed to adjust the learning rate """
         self.T = num_iteration/2 # keeps the learning rate nearly constant for the first half of the iterations
-        self.sigmaT = num_iteration/(self.sigma)
 
     def distance_map(self):
         """ Returns the average distance map of the weights.
