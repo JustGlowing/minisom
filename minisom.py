@@ -22,7 +22,7 @@ def fast_norm(x):
 
 
 class MiniSom:
-    def __init__(self,x,y,input_len,sigma=1.0,learning_rate=0.5,random_seed=None):
+    def __init__(self,x,y,input_len,sigma=1.0,learning_rate=0.5,decay_function=None,random_seed=None):
         """
             Initializes a Self Organizing Maps.
             x,y - dimensions of the SOM
@@ -31,6 +31,8 @@ class MiniSom:
             (at the iteration t we have sigma(t) = sigma / (1 + t/T) where T is #num_iteration/2)
             learning_rate - initial learning rate
             (at the iteration t we have learning_rate(t) = learning_rate / (1 + t/T) where T is #num_iteration/2)
+            decay_function, function that reduces learning_rate and sigma at each iteration
+                            default function: lambda x,current_iteration,max_iter: x/(1+current_iteration/max_iter)
             random_seed, random seed to use.
         """
         if sigma >= x/2.0 or sigma >= y/2.0:
@@ -39,6 +41,10 @@ class MiniSom:
             self.random_generator = random.RandomState(random_seed)
         else:
             self.random_generator = random.RandomState(random_seed)
+        if decay_function:
+            self._decay_function = decay_function
+        else:
+            self._decay_function = lambda x, t, max_iter: x/(1+t/max_iter)
         self.learning_rate = learning_rate
         self.sigma = sigma
         self.weights = self.random_generator.rand(x,y,input_len)*2-1 # random initialization
@@ -87,10 +93,8 @@ class MiniSom:
             win - position of the winning neuron for x (array or tuple).
             t - iteration index
         """
-        # eta(t) = eta(0) / (1 + t/T) 
-        # keeps the learning rate nearly constant for the first T iterations and then adjusts it
-        eta = self.learning_rate/(1+t/self.T)
-        sig = self.sigma/(1+t/self.T) # sigma and learning rate decrease with the same rule
+        eta = self._decay_function(self.learning_rate, t, self.T)
+        sig = self._decay_function(self.sigma, t, self.T) # sigma and learning rate decrease with the same rule
         g = self.neighborhood(win,sig)*eta # improves the performances
         it = nditer(g, flags=['multi_index'])
         while not it.finished:
@@ -191,6 +195,9 @@ class TestMinisom:
         self.som.weights = zeros((5,5)) # fake weights
         self.som.weights[2,3] = 5.0
         self.som.weights[1,1] = 2.0
+
+    def test_decay_function(self):
+        assert self.som._decay_function(1.,2.,3.) == 1./(1.+2./3.)
 
     def test_fast_norm(self):
         assert fast_norm(array([1,3])) == sqrt(1+9)
