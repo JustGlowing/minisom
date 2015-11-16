@@ -140,8 +140,9 @@ class MiniSom:
         self.T = num_iteration/2  # keeps the learning rate nearly constant for the first half of the iterations
 
     def distance_map(self):
-        """ Returns the average distance map of the weights.
-            (Each mean is normalized in order to sum up to 1) """
+        """ Returns the distance map of the weights.
+            Each cell is the normalised sum of the distances between a neuron and its neighbours.
+        """
         um = zeros((self.weights.shape[0], self.weights.shape[1]))
         it = nditer(um, flags=['multi_index'])
         while not it.finished:
