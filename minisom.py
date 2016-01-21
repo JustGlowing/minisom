@@ -99,7 +99,7 @@ class MiniSom:
         it = nditer(g, flags=['multi_index'])
         while not it.finished:
             # eta * neighborhood_function * (x-w)
-            self.weights[it.multi_index] += g[it.multi_index]*(x-self.weights[it.multi_index])            
+            self.weights[it.multi_index] += g[it.multi_index]*(x-self.weights[it.multi_index])
             # normalization
             self.weights[it.multi_index] = self.weights[it.multi_index] / fast_norm(self.weights[it.multi_index])
             it.iternext()
@@ -115,15 +115,15 @@ class MiniSom:
         """ Initializes the weights of the SOM picking random samples from data """
         it = nditer(self.activation_map, flags=['multi_index'])
         while not it.finished:
-            self.weights[it.multi_index] = data[int(self.random_generator.rand()*len(data)-1)]
+            self.weights[it.multi_index] = data[self.random_generator.randint(len(data))]
             self.weights[it.multi_index] = self.weights[it.multi_index]/fast_norm(self.weights[it.multi_index])
             it.iternext()
 
     def train_random(self, data, num_iteration):
         """ Trains the SOM picking samples at random from data """
-        self._init_T(num_iteration)        
+        self._init_T(num_iteration)
         for iteration in range(num_iteration):
-            rand_i = int(round(self.random_generator.rand()*len(data)-1)) # pick a random sample
+            rand_i = self.random_generator.randint(len(data)) # pick a random sample
             self.update(data[rand_i], self.winner(data[rand_i]), iteration)
 
     def train_batch(self, data, num_iteration):
@@ -155,7 +155,7 @@ class MiniSom:
         return um
 
     def activation_response(self, data):
-        """ 
+        """
             Returns a matrix where the element i,j is the number of times
             that the neuron i,j have been winner.
         """
@@ -165,9 +165,9 @@ class MiniSom:
         return a
 
     def quantization_error(self, data):
-        """ 
+        """
             Returns the quantization error computed as the average distance between
-            each input sample and its best matching unit.            
+            each input sample and its best matching unit.
         """
         error = 0
         for x in data:
@@ -220,7 +220,7 @@ class TestMinisom:
 
     def test_activate(self):
         assert self.som.activate(5.0).argmin() == 13.0  # unravel(13) = (2,3)
-     
+
     def test_quantization_error(self):
         self.som.quantization_error([5, 2]) == 0.0
         self.som.quantization_error([4, 1]) == 0.5
