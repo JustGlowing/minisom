@@ -137,7 +137,7 @@ class MiniSom:
 
     def _init_T(self, num_iteration):
         """ Initializes the parameter T needed to adjust the learning rate """
-        self.T = num_iteration/2  # keeps the learning rate nearly constant for the first half of the iterations
+        self.T = num_iteration/2  # keeps the learning rate nearly constant for the last half of the iterations
 
     def distance_map(self):
         """ Returns the distance map of the weights.
