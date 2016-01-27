@@ -191,8 +191,9 @@ from numpy.testing import assert_almost_equal, assert_array_almost_equal, assert
 class TestMinisom:
     def setup_method(self, method):
         self.som = MiniSom(5, 5, 1)
-        #for w in self.som.weights:  # checking weights normalization
-        #    assert_almost_equal(1.0, linalg.norm(w))
+        for i in range(5):
+            for j in range(5):
+                assert_almost_equal(1.0, linalg.norm(self.som.weights[i,j]))  # checking weights normalization
         self.som.weights = zeros((5, 5))  # fake weights
         self.som.weights[2, 3] = 5.0
         self.som.weights[1, 1] = 2.0
