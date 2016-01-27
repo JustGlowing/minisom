@@ -27,8 +27,8 @@ axis([0,som.weights.shape[0],0,som.weights.shape[1]])
 
 figure(2,facecolor='white')
 cnt = 0
-for i in range(20): # images mosaic
-	for j in range(20):
+for j in reversed(range(20)): # images mosaic
+	for i in range(20):
 		subplot(20,20,cnt+1,frameon=False, xticks=[], yticks=[])
 		if (i,j) in wmap:
 			imshow(digits.images[wmap[(i,j)]], cmap='Greys',  interpolation='nearest')
