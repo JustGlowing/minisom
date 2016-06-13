@@ -19,7 +19,7 @@ def fast_norm(x):
     return sqrt(dot(x, x.T))
 
 
-class MiniSom:
+class MiniSom(object):
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5, decay_function=None, random_seed=None):
         """
             Initializes a Self Organizing Maps.
