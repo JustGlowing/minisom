@@ -31,12 +31,12 @@ In order to use MiniSom you need your data organized as a Numpy matrix where eac
  Then you can run MiniSom just as follows:
 
     from minisom import MiniSom    
-    som = MiniSom(6,6,4,sigma=0.3,learning_rate=0.5) # initialization of 6x6 SOM
+    som = MiniSom(6, 6, 4, sigma=0.3, learning_rate=0.5) # initialization of 6x6 SOM
     print "Training..."
-    som.train_random(data,100) # trains the SOM with 100 iterations
+    som.train_random(data, 100) # trains the SOM with 100 iterations
     print "...ready!"
 
-MiniSom implements two types of trainings. The random training (implemented by the method `train_random`), where the model is trained picking random samples from your data, and the batch training (implemented by the method `train_batch`), where the samples are used in the order they are stored.
+MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples from your data, and the batch training (implemented by the method `train_batch`), where the samples are picked in the order they are stored.
 
 A data driven initialization of the weights is also provided by the method `random_weights_init` which initializes the weights picking random samples from the data.
 
