@@ -1,7 +1,7 @@
 MiniSom
 ====================
 
-![MiniSom]( http://3.bp.blogspot.com/-TjLGnec3uko/Ud8LbHTpO1I/AAAAAAAAAqk/nfJneFOZrK8/s1600/logo.png "MiniSom")
+![MiniSom]( https://3.bp.blogspot.com/-_6UDGEHzIrs/WSfiyjmoeRI/AAAAAAAABHw/3UQylcCBEhUfHNhf56WSHBBmQ6g_lXQhwCLcB/s320/minisom_logo.png "MiniSom")
 
 Self Organizing Maps
 --------------------
