@@ -20,17 +20,20 @@ def fast_norm(x):
 
 
 class MiniSom(object):
-    def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5, decay_function=None, random_seed=None):
+    def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5, 
+                 decay_function=None, neighborhood_function='gaussian', random_seed=None):
         """
             Initializes a Self Organizing Maps.
             x,y - dimensions of the SOM
             input_len - number of the elements of the vectors in input
-            sigma - spread of the neighborhood function (Gaussian), needs to be adequate to the dimensions of the map.
+            sigma - spread of the neighborhood function, needs to be adequate to the dimensions of the map.
             (at the iteration t we have sigma(t) = sigma / (1 + t/T) where T is #num_iteration/2)
             learning_rate - initial learning rate
             (at the iteration t we have learning_rate(t) = learning_rate / (1 + t/T) where T is #num_iteration/2)
             decay_function, function that reduces learning_rate and sigma at each iteration
                             default function: lambda x,current_iteration,max_iter: x/(1+current_iteration/max_iter)
+            neighborhood_function, function that weights the neighborhood of a position in the map
+                                   possible values: 'gaussian', 'mexican_hat'
             random_seed, random seed to use.
         """
         if sigma >= x/2.0 or sigma >= y/2.0:
@@ -52,7 +55,12 @@ class MiniSom(object):
         self.activation_map = zeros((x,y))
         self.neigx = arange(x)
         self.neigy = arange(y) # used to evaluate the neighborhood function
-        self.neighborhood = self.gaussian
+        neig_functions = {'gaussian': self._gaussian,
+                          'mexican_hat': self._mexican_hat}
+        if not neighborhood_function in neig_functions:
+            raise ValueError('%s not supported. Functions available: %s' % (neighborhood_function,
+                                                                            ', '.join(neig_functions.keys())))
+        self.neighborhood = neig_functions[neighborhood_function]
 
     def _activate(self, x):
         """ Updates matrix activation_map, in this matrix the element i,j is the response of the neuron i,j to x """
@@ -67,15 +75,15 @@ class MiniSom(object):
         self._activate(x)
         return self.activation_map
 
-    def gaussian(self, c, sigma):
+    def _gaussian(self, c, sigma):
         """ Returns a Gaussian centered in c """
         d = 2*pi*sigma*sigma
         ax = exp(-power(self.neigx-c[0], 2)/d)
         ay = exp(-power(self.neigy-c[1], 2)/d)
         return outer(ax, ay)  # the external product gives a matrix
 
-    def diff_gaussian(self, c, sigma):
-        """ Mexican hat centered in c (unused) """
+    def _mexican_hat(self, c, sigma):
+        """ Mexican hat centered in c """
         xx, yy = meshgrid(self.neigx, self.neigy)
         p = power(xx-c[0], 2) + power(yy-c[1], 2)
         d = 2*pi*sigma*sigma
@@ -186,9 +194,9 @@ class MiniSom(object):
 
 ### unit tests
 from numpy.testing import assert_almost_equal, assert_array_almost_equal, assert_array_equal
+import unittest
 
-
-class TestMinisom:
+class TestMinisom(unittest.TestCase):
     def setup_method(self, method):
         self.som = MiniSom(5, 5, 1)
         for i in range(5):
@@ -204,8 +212,12 @@ class TestMinisom:
     def test_fast_norm(self):
         assert fast_norm(array([1, 3])) == sqrt(1+9)
 
+    def test_unavailable_neigh_function(self):
+        with self.assertRaises(ValueError):
+            MiniSom(5,5,1, neighborhood_function='boooom')
+
     def test_gaussian(self):
-        bell = self.som.gaussian((2, 2), 1)
+        bell = self.som._gaussian((2, 2), 1)
         assert bell.max() == 1.0
         assert bell.argmax() == 12  # unravel(12) = (2,2)
 
