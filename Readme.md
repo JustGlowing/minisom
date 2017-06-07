@@ -11,7 +11,11 @@ MiniSom is a minimalistic and Numpy based implementation of the Self Organizing 
 Installation
 ---------------------
 
-Download MiniSom to the directory of your choice, enter it and run (may require root privileges):
+Just use pip:
+
+   pip install minisom
+
+or download MiniSom to the directory of your choice, enter it and run (may require root privileges):
 
     python setup.py install
 
