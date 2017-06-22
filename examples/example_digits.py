@@ -14,7 +14,8 @@ som.train_random(data,1500) # random training
 print("\n...ready!")
 
 # plotting the results
-from pylab import text,show,cm,axis,figure,subplot,imshow,zeros
+from matplotlib.pyplot import text,show,cm,axis,figure,subplot,imshow
+from numpy import zeros
 wmap = {}
 figure(1)
 im = 0
@@ -23,7 +24,7 @@ for x,t in zip(data,num): # scatterplot
 	wmap[w] = im
 	text(w[0]+.5, w[1]+.5, str(t), color=cm.Dark2(t / 4.), fontdict={'weight': 'bold', 'size': 11})
 	im = im + 1
-axis([0,som.weights.shape[0],0,som.weights.shape[1]])
+axis([0,som.get_weights().shape[0],0, som.get_weights().shape[1]])
 
 figure(2,facecolor='white')
 cnt = 0
