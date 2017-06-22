@@ -1,4 +1,4 @@
-from pylab import imread,imshow,figure,show,subplot,title
+from matplotlib.pyplot import imread,imshow,figure,show,subplot,title
 from numpy import reshape,flipud,unravel_index,zeros
 from minisom import MiniSom
 
@@ -12,7 +12,7 @@ pixels = reshape(img,(img.shape[0]*img.shape[1],3))
 print('training...')
 som = MiniSom(3,3,3,sigma=0.1,learning_rate=0.2) # 3x3 = 9 final colors
 som.random_weights_init(pixels)
-starting_weights = som.weights.copy() # saving the starting weights
+starting_weights = som.get_weights().copy() # saving the starting weights
 som.train_random(pixels,100)
 
 print('quantization...')
@@ -37,6 +37,6 @@ title('initial colors')
 imshow(flipud(starting_weights),interpolation='none')
 subplot(224)
 title('learned colors')
-imshow(flipud(som.weights),interpolation='none')
+imshow(flipud(som.get_weights()),interpolation='none')
 
 show()
