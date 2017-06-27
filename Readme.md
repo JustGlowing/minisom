@@ -24,21 +24,25 @@ How to use it
 
 In order to use MiniSom you need your data organized as a Numpy matrix where each row corresponds to an observation or an as list of lists like the following:
 
-    data = [[ 5.1  3.5  1.4  0.2],
-            [ 4.9  3.   1.4  0.2],
-            [ 4.7  3.2  1.3  0.2], # <-- single observation
-            [ 4.6  3.1  1.5  0.2],
-            [ 5.   3.6  1.4  0.2],
-            [ 4.1  3.3  1.4  0.2],
-            [ 4.2  3.2  1.2  0.2]]         
+```python
+data = [[ 5.1  3.5  1.4  0.2],
+        [ 4.9  3.   1.4  0.2],
+        [ 4.7  3.2  1.3  0.2], # <-- single observation
+        [ 4.6  3.1  1.5  0.2],
+        [ 5.   3.6  1.4  0.2],
+        [ 4.1  3.3  1.4  0.2],
+        [ 4.2  3.2  1.2  0.2]]         
+```
 
  Then you can run MiniSom just as follows:
 
-    from minisom import MiniSom    
-    som = MiniSom(6, 6, 4, sigma=0.3, learning_rate=0.5) # initialization of 6x6 SOM
-    print "Training..."
-    som.train_random(data, 100) # trains the SOM with 100 iterations
-    print "...ready!"
+```python
+from minisom import MiniSom    
+som = MiniSom(6, 6, 4, sigma=0.3, learning_rate=0.5) # initialization of 6x6 SOM
+print "Training..."
+som.train_random(data, 100) # trains the SOM with 100 iterations
+print "...ready!"
+```
 
 MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples from your data, and the batch training (implemented by the method `train_batch`), where the samples are picked in the order they are stored.
 
@@ -57,7 +61,9 @@ After the training you will be able to
 
 The data can be quantized by assigning a code book (weights vector of the winning neuron) to each sample in data. This kind of vector quantization is implemented by the method `quantization` that can be called as follows:
 
-    qnt = som.quantization(data)
+```python
+qnt = som.quantization(data)
+```
 
 In this example we have that `qnt[i]` is the quantized version of `data[i]`.
 
