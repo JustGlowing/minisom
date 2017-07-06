@@ -24,11 +24,11 @@ class MiniSom(object):
                  decay_function=None, neighborhood_function='gaussian', random_seed=None):
         """
             Initializes a Self Organizing Maps.
-            x,y - dimensions of the SOM
-            input_len - number of the elements of the vectors in input
-            sigma - spread of the neighborhood function, needs to be adequate to the dimensions of the map.
+            x,y, dimensions of the SOM
+            input_len, number of the elements of the vectors in input
+            sigma, spread of the neighborhood function, needs to be adequate to the dimensions of the map.
             (at the iteration t we have sigma(t) = sigma / (1 + t/T) where T is #num_iteration/2)
-            learning_rate - initial learning rate
+            learning_rate, initial learning rate
             (at the iteration t we have learning_rate(t) = learning_rate / (1 + t/T) where T is #num_iteration/2)
             decay_function, function that reduces learning_rate and sigma at each iteration
                             default function: lambda x,current_iteration,max_iter: x/(1+current_iteration/max_iter)
