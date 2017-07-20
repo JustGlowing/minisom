@@ -25,13 +25,13 @@ How to use it
 In order to use MiniSom you need your data organized as a Numpy matrix where each row corresponds to an observation or an as list of lists like the following:
 
 ```python
-data = [[ 5.1,  3.5,  1.4,  0.2],
-        [ 4.9,  3.,   1.4,  0.2],
-        [ 4.7,  3.2,  1.3,  0.2], # <-- single observation
-        [ 4.6,  3.1,  1.5,  0.2],
-        [ 5.,   3.6,  1.4,  0.2],
-        [ 4.1,  3.3,  1.4,  0.2],
-        [ 4.2,  3.2,  1.2,  0.2]]         
+data = [[ 0.80,  0.55,  0.22,  0.03],
+        [ 0.82,  0.50,  0.23,  0.03],
+        [ 0.80,  0.54,  0.22,  0.03],
+        [ 0.80,  0.53,  0.26,  0.03],
+        [ 0.79,  0.56,  0.22,  0.03],
+        [ 0.75,  0.60,  0.25,  0.03],
+        [ 0.77,  0.59,  0.22,  0.03]]      
 ```
 
  Then you can run MiniSom just as follows:
