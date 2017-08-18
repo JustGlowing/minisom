@@ -86,7 +86,7 @@ The graph above represent each image with the handwritten digit it contains. The
 
 <img src="http://2.bp.blogspot.com/--b04KEYZPyo/UepdhilpH2I/AAAAAAAAAq4/TefYKHi_uZ8/s1600/qnt_res.png" height="312" width="412" alt="Color quantization example">
 
-4.
+4. Natural language processing
 
 <img src="https://3.bp.blogspot.com/-D-z_xeWMHuU/WZb7Kc0fK9I/AAAAAAAABKY/xdI_ApUZMx8O4uN9ihZ_e6jbmQYhUggqgCLcBGAs/s1600/poems_som.png" height="650" width="650">
 
