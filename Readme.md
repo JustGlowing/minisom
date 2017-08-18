@@ -90,7 +90,7 @@ The graph above represent each image with the handwritten digit it contains. The
 
 <img src="https://3.bp.blogspot.com/-D-z_xeWMHuU/WZb7Kc0fK9I/AAAAAAAABKY/xdI_ApUZMx8O4uN9ihZ_e6jbmQYhUggqgCLcBGAs/s1600/poems_som.png" height="650" width="650">
 
-In this example each poem is associate with a cell in the map. The color represent the author. Check out the notebook in the examples for more details.
+In this example each poem is associate with a cell in the map. The color represent the author. Check out the notebook in the examples for more details: https://github.com/JustGlowing/minisom/blob/master/examples/PoemsAnalysis.ipynb
 
 Who uses Minisom?
 ------------
