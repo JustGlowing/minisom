@@ -66,13 +66,15 @@ In this example we have that `qnt[i]` is the quantized version of `data[i]`.
 
 Examples
 ---------------------
-In examples/example_iris.py you can find an example that shows how to train MiniSom and visualize the result using the <a href="http://en.wikipedia.org/wiki/Iris_flower_data_set">Iris flower dataset</a>. Here is the result of the script:
+In the directory `examples` you will find the code to produce the following images.
+
+1. Iris flower <a href="http://en.wikipedia.org/wiki/Iris_flower_data_set">dataset</a>.
 
 <img src="http://1.bp.blogspot.com/-j6L__LOB-UI/Ud7BXLLonBI/AAAAAAAAAqU/yf7RYfAoGWM/s1600/iris.png" height="312" width="412" alt="Iris example">
 
-For each observation we have a marker placed on the position of the winning neuron on the map. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background (see the color bar on the right to associate the value). 
+For each observation we have a marker placed on the position of the winning neuron on the map. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background (see the color bar on the right to associate the value) 
 
-In examples/example_digits.py there is an example of how to use MiniSom for images clustering. The example uses the scitkits-learn wrapper to the handwritten digits dataset. Here is one of the result that MiniSom can achieve in digits recognition:
+2. Images clustering
 
 <img src="http://1.bp.blogspot.com/-DOfulhSC7b8/UjHgeP6oasI/AAAAAAAAAso/t1cChUJZpVg/s1600/digits_mrk.png" height="312" width="412" alt="handwritten digitts recognition">
 
@@ -80,11 +82,15 @@ The graph above represent each image with the handwritten digit it contains. The
 
 <img src="http://1.bp.blogspot.com/-VxpdlXkeXfc/UjHgePQIvuI/AAAAAAAAAss/1jOaJRswqzM/s1600/digits_imgs.png" height="312" width="412" alt="handwritten digitts recognition">
 
-In examples/example_color.py you can find an example of how to use MiniSom for color quantization. Here is one of the possible results:
+3. Color quantization
 
 <img src="http://2.bp.blogspot.com/--b04KEYZPyo/UepdhilpH2I/AAAAAAAAAq4/TefYKHi_uZ8/s1600/qnt_res.png" height="312" width="412" alt="Color quantization example">
 
-(the examples require matplotlib for the visualization of the results).
+4.
+
+<img src="https://3.bp.blogspot.com/-D-z_xeWMHuU/WZb7Kc0fK9I/AAAAAAAABKY/xdI_ApUZMx8O4uN9ihZ_e6jbmQYhUggqgCLcBGAs/s1600/poems_som.png" height="650" width="650">
+
+In this example each poem is associate with a cell in the map. The color represent the author. Check out the notebook in the examples for more details.
 
 Who uses Minisom?
 ------------
