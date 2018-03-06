@@ -94,8 +94,11 @@ In this example each poem is associate with a cell in the map. The color represe
 
 Who uses Minisom?
 ------------
-
 <ul>
+<li>
+Udemy online course. <a href="https://www.udemy.com/deeplearning/?utm_campaign=email&utm_source=sendgrid.com&utm_medium=email">Deep Learning A-Z™: Hands-On Artificial Neural Networks</a>
+<img src="https://www.udemy.com/staticx/udemy/images/v6/logo-coral.svg" height="20">
+</li>
 <li>
 Fredrik Broch Elgaaen, Nicholas Mowatt Larssen. <a href="https://www.duo.uio.no/bitstream/handle/10852/57507/master_nml.pdf?sequence=1&isAllowed=y">Data mining i banksektoren - Prediksjonsmodellering og analyse av kunder som sier opp boliglån</a>. University of Oslo, May 2017.
 </li>
