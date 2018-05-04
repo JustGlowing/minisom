@@ -19,7 +19,7 @@ or download MiniSom to a directory of your choice and use the setup script:
 How to use it
 ---------------------
 
-In order to use MiniSom you need your data organized as a Numpy matrix where each row corresponds to an observation or an as list of lists like the following:
+In order to use MiniSom you need your data organized as a Numpy matrix where each row corresponds to an observation or as list of lists like the following:
 
 ```python
 data = [[ 0.80,  0.55,  0.22,  0.03],
