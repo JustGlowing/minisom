@@ -96,6 +96,13 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Ying Xie, Linh Le, Yiyun Zhou, Vijay V.Raghavan. <a href="https://www.sciencedirect.com/science/article/pii/S0169716118300026">Deep Learning for Natural Language Processing</a>. Elsevier Handbook of Statistics, 2018.
+</li>
+<li>
+Vincent Fortuin, Matthias Hüser, Francesco Locatello, Heiko Strathmann, and Gunnar Rätsch. <a href="https://arxiv.org/pdf/1806.02199.pdf">Deep Self-Organization: Interpretable Discrete
+Representation Learning on Time Series</a>. 2018.
+</li>
+<li>
 Birgitta Dresp-Langley, John Mwangi Wandeto, Henry Okola Nyongesa. <a href="https://www.openscience.fr/IMG/pdf/iste_fromd2d17v1n2.pdf">Using the quantization error from Self‐Organizing Map (SOM) output for fast detection of critical variations in image time series</a>. ISTE OpenScience, 2018.
 </li>
 <li>
