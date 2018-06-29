@@ -96,6 +96,12 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+T. M. Nam et al. <a href="https://ieeexplore.ieee.org/document/8343119/">Self-organizing map-based approaches in DDoS flooding detection using SDN</a>. 2018 International Conference on Information Networking (ICOIN), 2018.
+</li>
+<li>
+Li Yuan <a href="http://digitalcommons.uri.edu/theses/1244/">Implementation of Self-Organizing Maps with Python</a>. Master Thesis, University of Rhode Island, 2018.
+</li>
+<li>
 Ying Xie, Linh Le, Yiyun Zhou, Vijay V.Raghavan. <a href="https://www.sciencedirect.com/science/article/pii/S0169716118300026">Deep Learning for Natural Language Processing</a>. Elsevier Handbook of Statistics, 2018.
 </li>
 <li>
