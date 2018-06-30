@@ -1,9 +1,12 @@
 from math import sqrt
-
-from numpy import (array, unravel_index, nditer, linalg, random, subtract,
-                   power, exp, pi, zeros, arange, outer, meshgrid, dot)
+import operator
+from numpy import (array, unravel_index, nditer, linalg, random, subtract, sort, ndarray,
+                   power, exp, pi, zeros, arange, outer, meshgrid, dot, mean)
 from collections import defaultdict
 from warnings import warn
+
+from sklearn.datasets import make_multilabel_classification
+
 
 # for unit tests
 from numpy.testing import assert_almost_equal, assert_array_almost_equal
@@ -24,7 +27,7 @@ def fast_norm(x):
 
 
 class MiniSom(object):
-    def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
+    def __init__(self, x, y, labels, input_len, sigma=4.0, learning_rate=0.05,
                  decay_function=None, neighborhood_function='gaussian',
                  random_seed=None):
         """Initializes a Self Organizing Maps.
@@ -78,6 +81,12 @@ class MiniSom(object):
             self._decay_function = lambda x, t, max_iter: x/(1+t/max_iter)
         self._learning_rate = learning_rate
         self._sigma = sigma
+        
+        self.trainmap = defaultdict(list) 
+        self.labels = labels
+        self.threshold = 0.4
+        # neighborhood for mapping extra traing instances to winning neuron - multilabel classification
+        self.sigma2 = 1.0
         # random initialization
         self._weights = self._random_generator.rand(x, y, input_len)*2-1
         for i in range(x):
@@ -85,8 +94,8 @@ class MiniSom(object):
                 # normalization
                 norm = fast_norm(self._weights[i, j])
                 self._weights[i, j] = self._weights[i, j] / norm
-        self._activation_map = zeros((x, y))
-        self._neigx = arange(x)
+        self._activation_map = zeros((x, y))    
+        self._neigx = arange(x)  # dimensions of the grid
         self._neigy = arange(y)  # used to evaluate the neighborhood function
         neig_functions = {'gaussian': self._gaussian,
                           'mexican_hat': self._mexican_hat}
@@ -103,6 +112,9 @@ class MiniSom(object):
     def _activate(self, x):
         """Updates matrix activation_map, in this matrix
            the element i,j is the response of the neuron i,j to x"""
+        #print(x.shape)
+        
+        #print(self._weights.shape)
         s = subtract(x, self._weights)  # x - w
         it = nditer(self._activation_map, flags=['multi_index'])
         while not it.finished:
@@ -137,7 +149,6 @@ class MiniSom(object):
 
     def update(self, x, win, t):
         """Updates the weights of the neurons.
-
         Parameters
         ----------
         x : np.array
@@ -151,16 +162,54 @@ class MiniSom(object):
         # sigma and learning rate decrease with the same rule
         sig = self._decay_function(self._sigma, t, self.T)
         # improves the performances
-        g = self.neighborhood(win, sig)*eta
+        g = self.neighborhood(win, sig)*eta # neighborhood and learning combined
         it = nditer(g, flags=['multi_index'])
         while not it.finished:
             # eta * neighborhood_function * (x-w)
             x_w = (x - self._weights[it.multi_index])
+
             self._weights[it.multi_index] += g[it.multi_index] * x_w
             # normalization
-            norm = fast_norm(self._weights[it.multi_index])
-            self._weights[it.multi_index] = self._weights[it.multi_index]/norm
+            #norm = fast_norm(self._weights[it.multi_index])
+            #self._weights[it.multi_index] = self._weights[it.multi_index]/norm
             it.iternext()
+    
+    def train_random(self, data, num_iteration):
+        """Trains the SOM picking samples at random from data"""
+        self._init_T(num_iteration)
+        for iteration in range(num_iteration):
+            # pick a random sample
+            rand_i = self._random_generator.randint(len(data))
+            self.update(data[rand_i], self.winner(data[rand_i]), iteration)
+    
+    def trainmultilabel(self, X_train, y_train, epochs):
+        self._init_T(epochs)
+        for i in range(epochs):
+            self.sigma2 = 1
+            for j in range(X_train.shape[0]):
+                w = self.winner(X_train[j])
+                self.update(X_train[j], w, i)
+                self.trainmap[w].append(y_train[j])
+                
+                
+        
+    def classify(self, X_test, epochs):        
+        p = zeros((X_test.shape[0], self.labels))
+        proto = [0.0] * self.labels
+        for j in range(X_test.shape[0]):
+            w = self.winner(X_test[j])
+            mapp = self.train_map(w)
+            for o in range(self.labels):
+                proto[o] = ([ i[o] for i in mapp ])
+                proto[o] = mean(proto[o])
+                t = lambda o: 1 if proto[o] > self.threshold else 0
+                p[j][o] = t(o)
+        return p
+        
+    def train_map(self, w):
+        return self.trainmap[w]
+            
+
 
     def quantization(self, data):
         """Assigns a code book (weights vector of the winning neuron)
@@ -181,13 +230,6 @@ class MiniSom(object):
             self._weights[it.multi_index] = self._weights[it.multi_index]/norm
             it.iternext()
 
-    def train_random(self, data, num_iteration):
-        """Trains the SOM picking samples at random from data"""
-        self._init_T(num_iteration)
-        for iteration in range(num_iteration):
-            # pick a random sample
-            rand_i = self._random_generator.randint(len(data))
-            self.update(data[rand_i], self.winner(data[rand_i]), iteration)
 
     def train_batch(self, data, num_iteration):
         """Trains using all the vectors in data sequentially"""
