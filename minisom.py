@@ -1,7 +1,8 @@
 from math import sqrt
 
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
-                   power, exp, pi, zeros, arange, outer, meshgrid, dot)
+                   power, exp, pi, zeros, arange, outer, meshgrid, dot,
+                   logical_and)
 from collections import defaultdict
 from warnings import warn
 
@@ -61,7 +62,7 @@ class MiniSom(object):
 
         neighborhood_function : function, optional (default='gaussian')
             Function that weights the neighborhood of a position in the map
-            possible values: 'gaussian', 'mexican_hat'
+            possible values: 'gaussian', 'mexican_hat', 'bubble'
 
         random_seed : int, optiona (default=None)
             Random seed to use.
@@ -89,11 +90,15 @@ class MiniSom(object):
         self._neigx = arange(x)
         self._neigy = arange(y)  # used to evaluate the neighborhood function
         neig_functions = {'gaussian': self._gaussian,
-                          'mexican_hat': self._mexican_hat}
+                          'mexican_hat': self._mexican_hat,
+                          'bubble': self._bubble}
         if neighborhood_function not in neig_functions:
             msg = '%s not supported. Functions available: %s'
             raise ValueError(msg % (neighborhood_function,
                                     ', '.join(neig_functions.keys())))
+        if neighborhood_function == 'bubble' and sigma % 2 != 1:
+            warn('sigma should be an odd value when bubble \
+                 is used as neighborhood function')
         self.neighborhood = neig_functions[neighborhood_function]
 
     def get_weights(self):
@@ -128,6 +133,16 @@ class MiniSom(object):
         p = power(xx-c[0], 2) + power(yy-c[1], 2)
         d = 2*pi*sigma*sigma
         return exp(-p/d)*(1-2/d*p)
+
+    def _bubble(self, c, sigma):
+        """Constant function centered in c with spread sigma.
+           sigma should be an odd value,
+        """
+        ax = logical_and(self._neigx > c[0]-sigma/2.,
+                         self._neigx < c[0]+sigma/2.)
+        ay = logical_and(self._neigy > c[1]-sigma/2., 
+                         self._neigy < c[1]+sigma/2.)
+        return outer(ax, ay)*1.
 
     def winner(self, x):
         """Computes the coordinates of the winning neuron for the sample x"""
@@ -274,6 +289,16 @@ class TestMinisom(unittest.TestCase):
         bell = self.som._gaussian((2, 2), 1)
         assert bell.max() == 1.0
         assert bell.argmax() == 12  # unravel(12) = (2,2)
+
+    def test_mexican_hat(self):
+        bell = self.som._mexican_hat((2, 2), 1)
+        assert bell.max() == 1.0
+        assert bell.argmax() == 12  # unravel(12) = (2,2)
+
+    def test_bubble(self):
+        bubble = self.som._bubble((2, 2), 1)
+        assert bubble[2,2] == 1
+        assert sum(sum(bubble)) == 1
 
     def test_win_map(self):
         winners = self.som.win_map([5.0, 2.0])
