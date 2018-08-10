@@ -146,7 +146,7 @@ Pages 192-193.</li>
 
 Compatibility notes
 ---------------------
-Minisom has been tested under python 2.7.3 and 3.2.3.
+Minisom has been tested under python 2.7.3 and 3.6.2.
 
 License
 ---------------------
