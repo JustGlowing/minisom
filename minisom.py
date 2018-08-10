@@ -140,7 +140,7 @@ class MiniSom(object):
         """
         ax = logical_and(self._neigx > c[0]-sigma/2.,
                          self._neigx < c[0]+sigma/2.)
-        ay = logical_and(self._neigy > c[1]-sigma/2., 
+        ay = logical_and(self._neigy > c[1]-sigma/2.,
                          self._neigy < c[1]+sigma/2.)
         return outer(ax, ay)*1.
 
@@ -297,7 +297,7 @@ class TestMinisom(unittest.TestCase):
 
     def test_bubble(self):
         bubble = self.som._bubble((2, 2), 1)
-        assert bubble[2,2] == 1
+        assert bubble[2, 2] == 1
         assert sum(sum(bubble)) == 1
 
     def test_win_map(self):
