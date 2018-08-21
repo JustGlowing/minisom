@@ -357,6 +357,11 @@ class TestMinisom(unittest.TestCase):
         assert winners[(2, 3)][0] == [5.0]
         assert winners[(1, 1)][0] == [2.0]
 
+    def test_labels_map(self):
+        labels_map = self.som.labels_map([[5.0], [2.0]], ['a', 'b'])
+        assert labels_map[(2, 3)]['a'] == 1
+        assert labels_map[(1, 1)]['b'] == 1
+
     def test_activation_reponse(self):
         response = self.som.activation_response([[5.0], [2.0]])
         assert response[2, 3] == 1
