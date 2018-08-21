@@ -79,6 +79,7 @@ class MiniSom(object):
             self._decay_function = lambda x, t, max_iter: x/(1+t/max_iter)
         self._learning_rate = learning_rate
         self._sigma = sigma
+        self._input_len = input_len
         # random initialization
         self._weights = self._random_generator.rand(x, y, input_len)*2-1
         for i in range(x):
@@ -144,6 +145,14 @@ class MiniSom(object):
                          self._neigy < c[1]+sigma/2.)
         return outer(ax, ay)*1.
 
+    def _check_input_len(self, data):
+        """Checks that the data in input is of the correct shape."""
+        data_len = len(data[0])
+        if self._input_len != data_len:
+            msg = 'Received %d features, expected %d.' % (data_len,
+                                                          self._input_len)
+            raise ValueError(msg)
+
     def winner(self, x):
         """Computes the coordinates of the winning neuron for the sample x"""
         self._activate(x)
@@ -180,6 +189,7 @@ class MiniSom(object):
     def quantization(self, data):
         """Assigns a code book (weights vector of the winning neuron)
         to each sample in data."""
+        self._check_input_len(data)
         q = zeros(data.shape)
         for i, x in enumerate(data):
             q[i] = self._weights[self.winner(x)]
@@ -188,6 +198,7 @@ class MiniSom(object):
     def random_weights_init(self, data):
         """Initializes the weights of the SOM
         picking random samples from data"""
+        self._check_input_len(data)
         it = nditer(self._activation_map, flags=['multi_index'])
         while not it.finished:
             rand_i = self._random_generator.randint(len(data))
@@ -198,6 +209,9 @@ class MiniSom(object):
 
     def train_random(self, data, num_iteration):
         """Trains the SOM picking samples at random from data"""
+        if num_iteration < 1:
+            raise ValueError('num_iteration must be > 1')
+        self._check_input_len(data)
         self._init_T(num_iteration)
         for iteration in range(num_iteration):
             # pick a random sample
@@ -206,6 +220,9 @@ class MiniSom(object):
 
     def train_batch(self, data, num_iteration):
         """Trains using all the vectors in data sequentially"""
+        if num_iteration < 1:
+            raise ValueError('num_iteration must be > 1')
+        self._check_input_len(data)
         self._init_T(len(data)*num_iteration)
         iteration = 0
         while iteration < num_iteration:
@@ -242,6 +259,7 @@ class MiniSom(object):
             Returns a matrix where the element i,j is the number of times
             that the neuron i,j have been winner.
         """
+        self._check_input_len(data)
         a = zeros((self._weights.shape[0], self._weights.shape[1]))
         for x in data:
             a[self.winner(x)] += 1
@@ -250,6 +268,7 @@ class MiniSom(object):
     def quantization_error(self, data):
         """Returns the quantization error computed as the average
         distance between each input sample and its best matching unit."""
+        self._check_input_len(data)
         error = 0
         for x in data:
             error += fast_norm(x-self._weights[self.winner(x)])
@@ -258,6 +277,7 @@ class MiniSom(object):
     def win_map(self, data):
         """Returns a dictionary wm where wm[(i,j)] is a list
         with all the patterns that have been mapped in the position i,j."""
+        self._check_input_len(data)
         winmap = defaultdict(list)
         for x in data:
             winmap[self.winner(x)].append(x)
@@ -281,6 +301,19 @@ class TestMinisom(unittest.TestCase):
     def test_fast_norm(self):
         assert fast_norm(array([1, 3])) == sqrt(1+9)
 
+    def test_check_input_len(self):
+        with self.assertRaises(ValueError):
+            self.som.train_batch([[1, 2]], 1)
+
+        with self.assertRaises(ValueError):
+            self.som.random_weights_init(array([[1, 2]]))
+
+        with self.assertRaises(ValueError):
+            self.som._check_input_len(array([[1, 2]]))
+
+        self.som._check_input_len(array([[1]]))
+        self.som._check_input_len([[1]])
+
     def test_unavailable_neigh_function(self):
         with self.assertRaises(ValueError):
             MiniSom(5, 5, 1, neighborhood_function='boooom')
@@ -301,12 +334,12 @@ class TestMinisom(unittest.TestCase):
         assert sum(sum(bubble)) == 1
 
     def test_win_map(self):
-        winners = self.som.win_map([5.0, 2.0])
-        assert winners[(2, 3)][0] == 5.0
-        assert winners[(1, 1)][0] == 2.0
+        winners = self.som.win_map([[5.0], [2.0]])
+        assert winners[(2, 3)][0] == [5.0]
+        assert winners[(1, 1)][0] == [2.0]
 
     def test_activation_reponse(self):
-        response = self.som.activation_response([5.0, 2.0])
+        response = self.som.activation_response([[5.0], [2.0]])
         assert response[2, 3] == 1
         assert response[1, 1] == 1
 
@@ -314,11 +347,11 @@ class TestMinisom(unittest.TestCase):
         assert self.som.activate(5.0).argmin() == 13.0  # unravel(13) = (2,3)
 
     def test_quantization_error(self):
-        self.som.quantization_error([5, 2]) == 0.0
-        self.som.quantization_error([4, 1]) == 0.5
+        self.som.quantization_error([[5], [2]]) == 0.0
+        self.som.quantization_error([[4], [1]]) == 0.5
 
     def test_quantization(self):
-        q = self.som.quantization(array([4, 2]))
+        q = self.som.quantization(array([[4], [2]]))
         assert q[0] == 5.0
         assert q[1] == 2.0
 
