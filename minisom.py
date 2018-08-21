@@ -3,7 +3,7 @@ from math import sqrt
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
                    logical_and)
-from collections import defaultdict
+from collections import defaultdict, Counter
 from warnings import warn
 
 # for unit tests
@@ -281,6 +281,25 @@ class MiniSom(object):
         winmap = defaultdict(list)
         for x in data:
             winmap[self.winner(x)].append(x)
+        return winmap
+
+    def labels_map(self, data, labels):
+        """Returns a dictionary wm where wm[(i,j)] is a dictionary
+        that contains the number of samples from a given label
+        that have been mapped in position i,j.
+
+        Parameters
+        ----------
+        data : data matrix
+
+        label : list or array that contains the label of each sample in data.
+        """
+        self._check_input_len(data)
+        winmap = defaultdict(list)
+        for x, l in zip(data, labels):
+            winmap[self.winner(x)].append(l)
+        for position in winmap:
+            winmap[position] = Counter(winmap[position])
         return winmap
 
 
