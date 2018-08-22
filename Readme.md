@@ -74,6 +74,10 @@ In the directory `examples` you will find the code to produce the following imag
 
 For each observation we have a marker placed on the position of the winning neuron on the map. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background (see the color bar on the right to associate the value) 
 
+<img src="https://2.bp.blogspot.com/-Wf8BlSLfpSE/W31e8oCRyJI/AAAAAAAABS4/oF0_6cohL50XHLuQW-LPkwPKasDL6wmigCLcBGAs/s1600/som_iris_pies.png" width="412" alt="Iris pie charts">
+
+Each neuron is associated with one of the labels in the dataset with a specific degree.
+
 2. Images clustering
 
 <img src="http://1.bp.blogspot.com/-DOfulhSC7b8/UjHgeP6oasI/AAAAAAAAAso/t1cChUJZpVg/s1600/digits_mrk.png" height="312" width="412" alt="handwritten digitts recognition">
