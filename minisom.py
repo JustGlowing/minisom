@@ -92,7 +92,8 @@ class MiniSom(object):
         self._neigy = arange(y)  # used to evaluate the neighborhood function
         neig_functions = {'gaussian': self._gaussian,
                           'mexican_hat': self._mexican_hat,
-                          'bubble': self._bubble}
+                          'bubble': self._bubble,
+                          'triangle': self._triangle}
         if neighborhood_function not in neig_functions:
             msg = '%s not supported. Functions available: %s'
             raise ValueError(msg % (neighborhood_function,
@@ -144,6 +145,14 @@ class MiniSom(object):
         ay = logical_and(self._neigy > c[1]-sigma/2.,
                          self._neigy < c[1]+sigma/2.)
         return outer(ax, ay)*1.
+
+    def _triangle(self, c, sigma):
+        """Triangular function centered in c with spread sigma."""
+        triangle_x = (-abs(c[0] - self._neigx)) + sigma
+        triangle_y = (-abs(c[1] - self._neigy)) + sigma
+        triangle_x[triangle_x < 0] = 0.
+        triangle_y[triangle_y < 0] = 0.
+        return outer(triangle_x, triangle_y)
 
     def _check_input_len(self, data):
         """Checks that the data in input is of the correct shape."""
