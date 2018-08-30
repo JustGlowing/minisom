@@ -361,6 +361,11 @@ class TestMinisom(unittest.TestCase):
         assert bubble[2, 2] == 1
         assert sum(sum(bubble)) == 1
 
+    def test_triangle(self):
+        bubble = self.som._triangle((2, 2), 1)
+        assert bubble[2, 2] == 1
+        assert sum(sum(bubble)) == 1
+
     def test_win_map(self):
         winners = self.som.win_map([[5.0], [2.0]])
         assert winners[(2, 3)][0] == [5.0]
