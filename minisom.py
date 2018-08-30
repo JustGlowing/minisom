@@ -67,7 +67,7 @@ class MiniSom(object):
         random_seed : int, optiona (default=None)
             Random seed to use.
         """
-        if sigma >= x/2.0 or sigma >= y/2.0:
+        if sigma >= x or sigma >= y:
             warn('Warning: sigma is too high for the dimension of the map.')
         if random_seed:
             self._random_generator = random.RandomState(random_seed)
@@ -98,12 +98,10 @@ class MiniSom(object):
             msg = '%s not supported. Functions available: %s'
             raise ValueError(msg % (neighborhood_function,
                                     ', '.join(neig_functions.keys())))
-        if neighborhood_function == 'bubble' and sigma % 2 != 1:
-            warn('sigma should be an odd value when bubble \
-                 is used as neighborhood function')
-        if neighborhood_function == 'triangle' and divmod(sigma, 1)[1] != 0:
-            warn('sigma should be an integer when bubble \
-                 is used as neighborhood function')
+        if neighborhood_function in ['triangle',
+                                     'bubble'] and divmod(sigma, 1)[1] != 0:
+            warn('sigma should be an integer when bubble and bubble \
+                 are used as neighborhood function')
         self.neighborhood = neig_functions[neighborhood_function]
 
     def get_weights(self):
@@ -143,10 +141,10 @@ class MiniSom(object):
         """Constant function centered in c with spread sigma.
            sigma should be an odd value,
         """
-        ax = logical_and(self._neigx > c[0]-sigma/2.,
-                         self._neigx < c[0]+sigma/2.)
-        ay = logical_and(self._neigy > c[1]-sigma/2.,
-                         self._neigy < c[1]+sigma/2.)
+        ax = logical_and(self._neigx > c[0]-sigma,
+                         self._neigx < c[0]+sigma)
+        ay = logical_and(self._neigy > c[1]-sigma,
+                         self._neigy < c[1]+sigma)
         return outer(ax, ay)*1.
 
     def _triangle(self, c, sigma):
