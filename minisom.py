@@ -101,6 +101,9 @@ class MiniSom(object):
         if neighborhood_function == 'bubble' and sigma % 2 != 1:
             warn('sigma should be an odd value when bubble \
                  is used as neighborhood function')
+        if neighborhood_function == 'triangle' and divmod(sigma, 1)[1] != 0:
+            warn('sigma should be an integer when bubble \
+                 is used as neighborhood function')
         self.neighborhood = neig_functions[neighborhood_function]
 
     def get_weights(self):
