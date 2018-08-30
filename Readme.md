@@ -72,7 +72,7 @@ In the directory `examples` you will find the code to produce the following imag
 
 <img src="http://1.bp.blogspot.com/-j6L__LOB-UI/Ud7BXLLonBI/AAAAAAAAAqU/yf7RYfAoGWM/s1600/iris.png" height="312" width="412" alt="Iris example">
 
-For each observation we have a marker placed on the position of the winning neuron on the map. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background (see the color bar on the right to associate the value) 
+For each observation we have a marker placed on the position of the winning neuron on the map. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background (see the color bar on the right to associate the value).
 
 <img src="https://2.bp.blogspot.com/-Wf8BlSLfpSE/W31e8oCRyJI/AAAAAAAABS4/oF0_6cohL50XHLuQW-LPkwPKasDL6wmigCLcBGAs/s1600/som_iris_pies.png" width="412" alt="Iris pie charts">
 
