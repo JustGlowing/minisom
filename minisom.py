@@ -30,9 +30,9 @@ class MiniSom(object):
                  random_seed=None):
         """Initializes a Self Organizing Maps.
 
-        A rule of thumb to set the size of the grid is that it should
-        contain 5*sqrt(N) neurons where N is the number of samples
-        in the dataset to analyze.
+        A rule of thumb to set the size of the grid for a dimensionality
+        reduction task is that it should contain 5*sqrt(N) neurons 
+        where N is the number of samples in the dataset to analyze.
 
         E.g. if your dataset has 150 samples, 5*sqrt(150) = 61.23
         hence a map 8-by-8 should perform well. 
