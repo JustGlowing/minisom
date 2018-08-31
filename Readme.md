@@ -78,17 +78,17 @@ For each observation we have a marker placed on the position of the winning neur
 
 Each neuron is associated with one of the labels in the dataset with a specific degree.
 
-2. Images clustering
+2. Color quantization
+
+<img src="https://3.bp.blogspot.com/-ut3zlgBmRdo/W4kr9TaP-NI/AAAAAAAABTU/Mr53HjCT65kAR8I7ZvhNfJ-kkG6V2ZRJgCLcBGAs/s1600/color_quantization.png" alt="Color quantization example">
+
+3. Images clustering
 
 <img src="https://2.bp.blogspot.com/-iHtb6JfY3lQ/W4kr9akbmSI/AAAAAAAABTM/GSrw__X6ZTs6XlyzdiGFWabIBwiWYeT7gCLcBGAs/s1600/som_digits.png" alt="handwritten digitts recognition">
 
 The graph above represent each image with the handwritten digit it contains. The position corresponds to the position of the winning neuron for the image. Here we also have a version of this graphs that shows the original images:
 
 <img src="https://4.bp.blogspot.com/-dDMYwry702M/W4kr9bVrq0I/AAAAAAAABTQ/h4EkTRUB6qwxvM5Vo8lDvyhevvLXWphswCLcBGAs/s1600/som_digits_imgs.png" alt="handwritten digitts recognition">
-
-3. Color quantization
-
-<img src="https://3.bp.blogspot.com/-ut3zlgBmRdo/W4kr9TaP-NI/AAAAAAAABTU/Mr53HjCT65kAR8I7ZvhNfJ-kkG6V2ZRJgCLcBGAs/s1600/color_quantization.png" alt="Color quantization example">
 
 4. Natural language processing
 
