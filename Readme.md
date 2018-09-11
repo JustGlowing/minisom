@@ -70,29 +70,29 @@ In the directory `examples` you will find the code to produce the following imag
 
 1. Iris flower <a href="http://en.wikipedia.org/wiki/Iris_flower_data_set">dataset</a>.
 
-<img src="http://1.bp.blogspot.com/-j6L__LOB-UI/Ud7BXLLonBI/AAAAAAAAAqU/yf7RYfAoGWM/s1600/iris.png" height="312" width="412" alt="Iris example">
+<img src="https://1.bp.blogspot.com/-L_lNGbK7DGY/W4kr-M7OOuI/AAAAAAAABTY/BiOpH25UzPcs3QftwV98uIz0naJ8XnaUgCLcBGAs/s1600/som_iris.png" alt="Iris example">
 
-For each observation we have a marker placed on the position of the winning neuron on the map. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background (see the color bar on the right to associate the value).
+For each observation we have a marker placed on the position of the winning neuron on the map. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background.
 
-<img src="https://2.bp.blogspot.com/-Wf8BlSLfpSE/W31e8oCRyJI/AAAAAAAABS4/oF0_6cohL50XHLuQW-LPkwPKasDL6wmigCLcBGAs/s1600/som_iris_pies.png" width="412" alt="Iris pie charts">
+<img src="https://2.bp.blogspot.com/-S1_w438Cglo/W4kr-UZtFsI/AAAAAAAABTc/t8q7n7rMh7sz-PNdUY2a_oOp_y89KWZGgCLcBGAs/s1600/som_iris_labels.png">
 
 Each neuron is associated with one of the labels in the dataset with a specific degree.
 
-2. Images clustering
+2. Color quantization
 
-<img src="http://1.bp.blogspot.com/-DOfulhSC7b8/UjHgeP6oasI/AAAAAAAAAso/t1cChUJZpVg/s1600/digits_mrk.png" height="312" width="412" alt="handwritten digitts recognition">
+<img src="https://3.bp.blogspot.com/-ut3zlgBmRdo/W4kr9TaP-NI/AAAAAAAABTU/Mr53HjCT65kAR8I7ZvhNfJ-kkG6V2ZRJgCLcBGAs/s1600/color_quantization.png" alt="Color quantization example">
+
+3. Images clustering
+
+<img src="https://2.bp.blogspot.com/-iHtb6JfY3lQ/W4kr9akbmSI/AAAAAAAABTM/GSrw__X6ZTs6XlyzdiGFWabIBwiWYeT7gCLcBGAs/s1600/som_digits.png" alt="handwritten digitts recognition">
 
 The graph above represent each image with the handwritten digit it contains. The position corresponds to the position of the winning neuron for the image. Here we also have a version of this graphs that shows the original images:
 
-<img src="http://1.bp.blogspot.com/-VxpdlXkeXfc/UjHgePQIvuI/AAAAAAAAAss/1jOaJRswqzM/s1600/digits_imgs.png" height="312" width="412" alt="handwritten digitts recognition">
-
-3. Color quantization
-
-<img src="http://2.bp.blogspot.com/--b04KEYZPyo/UepdhilpH2I/AAAAAAAAAq4/TefYKHi_uZ8/s1600/qnt_res.png" height="312" width="412" alt="Color quantization example">
+<img src="https://4.bp.blogspot.com/-dDMYwry702M/W4kr9bVrq0I/AAAAAAAABTQ/h4EkTRUB6qwxvM5Vo8lDvyhevvLXWphswCLcBGAs/s1600/som_digits_imgs.png" alt="handwritten digitts recognition">
 
 4. Natural language processing
 
-<img src="https://3.bp.blogspot.com/-D-z_xeWMHuU/WZb7Kc0fK9I/AAAAAAAABKY/xdI_ApUZMx8O4uN9ihZ_e6jbmQYhUggqgCLcBGAs/s1600/poems_som.png" height="650" width="650">
+<img src="https://3.bp.blogspot.com/-D-z_xeWMHuU/WZb7Kc0fK9I/AAAAAAAABKY/xdI_ApUZMx8O4uN9ihZ_e6jbmQYhUggqgCLcBGAs/s1600/poems_som.png">
 
 In this example each poem is associate with a cell in the map. The color represent the author. Check out the notebook in the examples for more details: https://github.com/JustGlowing/minisom/blob/master/examples/PoemsAnalysis.ipynb
 
@@ -150,7 +150,7 @@ Pages 192-193.</li>
 
 Compatibility notes
 ---------------------
-Minisom has been tested under python 2.7.3 and 3.6.2.
+Minisom has been tested under Python 3.6.2.
 
 License
 ---------------------
