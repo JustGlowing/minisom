@@ -33,3 +33,13 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Mac files
+.DS_Store
+
+# IDE config
+.idea/
+
+# Notebooks checkpoints
+examples/.ipynb_checkpoints/
+
