@@ -68,44 +68,50 @@ class MiniSom(object):
             Function that weights the neighborhood of a position in the map
             possible values: 'gaussian', 'mexican_hat', 'bubble'
 
-        random_seed : int, optiona (default=None)
+        random_seed : int, optional (default=None)
             Random seed to use.
         """
         if sigma >= x or sigma >= y:
             warn('Warning: sigma is too high for the dimension of the map.')
-        if random_seed:
-            self._random_generator = random.RandomState(random_seed)
-        else:
-            self._random_generator = random.RandomState(random_seed)
+
+        self._random_generator = random.RandomState(random_seed)
+
         if decay_function:
             self._decay_function = decay_function
         else:
             self._decay_function = lambda x, t, max_iter: x/(1+t/max_iter)
+
         self._learning_rate = learning_rate
         self._sigma = sigma
         self._input_len = input_len
         # random initialization
         self._weights = self._random_generator.rand(x, y, input_len)*2-1
+
         for i in range(x):
             for j in range(y):
                 # normalization
                 norm = fast_norm(self._weights[i, j])
                 self._weights[i, j] = self._weights[i, j] / norm
+
         self._activation_map = zeros((x, y))
         self._neigx = arange(x)
         self._neigy = arange(y)  # used to evaluate the neighborhood function
+
         neig_functions = {'gaussian': self._gaussian,
                           'mexican_hat': self._mexican_hat,
                           'bubble': self._bubble,
                           'triangle': self._triangle}
+
         if neighborhood_function not in neig_functions:
             msg = '%s not supported. Functions available: %s'
             raise ValueError(msg % (neighborhood_function,
                                     ', '.join(neig_functions.keys())))
+
         if neighborhood_function in ['triangle',
                                      'bubble'] and divmod(sigma, 1)[1] != 0:
             warn('sigma should be an integer when triangle or bubble' +
                  'are used as neighborhood function')
+
         self.neighborhood = neig_functions[neighborhood_function]
 
     def get_weights(self):
@@ -159,6 +165,10 @@ class MiniSom(object):
         triangle_y[triangle_y < 0] = 0.
         return outer(triangle_x, triangle_y)
 
+    def _check_iteration_number(self, num_iteration):
+        if num_iteration < 1:
+            raise ValueError('num_iteration must be > 1')
+
     def _check_input_len(self, data):
         """Checks that the data in input is of the correct shape."""
         data_len = len(data[0])
@@ -191,6 +201,7 @@ class MiniSom(object):
         # improves the performances
         g = self.neighborhood(win, sig)*eta
         it = nditer(g, flags=['multi_index'])
+
         while not it.finished:
             # eta * neighborhood_function * (x-w)
             x_w = (x - self._weights[it.multi_index])
@@ -223,10 +234,10 @@ class MiniSom(object):
 
     def train_random(self, data, num_iteration):
         """Trains the SOM picking samples at random from data"""
-        if num_iteration < 1:
-            raise ValueError('num_iteration must be > 1')
+        self._check_iteration_number(num_iteration)
         self._check_input_len(data)
         self._init_T(num_iteration)
+
         for iteration in range(num_iteration):
             # pick a random sample
             rand_i = self._random_generator.randint(len(data))
@@ -234,11 +245,11 @@ class MiniSom(object):
 
     def train_batch(self, data, num_iteration):
         """Trains using all the vectors in data sequentially"""
-        if num_iteration < 1:
-            raise ValueError('num_iteration must be > 1')
+        self._check_iteration_number(num_iteration)
         self._check_input_len(data)
         self._init_T(len(data)*num_iteration)
         iteration = 0
+
         while iteration < num_iteration:
             idx = iteration % (len(data)-1)
             self.update(data[idx], self.winner(data[idx]), iteration)
@@ -318,7 +329,7 @@ class MiniSom(object):
 
 
 class TestMinisom(unittest.TestCase):
-    def setup_method(self, method):
+    def setUp(self):
         self.som = MiniSom(5, 5, 1)
         for i in range(5):
             for j in range(5):
@@ -390,8 +401,8 @@ class TestMinisom(unittest.TestCase):
         assert self.som.activate(5.0).argmin() == 13.0  # unravel(13) = (2,3)
 
     def test_quantization_error(self):
-        self.som.quantization_error([[5], [2]]) == 0.0
-        self.som.quantization_error([[4], [1]]) == 0.5
+        assert self.som.quantization_error([[5], [2]]) == 0.0
+        assert self.som.quantization_error([[4], [1]]) == 1.0
 
     def test_quantization(self):
         q = self.som.quantization(array([[4], [2]]))
