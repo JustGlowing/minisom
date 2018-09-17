@@ -24,26 +24,42 @@ def fast_norm(x):
     return sqrt(dot(x, x.T))
 
 
+def asymptotic_decay(learning_rate, t, max_iter):
+    """Decay function of the learning process.
+    Parameters
+    ----------
+    learning_rate : float
+        current learning rate.
+
+    t : int
+        current iteration.
+
+    max_iter : int
+        maximum number of iterations for the training.
+    """
+    return learning_rate / (1+t/max_iter)
+
+
 class MiniSom(object):
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
-                 decay_function=None, neighborhood_function='gaussian',
-                 random_seed=None):
+                 decay_function=asymptotic_decay,
+                 neighborhood_function='gaussian', random_seed=None):
         """Initializes a Self Organizing Maps.
 
         A rule of thumb to set the size of the grid for a dimensionality
-        reduction task is that it should contain 5*sqrt(N) neurons 
+        reduction task is that it should contain 5*sqrt(N) neurons
         where N is the number of samples in the dataset to analyze.
 
         E.g. if your dataset has 150 samples, 5*sqrt(150) = 61.23
-        hence a map 8-by-8 should perform well. 
+        hence a map 8-by-8 should perform well.
 
         Parameters
         ----------
         x : int
-            x dimension of the SOM
+            x dimension of the SOM.
 
         y : int
-            y dimension of the SOM
+            y dimension of the SOM.
 
         input_len : int
             Number of the elements of the vectors in input.
@@ -60,9 +76,19 @@ class MiniSom(object):
 
         decay_function : function (default=None)
             Function that reduces learning_rate and sigma at each iteration
-            default function:
-            lambda x, current_iteration, max_iter :
-                        x/(1+current_iteration/max_iter)
+            the default function is:
+                        learning_rate / (1+t/max_iterarations)
+
+            A custom decay function will need to to take in input
+            three parameters in the following order:
+
+            1. learning rate
+            2. current iteration
+            3. maximum number of iterations allowed
+
+
+            Note that if a lambda function is used to define the decay
+            MiniSom will not be pickable anymore.
 
         neighborhood_function : function, optional (default='gaussian')
             Function that weights the neighborhood of a position in the map
@@ -75,11 +101,6 @@ class MiniSom(object):
             warn('Warning: sigma is too high for the dimension of the map.')
 
         self._random_generator = random.RandomState(random_seed)
-
-        if decay_function:
-            self._decay_function = decay_function
-        else:
-            self._decay_function = lambda x, t, max_iter: x/(1+t/max_iter)
 
         self._learning_rate = learning_rate
         self._sigma = sigma
@@ -96,6 +117,7 @@ class MiniSom(object):
         self._activation_map = zeros((x, y))
         self._neigx = arange(x)
         self._neigy = arange(y)  # used to evaluate the neighborhood function
+        self._decay_function = decay_function
 
         neig_functions = {'gaussian': self._gaussian,
                           'mexican_hat': self._mexican_hat,
