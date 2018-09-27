@@ -88,11 +88,11 @@ Each neuron is associated with one of the labels in the dataset with a specific 
 
 The graph above represent each image with the handwritten digit it contains. The position corresponds to the position of the winning neuron for the image. Here we also have a version of this graphs that shows the original images:
 
-<img src="https://4.bp.blogspot.com/-dDMYwry702M/W4kr9bVrq0I/AAAAAAAABTQ/h4EkTRUB6qwxvM5Vo8lDvyhevvLXWphswCLcBGAs/s1600/som_digits_imgs.png" alt="handwritten digitts recognition">
+<img src="https://4.bp.blogspot.com/-dDMYwry702M/W4kr9bVrq0I/AAAAAAAABTQ/h4EkTRUB6qwxvM5Vo8lDvyhevvLXWphswCLcBGAs/s1600/som_digits_imgs.png" alt="handwritten digitts recognition" width=500>
 
 4. Natural language processing
 
-<img src="https://3.bp.blogspot.com/-D-z_xeWMHuU/WZb7Kc0fK9I/AAAAAAAABKY/xdI_ApUZMx8O4uN9ihZ_e6jbmQYhUggqgCLcBGAs/s1600/poems_som.png">
+<img src="https://3.bp.blogspot.com/-D-z_xeWMHuU/WZb7Kc0fK9I/AAAAAAAABKY/xdI_ApUZMx8O4uN9ihZ_e6jbmQYhUggqgCLcBGAs/s1600/poems_som.png" width=550>
 
 In this example each poem is associate with a cell in the map. The color represent the author. Check out the notebook in the examples for more details: https://github.com/JustGlowing/minisom/blob/master/examples/PoemsAnalysis.ipynb
 
