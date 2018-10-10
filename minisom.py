@@ -463,3 +463,8 @@ class TestMinisom(unittest.TestCase):
         som.random_weights_init(array([[1.0, .0]]))
         for w in som._weights:
             assert_array_equal(w[0], array([1.0, .0]))
+
+    def test_distance_map(self):
+        som = MiniSom(2, 2, 2, random_seed=1)
+        som._weights = array([[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]])
+        assert_array_equal(som.distance_map(), array([[1., 1.], [1., 1.]]))
