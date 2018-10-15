@@ -2,7 +2,7 @@ from math import sqrt
 
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
-                   logical_and, mean, std, cov, argsort, linspace)
+                   logical_and, mean, std, cov, argsort, linspace, transpose)
 from collections import defaultdict, Counter
 from warnings import warn
 
@@ -259,6 +259,9 @@ class MiniSom(object):
 
         This initialization doesn't depend on random processes and
         makes the training process converge faster.
+
+        It is strongly reccomended to normalize the data before initializing
+        the weights and use the same normalization for the training data.
         """
         if self._input_len == 1:
             msg = 'The data needs at least 2 features for pca initialization'
@@ -268,8 +271,7 @@ class MiniSom(object):
             msg = 'PCA initialization inappropriate:' + \
                   'One of the dimensions of the map is 1.'
             warn(msg)
-        scaled_data = (data - mean(data, axis=0)) / std(data, axis=0)
-        pc_length, pc = linalg.eig(cov(scaled_data.T))
+        pc_length, pc = linalg.eig(cov(transpose(data)))
         pc_order = argsort(pc_length)
         for i, c1 in enumerate(linspace(-1, 1, len(self._neigx))):
             for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
