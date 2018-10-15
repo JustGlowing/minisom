@@ -64,6 +64,30 @@ qnt = som.quantization(data)
 
 In this example we have that `qnt[i]` is the quantized version of `data[i]`.
 
+#### Export a SOM and load it again
+
+A model can be saved using pickle as follows
+
+```python
+import pickle
+som = MiniSom(7, 7, 4)
+
+# ...train the som here
+
+# saving the some in the file som.p
+with open('som.p', 'wb') as outfile:
+    pickle.dump(som, outfile)
+```
+
+and can be loaded as follows
+
+```python
+with open('som.p', 'rb') as infile:
+    som = pickle.load(infile)
+```
+
+Note that if a lambda function is used to define the decay factor MiniSom will not be pickable anymore.
+
 Examples
 ---------------------
 In the directory `examples` you will find the code to produce the following images.
