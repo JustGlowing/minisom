@@ -255,8 +255,10 @@ class MiniSom(object):
             it.iternext()
 
     def pca_weights_init(self, data):
-        """blah blah blah
-        the training doesn't depent on the random seed
+        """Initializes the weights to span the first 2 principal components.
+
+        This initialization doesn't depend on random processes and
+        makes the training process converge faster.
         """
         if self._input_len == 1:
             msg = 'The data needs at least 2 features for pca initialization'
