@@ -70,25 +70,25 @@ In the directory `examples` you will find the code to produce the following imag
 
 1. Iris flower <a href="http://en.wikipedia.org/wiki/Iris_flower_data_set">dataset</a>.
 
-<img src="https://1.bp.blogspot.com/-L_lNGbK7DGY/W4kr-M7OOuI/AAAAAAAABTY/BiOpH25UzPcs3QftwV98uIz0naJ8XnaUgCLcBGAs/s1600/som_iris.png" alt="Iris example">
+<img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_iris.png" alt="Iris example">
 
 For each observation we have a marker placed on the position of the winning neuron on the map. Each type of marker represents a class of the iris data. The average distance map of the weights is used as background.
 
-<img src="https://2.bp.blogspot.com/-S1_w438Cglo/W4kr-UZtFsI/AAAAAAAABTc/t8q7n7rMh7sz-PNdUY2a_oOp_y89KWZGgCLcBGAs/s1600/som_iris_labels.png">
+<img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_iris_pies.png">
 
 Each neuron is associated with one of the labels in the dataset with a specific degree.
 
 2. Color quantization
 
-<img src="https://3.bp.blogspot.com/-ut3zlgBmRdo/W4kr9TaP-NI/AAAAAAAABTU/Mr53HjCT65kAR8I7ZvhNfJ-kkG6V2ZRJgCLcBGAs/s1600/color_quantization.png" alt="Color quantization example">
+<img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_color_quantization.png" alt="Color quantization example">
 
 3. Images clustering
 
-<img src="https://2.bp.blogspot.com/-iHtb6JfY3lQ/W4kr9akbmSI/AAAAAAAABTM/GSrw__X6ZTs6XlyzdiGFWabIBwiWYeT7gCLcBGAs/s1600/som_digits.png" alt="handwritten digitts recognition">
+<img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_digts.png" alt="handwritten digitts recognition">
 
 The graph above represent each image with the handwritten digit it contains. The position corresponds to the position of the winning neuron for the image. Here we also have a version of this graphs that shows the original images:
 
-<img src="https://4.bp.blogspot.com/-dDMYwry702M/W4kr9bVrq0I/AAAAAAAABTQ/h4EkTRUB6qwxvM5Vo8lDvyhevvLXWphswCLcBGAs/s1600/som_digits_imgs.png" alt="handwritten digitts recognition" width=500>
+<img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_digts_imgs.png" alt="handwritten digitts recognition" width=500>
 
 4. Natural language processing
 
