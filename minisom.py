@@ -255,7 +255,7 @@ class MiniSom(object):
             it.iternext()
 
     def pca_weights_init(self, data):
-        """Initializes the weights to span the first 2 principal components.
+        """Initializes the weights to span the first two principal components.
 
         This initialization doesn't depend on random processes and
         makes the training process converge faster.
