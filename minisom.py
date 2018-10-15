@@ -2,7 +2,7 @@ from math import sqrt
 
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
-                   logical_and)
+                   logical_and, mean, std, cov, argsort, linspace)
 from collections import defaultdict, Counter
 from warnings import warn
 
@@ -254,6 +254,25 @@ class MiniSom(object):
             self._weights[it.multi_index] = self._weights[it.multi_index]/norm
             it.iternext()
 
+    def pca_weights_init(self, data):
+        """blah blah blah
+        the training doesn't depent on the random seed
+        """
+        if self._input_len == 1:
+            msg = 'The data needs at least 2 features for pca initialization'
+            raise ValueError(msg)
+        self._check_input_len(data)
+        if len(self._neigx) == 1 or len(self._neigy) == 1:
+            msg = 'PCA initialization inappropriate:' + \
+                  'One of the dimensions of the map is 1.'
+            warn(msg)
+        scaled_data = (data - mean(data, axis=0)) / std(data, axis=0)
+        pc_length, pc = linalg.eig(cov(scaled_data.T))
+        pc_order = argsort(pc_length)
+        for i, c1 in enumerate(linspace(-1, 1, len(self._neigx))):
+            for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
+                self._weights[i, j] = c1*pc[pc_order[0]] + c2*pc[pc_order[1]]
+
     def train_random(self, data, num_iteration):
         """Trains the SOM picking samples at random from data"""
         self._check_iteration_number(num_iteration)
@@ -463,6 +482,13 @@ class TestMinisom(unittest.TestCase):
         som.random_weights_init(array([[1.0, .0]]))
         for w in som._weights:
             assert_array_equal(w[0], array([1.0, .0]))
+
+    def test_pca_weights_init(self):
+        som = MiniSom(2, 2, 2)
+        som.pca_weights_init(array([[1.,  0.], [0., 1.], [1., 0.], [0., 1.]]))
+        expected = array([[[0., -1.41421356], [1.41421356, 0.]],
+                          [[-1.41421356, 0.], [0., 1.41421356]]])
+        assert_array_almost_equal(som._weights, expected)
 
     def test_distance_map(self):
         som = MiniSom(2, 2, 2, random_seed=1)
