@@ -37,7 +37,7 @@ def asymptotic_decay(learning_rate, t, max_iter):
     max_iter : int
         maximum number of iterations for the training.
     """
-    return learning_rate / (1+t/max_iter)
+    return learning_rate / (1+t/(max_iter/2))
 
 
 class MiniSom(object):
@@ -77,7 +77,7 @@ class MiniSom(object):
         decay_function : function (default=None)
             Function that reduces learning_rate and sigma at each iteration
             the default function is:
-                        learning_rate / (1+t/max_iterarations)
+                        learning_rate / (1+t/(max_iterarations/2))
 
             A custom decay function will need to to take in input
             three parameters in the following order:
@@ -205,7 +205,7 @@ class MiniSom(object):
         return unravel_index(self._activation_map.argmin(),
                              self._activation_map.shape)
 
-    def update(self, x, win, t):
+    def update(self, x, win, t, max_iteration):
         """Updates the weights of the neurons.
 
         Parameters
@@ -213,13 +213,15 @@ class MiniSom(object):
         x : np.array
             Current pattern to learn
         win : tuple
-            Position of the winning neuron for x (array or tuple).
+            Position of the winning neuron for x (array or tuple)
         t : int
             Iteration index
+        max_iteration : int
+            Maximum number of training itarations
         """
-        eta = self._decay_function(self._learning_rate, t, self.T)
+        eta = self._decay_function(self._learning_rate, t, max_iteration)
         # sigma and learning rate decrease with the same rule
-        sig = self._decay_function(self._sigma, t, self.T)
+        sig = self._decay_function(self._sigma, t, max_iteration)
         # improves the performances
         g = self.neighborhood(win, sig)*eta
         it = nditer(g, flags=['multi_index'])
@@ -281,30 +283,24 @@ class MiniSom(object):
         """Trains the SOM picking samples at random from data"""
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
-        self._init_T(num_iteration)
 
         for iteration in range(num_iteration):
             # pick a random sample
             rand_i = self._random_generator.randint(len(data))
-            self.update(data[rand_i], self.winner(data[rand_i]), iteration)
+            self.update(data[rand_i], self.winner(data[rand_i]),
+                        iteration, num_iteration)
 
     def train_batch(self, data, num_iteration):
         """Trains using all the vectors in data sequentially"""
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
-        self._init_T(len(data)*num_iteration)
         iteration = 0
 
         while iteration < num_iteration:
             idx = iteration % (len(data)-1)
-            self.update(data[idx], self.winner(data[idx]), iteration)
+            self.update(data[idx], self.winner(data[idx]),
+                        iteration, num_iteration)
             iteration += 1
-
-    def _init_T(self, num_iteration):
-        """Initializes the parameter T needed to adjust the learning rate"""
-        # keeps the learning rate nearly constant
-        # for the last half of the iterations
-        self.T = num_iteration/2
 
     def distance_map(self):
         """Returns the distance map of the weights.
@@ -385,7 +381,7 @@ class TestMinisom(unittest.TestCase):
         self.som._weights[1, 1] = 2.0
 
     def test_decay_function(self):
-        assert self.som._decay_function(1., 2., 3.) == 1./(1.+2./3.)
+        assert self.som._decay_function(1., 2., 3.) == 1./(1.+2./(3./2))
 
     def test_fast_norm(self):
         assert fast_norm(array([1, 3])) == sqrt(1+9)
