@@ -90,7 +90,7 @@ Note that if a lambda function is used to define the decay factor MiniSom will n
 
 Examples
 ---------------------
-In the directory `examples` you will find the code to produce the following images.
+The code that produces the following figures is in this notebook: https://github.com/JustGlowing/minisom/blob/master/examples/examples.ipynb
 
 1. Iris flower <a href="http://en.wikipedia.org/wiki/Iris_flower_data_set">dataset</a>.
 
