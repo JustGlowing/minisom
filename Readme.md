@@ -43,7 +43,7 @@ print "...ready!"
 
 MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples from your data, and the batch training (implemented by the method `train_batch`), where the samples are picked in the order they are stored.
 
-A data driven initialization of the weights is also provided by the method `random_weights_init` which initializes the weights picking random samples from the data.
+The weights of the network are randmly initialized by default. Two additional methods are provided to initialize the weights in a data driven fashion: `random_weights_init` and `pca_weights_init`.
 
 ### Using the trained SOM
 
