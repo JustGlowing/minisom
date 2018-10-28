@@ -124,6 +124,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Ili Ko, Desmond Chambers, Enda Barrett. <a href="https://ieeexplore.ieee.org/document/8343119/">A Lightweight DDoS Attack Mitigation System within the ISP Domain Utilising Self-organizing Map</a>. Proceedings of the Future Technologies, 2018 Springer.
+</li>
+<li>
 T. M. Nam et al. <a href="https://ieeexplore.ieee.org/document/8343119/">Self-organizing map-based approaches in DDoS flooding detection using SDN</a>. 2018 International Conference on Information Networking (ICOIN), 2018.
 </li>
 <li>
