@@ -5,6 +5,7 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    logical_and, mean, std, cov, argsort, linspace, transpose)
 from collections import defaultdict, Counter
 from warnings import warn
+from tqdm import tqdm
 
 # for unit tests
 from numpy.testing import assert_almost_equal, assert_array_almost_equal
@@ -279,28 +280,34 @@ class MiniSom(object):
             for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
                 self._weights[i, j] = c1*pc[pc_order[0]] + c2*pc[pc_order[1]]
 
-    def train_random(self, data, num_iteration):
+    def train_random(self, data, num_iteration, verbose=0):
         """Trains the SOM picking samples at random from data"""
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
 
-        for iteration in range(num_iteration):
+        iteration_generator = range(num_iteration)
+        if verbose == 1:
+            iteration_generator = tqdm(iteration_generator)
+
+        for iteration in iteration_generator:
             # pick a random sample
             rand_i = self._random_generator.randint(len(data))
             self.update(data[rand_i], self.winner(data[rand_i]),
                         iteration, num_iteration)
 
-    def train_batch(self, data, num_iteration):
+    def train_batch(self, data, num_iteration, verbose=0):
         """Trains using all the vectors in data sequentially"""
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
-        iteration = 0
 
-        while iteration < num_iteration:
+        iteration_generator = range(num_iteration)
+        if verbose == 1:
+            iteration_generator = tqdm(iteration_generator)
+
+        for iteration in iteration_generator:
             idx = iteration % (len(data)-1)
             self.update(data[idx], self.winner(data[idx]),
                         iteration, num_iteration)
-            iteration += 1
 
     def distance_map(self):
         """Returns the distance map of the weights.
