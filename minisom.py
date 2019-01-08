@@ -5,6 +5,7 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    logical_and, mean, std, cov, argsort, linspace, transpose)
 from collections import defaultdict, Counter
 from warnings import warn
+import sys
 
 # for unit tests
 from numpy.testing import assert_almost_equal, assert_array_almost_equal
@@ -14,6 +15,15 @@ import unittest
 """
     Minimalistic implementation of the Self Organizing Maps (SOM).
 """
+
+
+def _incremental_index_verbose(m):
+    """Yields numbers from 0 to m-1 printing the status on the stdout."""
+    for i in range(m):
+        percent = 100*(i+1)/m
+        progress = f'\r [ {i+1:{len(str(m))}} / {m} ] {percent:3.0f}%'
+        sys.stdout.write(progress)
+        yield i
 
 
 def fast_norm(x):
@@ -279,28 +289,32 @@ class MiniSom(object):
             for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
                 self._weights[i, j] = c1*pc[pc_order[0]] + c2*pc[pc_order[1]]
 
-    def train_random(self, data, num_iteration):
+    def train_random(self, data, num_iteration, verbose=False):
         """Trains the SOM picking samples at random from data"""
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
+        iterations = range(num_iteration)
+        if verbose:
+            iterations = _incremental_index_verbose(num_iteration)
 
-        for iteration in range(num_iteration):
+        for iteration in iterations:
             # pick a random sample
             rand_i = self._random_generator.randint(len(data))
             self.update(data[rand_i], self.winner(data[rand_i]),
                         iteration, num_iteration)
 
-    def train_batch(self, data, num_iteration):
+    def train_batch(self, data, num_iteration, verbose=False):
         """Trains using all the vectors in data sequentially"""
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
-        iteration = 0
+        iterations = range(num_iteration)
+        if verbose:
+            iterations = _incremental_index_verbose(num_iteration)
 
-        while iteration < num_iteration:
+        for iteration in iterations:
             idx = iteration % (len(data)-1)
             self.update(data[idx], self.winner(data[idx]),
                         iteration, num_iteration)
-            iteration += 1
 
     def distance_map(self):
         """Returns the distance map of the weights.
@@ -470,11 +484,21 @@ class TestMinisom(unittest.TestCase):
         som.train_batch(data, 10)
         assert q1 > som.quantization_error(data)
 
+        data = array([[1, 5], [6, 7]])
+        q1 = som.quantization_error(data)
+        som.train_batch(data, 10, verbose=True)
+        assert q1 > som.quantization_error(data)
+
     def test_train_random(self):
         som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
         data = array([[4, 2], [3, 1]])
         q1 = som.quantization_error(data)
         som.train_random(data, 10)
+        assert q1 > som.quantization_error(data)
+
+        data = array([[1, 5], [6, 7]])
+        q1 = som.quantization_error(data)
+        som.train_random(data, 10, verbose=True)
         assert q1 > som.quantization_error(data)
 
     def test_random_weights_init(self):
