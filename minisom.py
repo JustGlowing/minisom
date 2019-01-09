@@ -23,11 +23,11 @@ def _incremental_index_verbose(m):
     progress = f'\r [ {0:{len(str(m))}} / {m} ] {0:3.0f}% ? it/s'
     stdout.write(progress)
     beginning = time()
-    for i in range(1, m+1):
+    for i in range(m):
         yield i
-        it_per_sec = (time() - beginning) / i
-        progress = f'\r [ {i:{len(str(m))}} / {m} ]'
-        progress += f' {100*(i)/m:3.0f}%'
+        it_per_sec = (time() - beginning) / (i+1)
+        progress = f'\r [ {i+1:{len(str(m))}} / {m} ]'
+        progress += f' {100*(i+1)/m:3.0f}%'
         progress += f' {it_per_sec:4.5f} it/s'
         stdout.write(progress)
 
