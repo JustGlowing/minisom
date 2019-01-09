@@ -5,7 +5,8 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    logical_and, mean, std, cov, argsort, linspace, transpose)
 from collections import defaultdict, Counter
 from warnings import warn
-import sys
+from sys import stdout
+from time import time
 
 # for unit tests
 from numpy.testing import assert_almost_equal, assert_array_almost_equal
@@ -19,11 +20,16 @@ import unittest
 
 def _incremental_index_verbose(m):
     """Yields numbers from 0 to m-1 printing the status on the stdout."""
-    for i in range(m):
-        percent = 100*(i+1)/m
-        progress = f'\r [ {i+1:{len(str(m))}} / {m} ] {percent:3.0f}%'
-        sys.stdout.write(progress)
+    progress = f'\r [ {0:{len(str(m))}} / {m} ] {0:3.0f}% ? it/s'
+    stdout.write(progress)
+    beginning = time()
+    for i in range(1, m+1):
         yield i
+        it_per_sec = (time() - beginning) / i
+        progress = f'\r [ {i:{len(str(m))}} / {m} ]'
+        progress += f' {100*(i)/m:3.0f}%'
+        progress += f' {it_per_sec:4.5f} it/s'
+        stdout.write(progress)
 
 
 def fast_norm(x):
