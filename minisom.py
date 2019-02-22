@@ -247,8 +247,6 @@ class MiniSom(object):
             x_w = (x - self._weights[it.multi_index])
             self._weights[it.multi_index] += g[it.multi_index] * x_w
             # normalization
-            norm = fast_norm(self._weights[it.multi_index])
-            self._weights[it.multi_index] = self._weights[it.multi_index]/norm
             it.iternext()
 
     def quantization(self, data):
