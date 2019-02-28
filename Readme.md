@@ -112,11 +112,10 @@ The graph above represent each image with the handwritten digit it contains. The
 
 <img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_digts_imgs.png" alt="handwritten digitts recognition" width=500>
 
-4. Natural language processing
+4. Outliers detection
 
-<img src="https://3.bp.blogspot.com/-D-z_xeWMHuU/WZb7Kc0fK9I/AAAAAAAABKY/xdI_ApUZMx8O4uN9ihZ_e6jbmQYhUggqgCLcBGAs/s1600/poems_som.png" width=550>
+<img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_outliers_detection.png" width=550>
 
-In this example each poem is associate with a cell in the map. The color represent the author. Check out the notebook in the examples for more details: https://github.com/JustGlowing/minisom/blob/master/examples/PoemsAnalysis.ipynb
 
 Video tutorials
 ------------
