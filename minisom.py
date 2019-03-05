@@ -246,7 +246,6 @@ class MiniSom(object):
             # eta * neighborhood_function * (x-w)
             x_w = (x - self._weights[it.multi_index])
             self._weights[it.multi_index] += g[it.multi_index] * x_w
-            # normalization
             it.iternext()
 
     def quantization(self, data):
