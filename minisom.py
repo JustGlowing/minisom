@@ -153,12 +153,12 @@ class MiniSom(object):
         self.neighborhood = neig_functions[neighborhood_function]
 
     def get_weights(self):
-        """Returns the weights of the neural network"""
+        """Returns the weights of the neural network."""
         return self._weights
 
     def _activate(self, x):
         """Updates matrix activation_map, in this matrix
-           the element i,j is the response of the neuron i,j to x"""
+           the element i,j is the response of the neuron i,j to x."""
         s = subtract(x, self._weights)  # x - w
         it = nditer(self._activation_map, flags=['multi_index'])
         while not it.finished:
@@ -167,19 +167,19 @@ class MiniSom(object):
             it.iternext()
 
     def activate(self, x):
-        """Returns the activation map to x"""
+        """Returns the activation map to x."""
         self._activate(x)
         return self._activation_map
 
     def _gaussian(self, c, sigma):
-        """Returns a Gaussian centered in c"""
+        """Returns a Gaussian centered in c."""
         d = 2*pi*sigma*sigma
         ax = exp(-power(self._neigx-c[0], 2)/d)
         ay = exp(-power(self._neigy-c[1], 2)/d)
         return outer(ax, ay)  # the external product gives a matrix
 
     def _mexican_hat(self, c, sigma):
-        """Mexican hat centered in c"""
+        """Mexican hat centered in c."""
         xx, yy = meshgrid(self._neigx, self._neigy)
         p = power(xx-c[0], 2) + power(yy-c[1], 2)
         d = 2*pi*sigma*sigma
@@ -187,7 +187,7 @@ class MiniSom(object):
 
     def _bubble(self, c, sigma):
         """Constant function centered in c with spread sigma.
-           sigma should be an odd value,
+        sigma should be an odd value.
         """
         ax = logical_and(self._neigx > c[0]-sigma,
                          self._neigx < c[0]+sigma)
@@ -216,7 +216,7 @@ class MiniSom(object):
             raise ValueError(msg)
 
     def winner(self, x):
-        """Computes the coordinates of the winning neuron for the sample x"""
+        """Computes the coordinates of the winning neuron for the sample x."""
         self._activate(x)
         return unravel_index(self._activation_map.argmin(),
                              self._activation_map.shape)
@@ -227,13 +227,13 @@ class MiniSom(object):
         Parameters
         ----------
         x : np.array
-            Current pattern to learn
+            Current pattern to learn.
         win : tuple
-            Position of the winning neuron for x (array or tuple)
+            Position of the winning neuron for x (array or tuple).
         t : int
             Iteration index
         max_iteration : int
-            Maximum number of training itarations
+            Maximum number of training itarations.
         """
         eta = self._decay_function(self._learning_rate, t, max_iteration)
         # sigma and learning rate decrease with the same rule
@@ -259,7 +259,7 @@ class MiniSom(object):
 
     def random_weights_init(self, data):
         """Initializes the weights of the SOM
-        picking random samples from data"""
+        picking random samples from data."""
         self._check_input_len(data)
         it = nditer(self._activation_map, flags=['multi_index'])
         while not it.finished:
@@ -293,7 +293,20 @@ class MiniSom(object):
                 self._weights[i, j] = c1*pc[pc_order[0]] + c2*pc[pc_order[1]]
 
     def train_random(self, data, num_iteration, verbose=False):
-        """Trains the SOM picking samples at random from data"""
+        """Trains the SOM picking samples at random from data.
+
+        Parameters
+        ----------
+        data : np.array or list
+            Data matrix.
+
+        num_iterations : int
+            Maximum number of iterations (one iteration per sample).
+
+        verbose : bool (default=False)
+            If True the status of the training
+            will be printed at each iteration.
+        """
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
         iterations = range(num_iteration)
@@ -307,7 +320,20 @@ class MiniSom(object):
                         iteration, num_iteration)
 
     def train_batch(self, data, num_iteration, verbose=False):
-        """Trains using all the vectors in data sequentially"""
+        """Trains using all the vectors in data sequentially.
+
+        Parameters
+        ----------
+        data : np.array or list
+            Data matrix.
+
+        num_iterations : int
+            Maximum number of iterations (one iteration per sample).
+
+        verbose : bool (default=False)
+            If True the status of the training
+            will be printed at each iteration.
+        """
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
         iterations = range(num_iteration)
@@ -373,9 +399,11 @@ class MiniSom(object):
 
         Parameters
         ----------
-        data : data matrix
+        data : np.array or list
+            Data matrix.
 
-        label : list or array that contains the label of each sample in data.
+        label : np.array or list
+            Labels for each sample in data.
         """
         self._check_input_len(data)
         winmap = defaultdict(list)
