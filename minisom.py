@@ -20,7 +20,7 @@ import unittest
 
 def _incremental_index_verbose(m):
     """Yields numbers from 0 to m-1 printing the status on the stdout."""
-    progress = f'\r [ {0:{len(str(m))}} / {m} ] {0:3.0f}% ? it/s'
+    progress = f'\r [ {0:{len(str(m))}} / {m} ] {0:3.0f}% - ? it/s'
     stdout.write(progress)
     beginning = time()
     for i in range(m):
@@ -28,7 +28,7 @@ def _incremental_index_verbose(m):
         it_per_sec = (time() - beginning) / (i+1)
         progress = f'\r [ {i+1:{len(str(m))}} / {m} ]'
         progress += f' {100*(i+1)/m:3.0f}%'
-        progress += f' {it_per_sec:4.5f} it/s'
+        progress += f' - {it_per_sec:4.5f} it/s'
         stdout.write(progress)
 
 
@@ -318,6 +318,8 @@ class MiniSom(object):
             rand_i = self._random_generator.randint(len(data))
             self.update(data[rand_i], self.winner(data[rand_i]),
                         iteration, num_iteration)
+        if verbose:
+            print(' - quantization error:', self.quantization_error(data))
 
     def train_batch(self, data, num_iteration, verbose=False):
         """Trains using all the vectors in data sequentially.
@@ -344,6 +346,8 @@ class MiniSom(object):
             idx = iteration % (len(data)-1)
             self.update(data[idx], self.winner(data[idx]),
                         iteration, num_iteration)
+        if verbose:
+            print(' - quantization error:', self.quantization_error(data))
 
     def distance_map(self):
         """Returns the distance map of the weights.
