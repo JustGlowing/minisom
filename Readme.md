@@ -137,6 +137,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Katharina Dort. <a href="https://docs.belle2.org/record/1382/files/BELLE2-MTHESIS-2019-003.pdf">Search for Highly Ionizing Particles with the Pixel Detector in the Belle II Experiment</a>. Master Thesis, University of Giessen, May 2019.
+</li>
+<li>
 Rahul Kumar. <a href="https://www.amazon.co.uk/Machine-Learning-Quick-Reference-Essential/dp/1788830571">Machine Learning Quick Reference: Quick and essential machine learning hacks for training smart data models</a>. Packt Publishing Ltd, 31 Jan 2019.
 </li>
 <li>
@@ -164,6 +167,9 @@ Ying Xie, Linh Le, Yiyun Zhou, Vijay V.Raghavan. <a href="https://www.sciencedir
 Vincent Fortuin, Matthias Hüser, Francesco Locatello, Heiko Strathmann, and Gunnar Rätsch. <a href="https://arxiv.org/pdf/1806.02199.pdf">Deep Self-Organization: Interpretable Discrete
 Representation Learning on Time Series</a>. 2018.
 </li>
+<li>
+John Mwangi Wandeto. <a href="https://publication-theses.unistra.fr/public/theses_doctorat/2018/Wandeto_John_2018_ED269.pdf">Self-Organizing Map Quantization Error Approach for Detecting Temporal Variations in Image Sets</a>. Doctoral Thesis, University of Strasbourg, 2018.
+</li>    
 <li>
 Birgitta Dresp-Langley, John Mwangi Wandeto, Henry Okola Nyongesa. <a href="https://www.openscience.fr/IMG/pdf/iste_fromd2d17v1n2.pdf">Using the quantization error from Self‐Organizing Map (SOM) output for fast detection of critical variations in image time series</a>. ISTE OpenScience, 2018.
 </li>
