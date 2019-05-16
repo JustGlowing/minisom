@@ -137,6 +137,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Florent Forest, Mustapha Lebbah, Hanene Azzag and Jérôme Lacaille. <a href="http://florentfo.rest/files/LDRC-2019-DeepArchitecturesJointClusteringVisualization-full-paper.pdf">Deep Architectures for Joint Clustering and Visualization with Self-Organizing Maps</a>. LDRC@PAKDD 2019 (Learning Data Representation for Clustering@PAKDD) Macau China. 2019.
+</li>
+<li>
 Katharina Dort. <a href="https://docs.belle2.org/record/1382/files/BELLE2-MTHESIS-2019-003.pdf">Search for Highly Ionizing Particles with the Pixel Detector in the Belle II Experiment</a>. Master Thesis, University of Giessen, May 2019.
 </li>
 <li>
