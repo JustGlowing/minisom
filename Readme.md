@@ -143,6 +143,9 @@ Felix M. Riese, Sina Keller. <a href="https://arxiv.org/pdf/1903.11114.pdf">SUSI
 Chintan Shah, Anjali Jivani. <a href="https://ieeexplore.ieee.org/abstract/document/8554848">A Hybrid Approach of Text Summarization Using Latent Semantic Analysis and Deep Learning</a>. 2018 International Conference on Advances in Computing, Communications and Informatics (ICACCI), 2018.
 </li>
 <li>
+Katsutoshi Masai. <a href="http://koara.lib.keio.ac.jp/xoonips/modules/xoonips/download.php/KO50002002-20184959-0003.pdf?file_id=137977">Facial Expression Classification Using Photo-reflective Sensors on Smart Eyewear</a>. Keio University, Doctoral Thesis, 2018.
+</li>
+<li>
 Katsutoshi Masai, Kai Kunze, Yuta Sugiura, Maki Sugimoto. <a href="https://dl.acm.org/citation.cfm?id=3267562">Mapping Natural Facial Expressions Using Unsupervised Learning and Optical Sensors on Smart Eyewear</a>. Proceedings of the 2018 ACM International Joint Conference and 2018 International Symposium on Pervasive and Ubiquitous Computing and Wearable Computers, 2018 ACM.
 </li>
 <li>
