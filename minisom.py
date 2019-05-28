@@ -2,7 +2,8 @@ from math import sqrt
 
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
-                   logical_and, mean, std, cov, argsort, linspace, transpose)
+                   logical_and, mean, std, cov, argsort, linspace, transpose, einsum
+                   )
 from collections import defaultdict, Counter
 from warnings import warn
 from sys import stdout
@@ -240,13 +241,10 @@ class MiniSom(object):
         sig = self._decay_function(self._sigma, t, max_iteration)
         # improves the performances
         g = self.neighborhood(win, sig)*eta
-        it = nditer(g, flags=['multi_index'])
 
-        while not it.finished:
-            # eta * neighborhood_function * (x-w)
-            x_w = (x - self._weights[it.multi_index])
-            self._weights[it.multi_index] += g[it.multi_index] * x_w
-            it.iternext()
+        self._weights += einsum('ij, ijk->ijk', g, x-self._weights)
+
+
 
     def quantization(self, data):
         """Assigns a code book (weights vector of the winning neuron)
