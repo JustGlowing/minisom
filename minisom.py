@@ -2,7 +2,8 @@ from math import sqrt
 
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
-                   logical_and, mean, std, cov, argsort, linspace, transpose, einsum
+                   logical_and, mean, std, cov, argsort, linspace, transpose,
+                   einsum
                    )
 from collections import defaultdict, Counter
 from warnings import warn
@@ -243,8 +244,6 @@ class MiniSom(object):
         g = self.neighborhood(win, sig)*eta
 
         self._weights += einsum('ij, ijk->ijk', g, x-self._weights)
-
-
 
     def quantization(self, data):
         """Assigns a code book (weights vector of the winning neuron)
