@@ -242,7 +242,7 @@ class MiniSom(object):
         sig = self._decay_function(self._sigma, t, max_iteration)
         # improves the performances
         g = self.neighborhood(win, sig)*eta
-
+        # w_new = eta * neighborhood_function * (x-w)
         self._weights += einsum('ij, ijk->ijk', g, x-self._weights)
 
     def quantization(self, data):
