@@ -9,6 +9,7 @@ from collections import defaultdict, Counter
 from warnings import warn
 from sys import stdout
 from time import time
+import pickle
 
 # for unit tests
 from numpy.testing import assert_almost_equal, assert_array_almost_equal
@@ -399,6 +400,9 @@ class MiniSom(object):
         that contains the number of samples from a given label
         that have been mapped in position i,j.
 
+        The labels passed to this method will be saved and then used by
+        the method classify when invoked.
+
         Parameters
         ----------
         data : np.array or list
@@ -421,7 +425,7 @@ class MiniSom(object):
     def classify(self, data):
         """Classifies each sample in data in one of the classes definited
         using the method labels_map.
-        Returns a list of the same length of data where the i-th element 
+        Returns a list of the same length of data where the i-th element
         is the class assigned to data[i].
         """
         self._check_input_len(data)
@@ -585,3 +589,9 @@ class TestMinisom(unittest.TestCase):
         som = MiniSom(2, 2, 2, random_seed=1)
         som._weights = array([[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]])
         assert_array_equal(som.distance_map(), array([[1., 1.], [1., 1.]]))
+
+    def test_pickling(self):
+        with open('som.p', 'wb') as outfile:
+            pickle.dump(self.som, outfile)
+        with open('som.p', 'rb') as infile:
+            pickle.load(infile)
