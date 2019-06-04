@@ -110,6 +110,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+H. D. Thompson. Wind climatology of Quesnel Lake, British Columbia. Master Thesis, University of Northern British Columbia, Prince George, BC. 2019.
+</li>
+<li>
 Florent Forest, Mustapha Lebbah, Hanene Azzag and Jérôme Lacaille. <a href="http://florentfo.rest/files/LDRC-2019-DeepArchitecturesJointClusteringVisualization-full-paper.pdf">Deep Architectures for Joint Clustering and Visualization with Self-Organizing Maps</a>. LDRC@PAKDD 2019 (Learning Data Representation for Clustering@PAKDD) Macau China. 2019.
 </li>
 <li>
