@@ -125,6 +125,9 @@ Rahul Kumar. <a href="https://www.amazon.co.uk/Machine-Learning-Quick-Reference-
 Felix M. Riese, Sina Keller. <a href="https://arxiv.org/pdf/1903.11114.pdf">SUSI: Supervised Self-Organizing Maps for Regression and Classification in Python</a>.
 </li>
 <li>
+Enea Mele, Charalambos Elias, Aphrodite Ktena. <a href="https://ieeexplore.ieee.org/abstract/document/8659866">Electricity use profiling and forecasting at microgrid level</a>. IEEE 59th International Scientific Conference on Power and Electrical Engineering of Riga Technical University (RTUCON), 2018.
+</li>
+<li>
 Chintan Shah, Anjali Jivani. <a href="https://ieeexplore.ieee.org/abstract/document/8554848">A Hybrid Approach of Text Summarization Using Latent Semantic Analysis and Deep Learning</a>. 2018 International Conference on Advances in Computing, Communications and Informatics (ICACCI), 2018.
 </li>
 <li>
