@@ -23,15 +23,17 @@ import unittest
 
 def _incremental_index_verbose(m):
     """Yields numbers from 0 to m-1 printing the status on the stdout."""
-    progress = f'\r [ {0:{len(str(m))}} / {m} ] {0:3.0f}% - ? it/s'
+    digits = len(str(m))
+    progress = '\r [ {s:{d}} / {m} ] {s:3.0f}% - ? it/s'
+    progress = progress.format(m=m, d=digits, s=0)
     stdout.write(progress)
     beginning = time()
     for i in range(m):
         yield i
         it_per_sec = (time() - beginning) / (i+1)
-        progress = f'\r [ {i+1:{len(str(m))}} / {m} ]'
-        progress += f' {100*(i+1)/m:3.0f}%'
-        progress += f' - {it_per_sec:4.5f} it/s'
+        progress = '\r [ {i:{d}} / {m} ]'.format(i=i+1, d=digits, m=m)
+        progress += ' {p:3.0f}%'.format(p=100*(i+1)/m)
+        progress += ' - {it_per_sec:4.5f} it/s'.format(it_per_sec=it_per_sec)
         stdout.write(progress)
 
 
