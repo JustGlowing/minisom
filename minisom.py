@@ -10,6 +10,7 @@ from warnings import warn
 from sys import stdout
 from time import time
 import pickle
+import os
 
 # for unit tests
 from numpy.testing import assert_almost_equal, assert_array_almost_equal
@@ -597,3 +598,4 @@ class TestMinisom(unittest.TestCase):
             pickle.dump(self.som, outfile)
         with open('som.p', 'rb') as infile:
             pickle.load(infile)
+        os.remove('som.p')
