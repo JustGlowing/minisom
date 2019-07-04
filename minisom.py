@@ -267,8 +267,6 @@ class MiniSom(object):
         while not it.finished:
             rand_i = self._random_generator.randint(len(data))
             self._weights[it.multi_index] = data[rand_i]
-            norm = fast_norm(self._weights[it.multi_index])
-            self._weights[it.multi_index] = self._weights[it.multi_index]
             it.iternext()
 
     def pca_weights_init(self, data):
