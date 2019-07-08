@@ -111,6 +111,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+G Roma, O Green, PA Tremblay. <a href="https://pure.hud.ac.uk/ws/files/17022863/adaptive_mapping.pdf">Adaptive Mapping of Sound Collections for Data-driven Musical Interfaces</a>. 19th edition of NIME, 2019.
+</li>
+<li>
 H. D. Thompson. Wind climatology of Quesnel Lake, British Columbia. Master Thesis, University of Northern British Columbia, Prince George, BC. 2019.
 </li>
 <li>
