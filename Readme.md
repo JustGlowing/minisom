@@ -14,6 +14,7 @@ Just use pip:
 
 or download MiniSom to a directory of your choice and use the setup script:
 
+    git clone https://github.com/JustGlowing/minisom.git
     python setup.py install
 
 How to use it
