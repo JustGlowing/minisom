@@ -31,7 +31,7 @@ def _incremental_index_verbose(m):
     beginning = time()
     for i in range(m):
         yield i
-        it_per_sec = (time() - beginning) / (i+1)
+        it_per_sec = (i+1) / (time() - beginning)
         progress = '\r [ {i:{d}} / {m} ]'.format(i=i+1, d=digits, m=m)
         progress += ' {p:3.0f}%'.format(p=100*(i+1)/m)
         progress += ' - {it_per_sec:4.5f} it/s'.format(it_per_sec=it_per_sec)
