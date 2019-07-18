@@ -129,7 +129,6 @@ class MiniSom(object):
         self._input_len = input_len
         # random initialization
         self._weights = self._random_generator.rand(x, y, input_len)*2-1
-        self._class_assignments = defaultdict(list)
 
         for i in range(x):
             for j in range(y):
@@ -401,9 +400,6 @@ class MiniSom(object):
         that contains the number of samples from a given label
         that have been mapped in position i,j.
 
-        The labels passed to this method will be saved and then used by
-        the method classify when invoked.
-
         Parameters
         ----------
         data : np.array or list
@@ -420,28 +416,7 @@ class MiniSom(object):
             winmap[self.winner(x)].append(l)
         for position in winmap:
             winmap[position] = Counter(winmap[position])
-        self._class_assignments = winmap
         return winmap
-
-    def classify(self, data):
-        """Classifies each sample in data in one of the classes definited
-        using the method labels_map.
-        Returns a list of the same length of data where the i-th element
-        is the class assigned to data[i].
-        """
-        self._check_input_len(data)
-        if len(self._class_assignments) == 0:
-            raise ValueError('You need to call labels_map first.')
-        winmap = self._class_assignments
-        default_class = npsum(list(winmap.values())).most_common()[0][0]
-        result = []
-        for d in data:
-            win_position = self.winner(d)
-            if win_position in winmap:
-                result.append(winmap[win_position].most_common()[0][0])
-            else:
-                result.append(default_class)
-        return result
 
 
 class TestMinisom(unittest.TestCase):
@@ -503,19 +478,10 @@ class TestMinisom(unittest.TestCase):
         assert winners[(2, 3)][0] == [5.0]
         assert winners[(1, 1)][0] == [2.0]
 
-    def test_classify(self):
-        d = [[5.0], [2.0]]
-        labels = ['a', 'b']
-        with self.assertRaises(ValueError):
-            self.som.classify(d)
-        self.som.labels_map(d, labels)
-        assert_array_equal(self.som.classify(d), labels)
-
     def test_labels_map(self):
         labels_map = self.som.labels_map([[5.0], [2.0]], ['a', 'b'])
         assert labels_map[(2, 3)]['a'] == 1
         assert labels_map[(1, 1)]['b'] == 1
-        assert len(self.som._class_assignments) > 0
         with self.assertRaises(ValueError):
             self.som.labels_map([[5.0]], ['a', 'b'])
 
