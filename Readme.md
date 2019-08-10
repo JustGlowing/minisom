@@ -111,6 +111,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Marco Casavantes, Roberto Lopez, and Luis Carlos Gonzalez. <a href="http://ceur-ws.org/Vol-2421/MEX-A3T_paper_8.pdf">UACh at MEX-A3T 2019: Preliminary Results on Detecting Aggressive Tweets by Adding Author Information Via an Unsupervised Strategy</a>. Proceedings of the Iberian Languages Evaluation Forum (IberLEF 2019), 2019.
+</li>
+<li>
 G Roma, O Green, PA Tremblay. <a href="https://pure.hud.ac.uk/ws/files/17022863/adaptive_mapping.pdf">Adaptive Mapping of Sound Collections for Data-driven Musical Interfaces</a>. 19th edition of NIME, 2019.
 </li>
 <li>
