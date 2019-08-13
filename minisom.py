@@ -9,6 +9,7 @@ from collections import defaultdict, Counter
 from warnings import warn
 from sys import stdout
 from time import time
+import datetime
 import pickle
 import os
 
@@ -32,9 +33,12 @@ def _incremental_index_verbose(m):
     for i in range(m):
         yield i
         it_per_sec = (i+1) / (time() - beginning)
+        sec_left = ((m-i) / float(it_per_sec))
+        time_left = str(datetime.timedelta(seconds=sec_left))[:7]
         progress = '\r [ {i:{d}} / {m} ]'.format(i=i+1, d=digits, m=m)
         progress += ' {p:3.0f}%'.format(p=100*(i+1)/m)
-        progress += ' - {it_per_sec:4.5f} it/s'.format(it_per_sec=it_per_sec)
+        progress += ' - {it_per_sec:4.2f} it/s'.format(it_per_sec=it_per_sec)
+        progress += ' - {time_left} left '.format(time_left=time_left)
         stdout.write(progress)
 
 
