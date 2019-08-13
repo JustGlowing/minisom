@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='MiniSom',
-  version= '2.1.5',
+  version= '2.1.9',
   description='Minimalistic implementation of the Self Organizing Maps (SOM)',
   author='Giuseppe Vettigli',
   package_data={'': ['Readme.md']},
