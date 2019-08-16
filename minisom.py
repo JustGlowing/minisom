@@ -133,12 +133,7 @@ class MiniSom(object):
         self._input_len = input_len
         # random initialization
         self._weights = self._random_generator.rand(x, y, input_len)*2-1
-
-        for i in range(x):
-            for j in range(y):
-                # normalization
-                norm = fast_norm(self._weights[i, j])
-                self._weights[i, j] = self._weights[i, j] / norm
+        self._weights /= linalg.norm(self._weights, axis=-1, keepdims=True)
 
         self._activation_map = zeros((x, y))
         self._neigx = arange(x)
@@ -170,11 +165,7 @@ class MiniSom(object):
         """Updates matrix activation_map, in this matrix
            the element i,j is the response of the neuron i,j to x."""
         s = subtract(x, self._weights)  # x - w
-        it = nditer(self._activation_map, flags=['multi_index'])
-        while not it.finished:
-            # || x - w ||
-            self._activation_map[it.multi_index] = fast_norm(s[it.multi_index])
-            it.iternext()
+        self._activation_map = linalg.norm(s, axis=-1)
 
     def activate(self, x):
         """Returns the activation map to x."""
@@ -430,7 +421,7 @@ class TestMinisom(unittest.TestCase):
             for j in range(5):
                 # checking weights normalization
                 assert_almost_equal(1.0, linalg.norm(self.som._weights[i, j]))
-        self.som._weights = zeros((5, 5))  # fake weights
+        self.som._weights = zeros((5, 5, 1))  # fake weights
         self.som._weights[2, 3] = 5.0
         self.som._weights[1, 1] = 2.0
 
