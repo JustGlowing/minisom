@@ -114,6 +114,9 @@ Who uses Minisom?
 I Ko, D Chambers, E Barrett . <a href="http://ceur-ws.org/Vol-2421/MEX-A3T_paper_8.pdf">Feature dynamic deep learning approach for DDoS mitigation within the ISP domain</a>. International Journal of Information Security, 2019.
 </li>
 <li>
+Leonardo Barreto, Edjard Mota. <a href="https://arxiv.org/abs/1906.06761">Self-organized inductive reasoning with NeMuS</a>. June 2019.
+</li>
+<li>
 Marco Casavantes, Roberto Lopez, and Luis Carlos Gonzalez. <a href="http://ceur-ws.org/Vol-2421/MEX-A3T_paper_8.pdf">UACh at MEX-A3T 2019: Preliminary Results on Detecting Aggressive Tweets by Adding Author Information Via an Unsupervised Strategy</a>. Proceedings of the Iberian Languages Evaluation Forum (IberLEF 2019), 2019.
 </li>
 <li>
