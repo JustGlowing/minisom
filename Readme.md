@@ -36,11 +36,11 @@ data = [[ 0.80,  0.55,  0.22,  0.03],
 
 ```python
 from minisom import MiniSom    
-som = MiniSom(6, 6, 4, sigma=0.3, learning_rate=0.5) # initialization of 6x6 SOM
+som = MiniSom(6, 6, 4, sigma=0.3, learning_rate=0.5) # initialization of 6x6 SOM with an input of dimension of 4 for training. The initial sigma and learning rate are 0.3 and 0.5, respectively.
 som.train_random(data, 100) # trains the SOM with 100 iterations
 ```
 
-MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples from your data, and the batch training (implemented by the method `train_batch`), where the samples are picked in the order they are stored.
+MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples (i.e. rows) from your data, and the batch training (implemented by the method `train_batch`), where the samples are picked in the order they are stored. For `train_random`, it will just pick the iteration number of samples for training. For `train_batch`, it will pick the iteration number of data for training so that all samples in the data can be fairly considered.
 
 The weights of the network are randmly initialized by default. Two additional methods are provided to initialize the weights in a data driven fashion: `random_weights_init` and `pca_weights_init`.
 
