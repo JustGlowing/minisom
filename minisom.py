@@ -337,7 +337,7 @@ class MiniSom(object):
             iterations = _incremental_index_verbose(num_iteration)
 
         for iteration in iterations:
-            idx = iteration % (len(data)-1)
+            idx = iteration % len(data)
             self.update(data[idx], self.winner(data[idx]),
                         iteration, num_iteration)
         if verbose:
