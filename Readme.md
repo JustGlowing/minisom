@@ -112,6 +112,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+György Kovács. <a href="https://www.sciencedirect.com/science/article/pii/S0925231219311622">Smote-variants: A python implementation of 85 minority oversampling techniques</a>. Neurocomputing, 2019 - Elsevier.
+</li>
+<li>
 I Ko, D Chambers, E Barrett . <a href="http://ceur-ws.org/Vol-2421/MEX-A3T_paper_8.pdf">Feature dynamic deep learning approach for DDoS mitigation within the ISP domain</a>. International Journal of Information Security, 2019.
 </li>
 <li>
