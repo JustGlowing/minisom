@@ -95,7 +95,7 @@ class MiniSom(object):
             to the dimensions of the map.
             (at the iteration t we have sigma(t) = sigma / (1 + t/T)
             where T is #num_iteration/2)
-            learning_rate, initial learning rate
+        learning_rate: initial learning rate
             (at the iteration t we have
             learning_rate(t) = learning_rate / (1 + t/T)
             where T is #num_iteration/2)
@@ -332,12 +332,12 @@ class MiniSom(object):
         """
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
-        iterations = range(num_iteration)
+        iterations = range(num_iteration*len(data)) # For each iteration, we go through all data samples, so we ensure each sample in the data be fairly considered.
         if verbose:
             iterations = _incremental_index_verbose(num_iteration)
 
         for iteration in iterations:
-            idx = iteration % (len(data)-1)
+            idx = iteration % (len(data)) # I think the denominator should just be len(data) otherwise data[-1] cannot be incorporated.
             self.update(data[idx], self.winner(data[idx]),
                         iteration, num_iteration)
         if verbose:
