@@ -95,7 +95,7 @@ class MiniSom(object):
             to the dimensions of the map.
             (at the iteration t we have sigma(t) = sigma / (1 + t/T)
             where T is #num_iteration/2)
-            learning_rate, initial learning rate
+        learning_rate: initial learning rate
             (at the iteration t we have
             learning_rate(t) = learning_rate / (1 + t/T)
             where T is #num_iteration/2)
