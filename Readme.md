@@ -36,18 +36,15 @@ data = [[ 0.80,  0.55,  0.22,  0.03],
 
 ```python
 from minisom import MiniSom    
-# initialization of 6x6 SOM with an input of dimension of 4 for training. The initial sigma and learning rate are 0.3 and 0.5, respectively.
+# initialization of 6x6 SOM with an input of dimension of 4 for training.
+# The initial sigma and learning rate are 0.3 and 0.5, respectively. They decline by dividing (1+t/T) where T is half num_iteration.
 som = MiniSom(6, 6, 4, sigma=0.3, learning_rate=0.5)
 som.train_random(data, 100) # trains the SOM with 100 iterations
 ```
 
-MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples (i.e. rows) from your data, and the batch training (implemented by the method `train_batch`), where the samples are picked in the order they are stored. For both `train_random` and `train_batch`, it will just pick the iteration number of samples (i.e. rows) from your data for training. Practically, I recommend using `train_batch` with the iteration number as multiple times of `len(data)` so as to all samples within your data contribute equally.
+MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples (i.e. rows) from your data, and the batch training (implemented by the method `train_batch`), where the samples are picked in the order they are stored. For both `train_random` and `train_batch`, it both picks the iteration number of samples (i.e. rows) from your data for training. Practically, I recommend using `train_batch` with the iteration number as multiple times of `len(data)` so as to ensure all samples within your data contribute equally.
 
-Note that idx calculation in original `train_batch` is wrong and to fix it without re-install minisom is as follows. The author has also accepted this bug fix.
-1. Find the path of minisom in Python environment using `import minisom; print(minisom.__file__)`
-2. Open the `minisom.py` and fix the bugs.
-
-The weights of the network are randmly initialized by default. Two additional methods are provided to initialize the weights in a data driven fashion: `random_weights_init` and `pca_weights_init`. Note that `random_weights_init` is to randomly pick sample from your data instead of creating random numbers.
+The weights of the network are randmly initialized by default. Two additional methods are provided to initialize the weights in a data driven fashion: `random_weights_init` and `pca_weights_init`. The `random_weights_init` is to randomly pick sample from your data instead of creating random numbers.
 
 ### Using the trained SOM
 
