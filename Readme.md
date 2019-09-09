@@ -73,7 +73,7 @@ som = MiniSom(7, 7, 4)
 
 # ...train the som here
 
-# saving the some in the file som.p
+# saving the som in the file som.p
 with open('som.p', 'wb') as outfile:
     pickle.dump(som, outfile)
 ```
