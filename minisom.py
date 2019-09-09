@@ -337,7 +337,11 @@ class MiniSom(object):
             iterations = _incremental_index_verbose(num_iteration)
 
         for iteration in iterations:
+<<<<<<< HEAD
             idx = iteration % (len(data)) # I think the denominator should just be len(data) otherwise data[-1] cannot be incorporated.
+=======
+            idx = iteration % len(data)
+>>>>>>> upstream/master
             self.update(data[idx], self.winner(data[idx]),
                         iteration, num_iteration)
         if verbose:
