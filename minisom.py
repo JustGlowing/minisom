@@ -332,7 +332,7 @@ class MiniSom(object):
         """
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
-        iterations = range(num_iteration*len(data)) # For each iteration, we go through all data samples, so we ensure each sample in the data be fairly considered.
+        iterations = range(num_iteration)
         if verbose:
             iterations = _incremental_index_verbose(num_iteration)
 
