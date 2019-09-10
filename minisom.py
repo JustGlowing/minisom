@@ -3,7 +3,7 @@ from math import sqrt
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
-                   einsum)
+                   einsum, prod, where)
 from numpy import sum as npsum
 from collections import defaultdict, Counter
 from warnings import warn
@@ -313,7 +313,8 @@ class MiniSom(object):
             self.update(data[rand_i], self.winner(data[rand_i]),
                         iteration, num_iteration)
         if verbose:
-            print(' - quantization error:', self.quantization_error(data))
+            print('\n quantization error:', self.quantization_error(data))
+            print(' topographic error:', self.topographic_error(data))
 
     def train_batch(self, data, num_iteration, verbose=False):
         """Trains using all the vectors in data sequentially.
@@ -341,7 +342,8 @@ class MiniSom(object):
             self.update(data[idx], self.winner(data[idx]),
                         iteration, num_iteration)
         if verbose:
-            print(' - quantization error:', self.quantization_error(data))
+            print('\n quantization error:', self.quantization_error(data))
+            print(' topographic error:', self.topographic_error(data))
 
     def distance_map(self):
         """Returns the distance map of the weights.
@@ -380,6 +382,35 @@ class MiniSom(object):
         for x in data:
             error += fast_norm(x-self._weights[self.winner(x)])
         return error/len(data)
+
+    def topographic_error(self, data):
+        """Returns the topographic error computed by finding
+        the best-matching and second-best-matching neuron in the map
+        for each input and then evaluating the positions.
+
+        A sample for which these two nodes are not ajacent conunts as
+        an error. The topographic error is given by the
+        the total number of errors divided by the total of samples.
+
+        If the topographic error is 0, no error occurred.
+        If 1, the topology was not preserved for any of the samples."""
+        error = 0
+
+        def are_adjacent(a, b):
+            """Gives 0 if a and b are neighbors, 0 otherwise"""
+            return not (abs(a[0] - b[0]) <= 1 and abs(a[1] - b[1]) <= 1)
+
+        for x in data:
+            self.activate(x)
+            activations = self._activation_map
+            flat_map = activations.reshape(prod(self._activation_map.shape))
+            indexes = argsort(flat_map)
+            bmu_1 = unravel_index(where(indexes == 0)[0][0],
+                                  self._activation_map.shape)
+            bmu_2 = unravel_index(where(indexes == 1)[0][0],
+                                  self._activation_map.shape)
+            error += are_adjacent(bmu_1, bmu_2)
+        return error / float(len(data))
 
     def win_map(self, data):
         """Returns a dictionary wm where wm[(i,j)] is a list
@@ -489,6 +520,14 @@ class TestMinisom(unittest.TestCase):
         assert self.som.activate(5.0).argmin() == 13.0  # unravel(13) = (2,3)
 
     def test_quantization_error(self):
+        assert self.som.quantization_error([[5], [2]]) == 0.0
+        assert self.som.quantization_error([[4], [1]]) == 1.0
+
+    def test_topographic_error(self):
+        # 5 will have bm_1 in (2,3) and bmu_2 in (2, 4)
+        self.som._weights[2, 4] = 6.0
+        # 2 will have bm_1 in (1,1) and bmu_2 in (1, 2)
+        self.som._weights[1, 2] = 3.0
         assert self.som.quantization_error([[5], [2]]) == 0.0
         assert self.som.quantization_error([[4], [1]]) == 1.0
 
