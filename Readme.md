@@ -46,22 +46,7 @@ The weights of the network are randomly initialized by default. Two additional m
 
 ### Using the trained SOM
 
-After the training you will be able to
-
-* Compute the coordinate assigned to an observation `x` on the map with the method `winner(x)`.
-* Compute the average distance map of the weights on the map with the method `distance_map()`.
-* Compute the number of times that each neuron have been considered winner for the observations of a new data set with the method `activation_response(data)`.
-* Compute the quantization error with the method `quantization_error(data)`.
-
-#### Vector quantization
-
-The data can be quantized by assigning a code book (weights vector of the winning neuron) to each sample in data. This kind of vector quantization is implemented by the method `quantization` that can be called as follows:
-
-```python
-qnt = som.quantization(data)
-```
-
-In this example we have that `qnt[i]` is the quantized version of `data[i]`.
+For an overview of all the features implemented in minisom you can browse the following examples: https://github.com/JustGlowing/minisom/tree/master/examples
 
 #### Export a SOM and load it again
 
@@ -89,7 +74,6 @@ Note that if a lambda function is used to define the decay factor MiniSom will n
 
 Examples
 ---------------------
-You can find some examples of how to use MiniSom here: https://github.com/JustGlowing/minisom/tree/master/examples
 
 Here are some of the charts you'll see how to generate in the examples:
 
