@@ -3,7 +3,7 @@ from math import sqrt
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
-                   einsum, prod, where)
+                   einsum, prod, where, nan)
 from numpy import sum as npsum
 from collections import defaultdict, Counter
 from warnings import warn
@@ -23,15 +23,29 @@ import unittest
 """
 
 
-def _incremental_index_verbose(m):
-    """Yields numbers from 0 to m-1 printing the status on the stdout."""
+def _build_iteration_indexes(data_len, num_iterations,
+                             verbose=False, random_order=False):
+    """Returns an iterable with the indexes of the samples
+    to pick at each iteration of the training."""
+    iterations = arange(num_iterations) % data_len
+    if random_order:
+        random.shuffle(iterations)
+    if verbose:
+        return _wrap_index__in_verbose(iterations)
+    else:
+        return iterations
+
+
+def _wrap_index__in_verbose(iterations):
+    """Yields the values in iterations printing the status on the stdout."""
+    m = len(iterations)
     digits = len(str(m))
     progress = '\r [ {s:{d}} / {m} ] {s:3.0f}% - ? it/s'
     progress = progress.format(m=m, d=digits, s=0)
     stdout.write(progress)
     beginning = time()
-    for i in range(m):
-        yield i
+    for i, it in enumerate(iterations):
+        yield it
         it_per_sec = (i+1) / (time() - beginning)
         sec_left = ((m-i) / float(it_per_sec))
         time_left = str(timedelta(seconds=sec_left))[:7]
@@ -286,6 +300,35 @@ class MiniSom(object):
             for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
                 self._weights[i, j] = c1*pc[pc_order[0]] + c2*pc[pc_order[1]]
 
+    def train(self, data, num_iteration, random_order=False, verbose=False):
+        """Trains the SOM.
+
+        Parameters
+        ----------
+        data : np.array or list
+            Data matrix.
+
+        num_iteration : int
+            Maximum number of iterations (one iteration per sample).
+        random_order : bool (default=False)
+            If True, samples are picked in random order.
+            Otherwise the samples are picked sequentially.
+
+        verbose : bool (default=False)
+            If True the status of the training
+            will be printed at each iteration.
+        """
+        self._check_iteration_number(num_iteration)
+        self._check_input_len(data)
+        iterations = _build_iteration_indexes(len(data), num_iteration,
+                                              verbose, random_order)
+        for t, iteration in enumerate(iterations):
+            self.update(data[iteration], self.winner(data[iteration]),
+                        t, num_iteration)
+        if verbose:
+            print('\n quantization error:', self.quantization_error(data))
+            print(' topographic error:', self.topographic_error(data))
+
     def train_random(self, data, num_iteration, verbose=False):
         """Trains the SOM picking samples at random from data.
 
@@ -294,56 +337,31 @@ class MiniSom(object):
         data : np.array or list
             Data matrix.
 
-        num_iterations : int
+        num_iteration : int
             Maximum number of iterations (one iteration per sample).
 
         verbose : bool (default=False)
             If True the status of the training
             will be printed at each iteration.
         """
-        self._check_iteration_number(num_iteration)
-        self._check_input_len(data)
-        iterations = range(num_iteration)
-        if verbose:
-            iterations = _incremental_index_verbose(num_iteration)
-
-        for iteration in iterations:
-            # pick a random sample
-            rand_i = self._random_generator.randint(len(data))
-            self.update(data[rand_i], self.winner(data[rand_i]),
-                        iteration, num_iteration)
-        if verbose:
-            print('\n quantization error:', self.quantization_error(data))
-            print(' topographic error:', self.topographic_error(data))
+        self.train(data, num_iteration, random_order=False, verbose=verbose)
 
     def train_batch(self, data, num_iteration, verbose=False):
-        """Trains using all the vectors in data sequentially.
+        """Trains the SOM using all the vectors in data sequentially.
 
         Parameters
         ----------
         data : np.array or list
             Data matrix.
 
-        num_iterations : int
+        num_iteration : int
             Maximum number of iterations (one iteration per sample).
 
         verbose : bool (default=False)
             If True the status of the training
             will be printed at each iteration.
         """
-        self._check_iteration_number(num_iteration)
-        self._check_input_len(data)
-        iterations = range(num_iteration)
-        if verbose:
-            iterations = _incremental_index_verbose(num_iteration)
-
-        for iteration in iterations:
-            idx = iteration % len(data)
-            self.update(data[idx], self.winner(data[idx]),
-                        iteration, num_iteration)
-        if verbose:
-            print('\n quantization error:', self.quantization_error(data))
-            print(' topographic error:', self.topographic_error(data))
+        self.train(data, num_iteration, random_order=False, verbose=verbose)
 
     def distance_map(self):
         """Returns the distance map of the weights.
@@ -394,16 +412,21 @@ class MiniSom(object):
 
         If the topographic error is 0, no error occurred.
         If 1, the topology was not preserved for any of the samples."""
-        error = 0
+        self._check_input_len(data)
+        total_neurons = prod(self._activation_map.shape)
+        if total_neurons == 1:
+            warn('The topographic error is not defined for a 1-by-1 map.')
+            return nan
 
         def are_adjacent(a, b):
             """Gives 0 if a and b are neighbors, 0 otherwise"""
             return not (abs(a[0] - b[0]) <= 1 and abs(a[1] - b[1]) <= 1)
 
+        error = 0
         for x in data:
             self.activate(x)
             activations = self._activation_map
-            flat_map = activations.reshape(prod(self._activation_map.shape))
+            flat_map = activations.reshape(total_neurons)
             indexes = argsort(flat_map)
             bmu_1 = unravel_index(where(indexes == 0)[0][0],
                                   self._activation_map.shape)
@@ -553,7 +576,7 @@ class TestMinisom(unittest.TestCase):
         som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
         data = array([[4, 2], [3, 1]])
         q1 = som.quantization_error(data)
-        som.train_batch(data, 10)
+        som.train(data, 10)
         assert q1 > som.quantization_error(data)
 
         data = array([[1, 5], [6, 7]])
@@ -565,7 +588,7 @@ class TestMinisom(unittest.TestCase):
         som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
         data = array([[4, 2], [3, 1]])
         q1 = som.quantization_error(data)
-        som.train_random(data, 10)
+        som.train(data, 10, random_order=True)
         assert q1 > som.quantization_error(data)
 
         data = array([[1, 5], [6, 7]])
