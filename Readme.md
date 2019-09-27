@@ -99,7 +99,7 @@ Who uses Minisom?
 György Kovács. <a href="https://www.sciencedirect.com/science/article/pii/S0925231219311622">Smote-variants: A python implementation of 85 minority oversampling techniques</a>. Neurocomputing, 2019 - Elsevier.
 </li>
 <li>
-Catalin Stoean, Ruxandra StoeanRoberto Antonio Becerra-GarcíaRodolfo García-BermúdezMiguel AtenciaFrancisco García-LagosLuis Velázquez-PérezGonzalo Joya. <a hfref="https://link.springer.com/chapter/10.1007/978-3-030-20518-8_3">Unsupervised Learning as a Complement to Convolutional Neural Network Classification in the Analysis of Saccadic Eye Movement in Spino-Cerebellar Ataxia Type 2</a>. IWANN 2019: Advances in Computational Intelligence pp 26-37, 2019.
+Catalin Stoean, Ruxandra Stoean, Roberto Antonio Becerra-García, Rodolfo García-Bermúdez, Miguel Atencia, Francisco García-Lagos, Luis Velázquez-Pérez, Gonzalo Joya. <a href="https://link.springer.com/chapter/10.1007/978-3-030-20518-8_3">Unsupervised Learning as a Complement to Convolutional Neural Network Classification in the Analysis of Saccadic Eye Movement in Spino-Cerebellar Ataxia Type 2</a>. IWANN 2019: Advances in Computational Intelligence pp 26-37, 2019.
 </li>
 <li>
 I Ko, D Chambers, E Barrett . <a href="http://ceur-ws.org/Vol-2421/MEX-A3T_paper_8.pdf">Feature dynamic deep learning approach for DDoS mitigation within the ISP domain</a>. International Journal of Information Security, 2019.
