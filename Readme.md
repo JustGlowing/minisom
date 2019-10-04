@@ -96,6 +96,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+E Mele, C Elias, A Ktena. <a href="https://content.sciendo.com/configurable/contentpage/journals$002fecce$002f15$002f1$002farticle-p21.xml">Machine Learning Platform for Profiling and Forecasting at Microgrid Level</a>. Electrical, Control and Communication Engineering. 2019.    
+</li>
+<li>
 György Kovács. <a href="https://www.sciencedirect.com/science/article/pii/S0925231219311622">Smote-variants: A python implementation of 85 minority oversampling techniques</a>. Neurocomputing, 2019 - Elsevier.
 </li>
 <li>
