@@ -7,7 +7,7 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract,
 from numpy import sum as npsum
 from collections import defaultdict, Counter
 from warnings import warn
-from sys import stdout, float_info
+from sys import stdout
 from time import time
 from datetime import timedelta
 import pickle
@@ -44,14 +44,13 @@ def _wrap_index__in_verbose(iterations):
     progress = progress.format(m=m, d=digits, s=0)
     stdout.write(progress)
     beginning = time()
+    stdout.write(progress)
     for i, it in enumerate(iterations):
         yield it
-        it_per_sec = (i+1) / ((time() - beginning) + float_info.min)
-        sec_left = ((m-i) / float(it_per_sec))
+        sec_left = ((m-i) * (time() - beginning)) / (i+1)
         time_left = str(timedelta(seconds=sec_left))[:7]
         progress = '\r [ {i:{d}} / {m} ]'.format(i=i+1, d=digits, m=m)
         progress += ' {p:3.0f}%'.format(p=100*(i+1)/m)
-        progress += ' - {it_per_sec:4.2f} it/s'.format(it_per_sec=it_per_sec)
         progress += ' - {time_left} left '.format(time_left=time_left)
         stdout.write(progress)
 
