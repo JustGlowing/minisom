@@ -47,7 +47,7 @@ def _wrap_index__in_verbose(iterations):
     stdout.write(progress)
     for i, it in enumerate(iterations):
         yield it
-        sec_left = ((m-i) * (time() - beginning)) / (i+1)
+        sec_left = ((m-i+1) * (time() - beginning)) / (i+1)
         time_left = str(timedelta(seconds=sec_left))[:7]
         progress = '\r [ {i:{d}} / {m} ]'.format(i=i+1, d=digits, m=m)
         progress += ' {p:3.0f}%'.format(p=100*(i+1)/m)
