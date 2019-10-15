@@ -343,7 +343,7 @@ class MiniSom(object):
             If True the status of the training
             will be printed at each iteration.
         """
-        self.train(data, num_iteration, random_order=False, verbose=verbose)
+        self.train(data, num_iteration, random_order=True, verbose=verbose)
 
     def train_batch(self, data, num_iteration, verbose=False):
         """Trains the SOM using all the vectors in data sequentially.
