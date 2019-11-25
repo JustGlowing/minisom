@@ -123,6 +123,9 @@ H. D. Thompson. Wind climatology of Quesnel Lake, British Columbia. Master Thesi
 Florent Forest, Mustapha Lebbah, Hanene Azzag and Jérôme Lacaille. <a href="http://florentfo.rest/files/LDRC-2019-DeepArchitecturesJointClusteringVisualization-full-paper.pdf">Deep Architectures for Joint Clustering and Visualization with Self-Organizing Maps</a>. LDRC@PAKDD 2019 (Learning Data Representation for Clustering@PAKDD) Macau China. 2019.
 </li>
 <li>
+Stephanie Kas. <a href="http://fb07-indico.physik.uni-giessen.de:8080/wiki/images/e/ea/Bachelor_Thesis_Stephanie_Kaes_2019-cmprd.pdf">Multiparameter Analysis of the Belle II Pixeldetector’s Data</a>. Bachelor Thesis, University of Giessen, July 2019.
+</li>
+<li>
 Katharina Dort. <a href="https://docs.belle2.org/record/1382/files/BELLE2-MTHESIS-2019-003.pdf">Search for Highly Ionizing Particles with the Pixel Detector in the Belle II Experiment</a>. Master Thesis, University of Giessen, May 2019.
 </li>
 <li>
