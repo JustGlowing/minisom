@@ -159,6 +159,10 @@ Li Yuan <a href="http://digitalcommons.uri.edu/theses/1244/">Implementation of S
 Ying Xie, Linh Le, Yiyun Zhou, Vijay V.Raghavan. <a href="https://www.sciencedirect.com/science/article/pii/S0169716118300026">Deep Learning for Natural Language Processing</a>. Elsevier Handbook of Statistics, 2018.
 </li>
 <li>
+André de Vasconcelos Santos Silva. <a href="https://repositorio.iscte-iul.pt/bitstream/10071/18245/1/Master_Andre_Santos_Silva.pdf">Sparse Distributed Representations as Word
+Embeddings for Language Understanding</a>. Master Thesis, University Institute of Lisbon, 2018.
+</li>
+<li>
 Vincent Fortuin, Matthias Hüser, Francesco Locatello, Heiko Strathmann, and Gunnar Rätsch. <a href="https://arxiv.org/pdf/1806.02199.pdf">Deep Self-Organization: Interpretable Discrete
 Representation Learning on Time Series</a>. 2018.
 </li>
