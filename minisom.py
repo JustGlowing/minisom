@@ -396,8 +396,8 @@ class MiniSom(object):
         """
         calculate distance matrix: dist[i,j]: i: the i-th data, j: the j-th node
         """
-        D = data
-        C = self._weights.reshape(-1, data.shape[1])
+        D = np.array(data)
+        C = self._weights.reshape(-1, self._weights.shape[2])
         dd = (D ** 2).sum(axis=1, keepdims=True)
         cc = (C ** 2).sum(axis=1, keepdims=True)
         dc = D @ C.T
@@ -426,7 +426,7 @@ class MiniSom(object):
             warn('The topographic error is not defined for a 1-by-1 map.')
             return nan
         inds = np.argsort(self.dist_mat(data), axis=1)[:, :2]
-        x, y = np.unravel_index(inds, self._weights.shape[:2])
+        x, y = np.unravel_index(inds, self._weights.shape[:2]) # pylint: disable=unbalanced-tuple-unpacking
         dxdy = np.hstack([np.diff(x), np.diff(y)])
         diff = np.linalg.norm(dxdy, axis=1)
         return (diff > 1.42).mean()
