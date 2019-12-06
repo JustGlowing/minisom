@@ -1,5 +1,6 @@
 from math import sqrt
 
+import numpy as np
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
@@ -390,15 +391,23 @@ class MiniSom(object):
         for x in data:
             a[self.winner(x)] += 1
         return a
+    
+    def dist_mat(self, data):
+        """
+        calculate distance matrix: dist[i,j]: i: the i-th data, j: the j-th node
+        """
+        D = data
+        C = self._weights.reshape(-1, data.shape[1])
+        dd = (D ** 2).sum(axis=1, keepdims=True)
+        cc = (C ** 2).sum(axis=1, keepdims=True)
+        dc = D @ C.T
+        return np.sqrt(-2 * dc + dd + cc.T)
 
     def quantization_error(self, data):
         """Returns the quantization error computed as the average
         distance between each input sample and its best matching unit."""
         self._check_input_len(data)
-        error = 0
-        for x in data:
-            error += fast_norm(x-self._weights[self.winner(x)])
-        return error/len(data)
+        return self.dist_mat(data).min(axis=1).mean()
 
     def topographic_error(self, data):
         """Returns the topographic error computed by finding
@@ -416,23 +425,11 @@ class MiniSom(object):
         if total_neurons == 1:
             warn('The topographic error is not defined for a 1-by-1 map.')
             return nan
-
-        def are_adjacent(a, b):
-            """Gives 0 if a and b are neighbors, 0 otherwise"""
-            return not (abs(a[0] - b[0]) <= 1 and abs(a[1] - b[1]) <= 1)
-
-        error = 0
-        for x in data:
-            self.activate(x)
-            activations = self._activation_map
-            flat_map = activations.reshape(total_neurons)
-            indexes = argsort(flat_map)
-            bmu_1 = unravel_index(where(indexes == 0)[0][0],
-                                  self._activation_map.shape)
-            bmu_2 = unravel_index(where(indexes == 1)[0][0],
-                                  self._activation_map.shape)
-            error += are_adjacent(bmu_1, bmu_2)
-        return error / float(len(data))
+        inds = np.argsort(self.dist_mat(data), axis=1)[:, :2]
+        x, y = np.unravel_index(inds, self._weights.shape[:2])
+        dxdy = np.hstack([np.diff(x), np.diff(y)])
+        diff = np.linalg.norm(dxdy, axis=1)
+        return (diff > 1.42).mean()
 
     def win_map(self, data):
         """Returns a dictionary wm where wm[(i,j)] is a list
