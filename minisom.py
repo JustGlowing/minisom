@@ -426,7 +426,8 @@ class MiniSom(object):
             warn('The topographic error is not defined for a 1-by-1 map.')
             return nan
         inds = np.argsort(self.dist_mat(data), axis=1)[:, :2]
-        x, y = np.unravel_index(inds, self._weights.shape[:2]) # pylint: disable=unbalanced-tuple-unpacking
+        xy = np.unravel_index(inds, self._weights.shape[:2])
+        x, y = xy[0], xy[1]
         dxdy = np.hstack([np.diff(x), np.diff(y)])
         diff = np.linalg.norm(dxdy, axis=1)
         return (diff > 1.42).mean()
