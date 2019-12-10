@@ -3,7 +3,7 @@ from math import sqrt
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
-                   einsum, prod, where, nan)
+                   einsum, prod, nan)
 from numpy import sum as npsum
 from collections import defaultdict, Counter
 from warnings import warn
@@ -434,10 +434,8 @@ class MiniSom(object):
             activations = self._activation_map
             flat_map = activations.reshape(total_neurons)
             indexes = argsort(flat_map)
-            bmu_1 = unravel_index(where(indexes == 0)[0][0],
-                                  self._activation_map.shape)
-            bmu_2 = unravel_index(where(indexes == 1)[0][0],
-                                  self._activation_map.shape)
+            bmu_1 = unravel_index(indexes[0], self._activation_map.shape)
+            bmu_2 = unravel_index(indexes[1], self._activation_map.shape)
             error += are_adjacent(bmu_1, bmu_2)
         return error / float(len(data))
 
