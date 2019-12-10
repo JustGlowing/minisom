@@ -25,12 +25,16 @@ import unittest
 
 
 def _build_iteration_indexes(data_len, num_iterations,
-                             verbose=False, random_order=False):
+                             verbose=False, random_generator=None):
     """Returns an iterable with the indexes of the samples
-    to pick at each iteration of the training."""
+    to pick at each iteration of the training.
+
+    If random_generator is not None, it must be an instalce
+    of numpy.random.RandomState and it will be used
+    to randomize the order of the samples."""
     iterations = arange(num_iterations) % data_len
-    if random_order:
-        random.shuffle(iterations)
+    if random_generator:
+        random_generator.shuffle(iterations)
     if verbose:
         return _wrap_index__in_verbose(iterations)
     else:
@@ -320,8 +324,11 @@ class MiniSom(object):
         """
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
+        random_generator = None
+        if random_order:
+            random_generator = self._random_generator
         iterations = _build_iteration_indexes(len(data), num_iteration,
-                                              verbose, random_order)
+                                              verbose, random_generator)
         for t, iteration in enumerate(iterations):
             self.update(data[iteration], self.winner(data[iteration]),
                         t, num_iteration)
@@ -544,12 +551,15 @@ class TestMinisom(unittest.TestCase):
         assert self.som.quantization_error([[4], [1]]) == 1.0
 
     def test_topographic_error(self):
-        # 5 will have bm_1 in (2,3) and bmu_2 in (2, 4)
+        # 5 will have bmu_1 in (2,3) and bmu_2 in (2, 4)
+        # which are in the same neighborhood
         self.som._weights[2, 4] = 6.0
-        # 2 will have bm_1 in (1,1) and bmu_2 in (1, 2)
-        self.som._weights[1, 2] = 3.0
-        assert self.som.quantization_error([[5], [2]]) == 0.0
-        assert self.som.quantization_error([[4], [1]]) == 1.0
+        # 15 will have bmu_1 in (4, 4) and bmu_2 in (0, 0)
+        # which are not in the same neighborhood
+        self.som._weights[4, 4] = 15.0
+        self.som._weights[0, 0] = 14.
+        assert self.som.topographic_error([[5]]) == 0.0
+        assert self.som.topographic_error([[15]]) == 1.0
 
     def test_quantization(self):
         q = self.som.quantization(array([[4], [2]]))
