@@ -3,7 +3,7 @@ from math import sqrt
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
-                   einsum, prod, nan, sqrt, hstack, diff)
+                   einsum, prod, nan, sqrt, hstack, diff, argmin)
 from numpy import sum as npsum
 from numpy.linalg import norm
 from collections import defaultdict, Counter
@@ -266,10 +266,9 @@ class MiniSom(object):
         """Assigns a code book (weights vector of the winning neuron)
         to each sample in data."""
         self._check_input_len(data)
-        q = zeros(data.shape)
-        for i, x in enumerate(data):
-            q[i] = self._weights[self.winner(x)]
-        return q
+        winners_coords = argmin(self._distance_from_weights(data), axis=1)
+        return self._weights[unravel_index(winners_coords,
+                                           self._weights.shape[:2])]
 
     def random_weights_init(self, data):
         """Initializes the weights of the SOM
@@ -400,14 +399,13 @@ class MiniSom(object):
         return a
 
     def _distance_from_weights(self, data):
-        """
-        calculate distance matrix:
-          dist[i,j]: i: the i-th data, j: the j-th node
+        """Returns a matrix d where d[i,j] is the euclidean distance between
+        data[i] and the j-th weight.
         """
         input_data = array(data)
         weights_flat = self._weights.reshape(-1, self._weights.shape[2])
-        input_data_sq = (input_data ** 2).sum(axis=1, keepdims=True)
-        weights_flat_sq = (weights_flat ** 2).sum(axis=1, keepdims=True)
+        input_data_sq = power(input_data, 2).sum(axis=1, keepdims=True)
+        weights_flat_sq = power(weights_flat, 2).sum(axis=1, keepdims=True)
         cross_term = dot(input_data, weights_flat.T)
         return sqrt(-2 * cross_term + input_data_sq + weights_flat_sq.T)
 
@@ -415,7 +413,7 @@ class MiniSom(object):
         """Returns the quantization error computed as the average
         distance between each input sample and its best matching unit."""
         self._check_input_len(data)
-        return self._distance_from_weights(data).min(axis=1).mean()
+        return power((self.quantization(data) - data), 2).mean()
 
     def topographic_error(self, data):
         """Returns the topographic error computed by finding
