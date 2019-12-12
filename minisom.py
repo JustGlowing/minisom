@@ -3,8 +3,9 @@ from math import sqrt
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
-                   einsum, prod, nan)
+                   einsum, prod, nan, sqrt, hstack, diff)
 from numpy import sum as npsum
+from numpy.linalg import norm
 from collections import defaultdict, Counter
 from warnings import warn
 from sys import stdout
@@ -398,14 +399,23 @@ class MiniSom(object):
             a[self.winner(x)] += 1
         return a
 
+    def _distance_from_weights(self, data):
+        """
+        calculate distance matrix:
+          dist[i,j]: i: the i-th data, j: the j-th node
+        """
+        input_data = array(data)
+        weights_flat = self._weights.reshape(-1, self._weights.shape[2])
+        input_data_sq = (input_data ** 2).sum(axis=1, keepdims=True)
+        weights_flat_sq = (weights_flat ** 2).sum(axis=1, keepdims=True)
+        cross_term = dot(input_data, weights_flat.T)
+        return sqrt(-2 * cross_term + input_data_sq + weights_flat_sq.T)
+
     def quantization_error(self, data):
         """Returns the quantization error computed as the average
         distance between each input sample and its best matching unit."""
         self._check_input_len(data)
-        error = 0
-        for x in data:
-            error += fast_norm(x-self._weights[self.winner(x)])
-        return error/len(data)
+        return self._distance_from_weights(data).min(axis=1).mean()
 
     def topographic_error(self, data):
         """Returns the topographic error computed by finding
@@ -423,21 +433,13 @@ class MiniSom(object):
         if total_neurons == 1:
             warn('The topographic error is not defined for a 1-by-1 map.')
             return nan
-
-        def are_adjacent(a, b):
-            """Gives 0 if a and b are neighbors, 0 otherwise"""
-            return not (abs(a[0] - b[0]) <= 1 and abs(a[1] - b[1]) <= 1)
-
-        error = 0
-        for x in data:
-            self.activate(x)
-            activations = self._activation_map
-            flat_map = activations.reshape(total_neurons)
-            indexes = argsort(flat_map)
-            bmu_1 = unravel_index(indexes[0], self._activation_map.shape)
-            bmu_2 = unravel_index(indexes[1], self._activation_map.shape)
-            error += are_adjacent(bmu_1, bmu_2)
-        return error / float(len(data))
+        # b2mu: best 2 matching units
+        b2mu_inds = argsort(self._distance_from_weights(data), axis=1)[:, :2]
+        b2my_xy = unravel_index(b2mu_inds, self._weights.shape[:2])
+        b2mu_x, b2mu_y = b2my_xy[0], b2my_xy[1]
+        dxdy = hstack([diff(b2mu_x), diff(b2mu_y)])
+        distance = norm(dxdy, axis=1)
+        return (distance > 1.42).mean()
 
     def win_map(self, data):
         """Returns a dictionary wm where wm[(i,j)] is a list
@@ -545,6 +547,14 @@ class TestMinisom(unittest.TestCase):
 
     def test_activate(self):
         assert self.som.activate(5.0).argmin() == 13.0  # unravel(13) = (2,3)
+
+    def test_distance_from_weights(self):
+        data = arange(-5, 5).reshape(-1, 1)
+        weights = self.som._weights.reshape(-1, self.som._weights.shape[2])
+        distances = self.som._distance_from_weights(data)
+        for i in range(len(data)):
+            for j in range(len(weights)):
+                assert(distances[i][j] == norm(data[i] - weights[j]))
 
     def test_quantization_error(self):
         assert self.som.quantization_error([[5], [2]]) == 0.0
