@@ -3,7 +3,7 @@ from math import sqrt
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
                    power, exp, pi, zeros, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
-                   einsum, prod, where, nan, sqrt, hstack, diff)
+                   einsum, prod, nan, sqrt, hstack, diff)
 from numpy import sum as npsum
 from numpy.linalg import norm
 from collections import defaultdict, Counter
@@ -398,10 +398,11 @@ class MiniSom(object):
         for x in data:
             a[self.winner(x)] += 1
         return a
-    
+
     def _distance_from_weights(self, data):
         """
-        calculate distance matrix: dist[i,j]: i: the i-th data, j: the j-th node
+        calculate distance matrix:
+          dist[i,j]: i: the i-th data, j: the j-th node
         """
         input_data = array(data)
         weights_flat = self._weights.reshape(-1, self._weights.shape[2])
@@ -548,14 +549,12 @@ class TestMinisom(unittest.TestCase):
         assert self.som.activate(5.0).argmin() == 13.0  # unravel(13) = (2,3)
 
     def test_distance_from_weights(self):
-        self.som._weights = arange(2 * 3 * 4).reshape(2, 3, 4)
-        data = arange(2 * 4).reshape(2, 4)
-        assert (self.som._distance_from_weights(data) == array([[0., 8., 16., 24., 32., 40.], [8., 0., 8., 16., 24., 32.]])).all()
-
-    def test_distance_from_weights_big_data(self):
-        self.som._weights = random.rand(50, 30, 300)
-        data = random.rand(10000, 300)
-        self.som._distance_from_weights(data)
+        data = arange(-5, 5).reshape(-1, 1)
+        weights = self.som._weights.reshape(-1, self.som._weights.shape[2])
+        distances = self.som._distance_from_weights(data)
+        for i in range(len(data)):
+            for j in range(len(weights)):
+                assert(distances[i][j] == norm(data[i] - weights[j]))
 
     def test_quantization_error(self):
         assert self.som.quantization_error([[5], [2]]) == 0.0
