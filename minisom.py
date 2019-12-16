@@ -136,7 +136,7 @@ class MiniSom(object):
 
         neighborhood_function : function, optional (default='gaussian')
             Function that weights the neighborhood of a position in the map
-            possible values: 'gaussian', 'mexican_hat', 'bubble'
+            possible values: 'gaussian', 'mexican_hat', 'bubble', 'triangle'
 
         random_seed : int, optional (default=None)
             Random seed to use.
