@@ -98,6 +98,12 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Mengxia Luo, Can Yang, Xiaorui Gong, Lei Yu. <a href="https://link.springer.com/chapter/10.1007/978-3-030-37228-6_16">FuncNet: A Euclidean Embedding Approach for Lightweight Cross-platform Binary Recognition</a>. Security and Privacy in Communication Networks, 15th EAI International Conference, SecureComm 2019.    
+</li>
+<li>
+Melvin Gelbard. <a href="https://project-archive.inf.ed.ac.uk/msc/20193475/msc_proj.pdf">A Data Mining Approach to the Study of Dynamic Changes in Brain White Matter</a>. Master Thesis, University of Edinburgh. 2019.    
+</li>
+<li>
 E Mele, C Elias, A Ktena. <a href="https://content.sciendo.com/configurable/contentpage/journals$002fecce$002f15$002f1$002farticle-p21.xml">Machine Learning Platform for Profiling and Forecasting at Microgrid Level</a>. Electrical, Control and Communication Engineering. 2019.    
 </li>
 <li>
