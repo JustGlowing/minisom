@@ -169,8 +169,9 @@ class MiniSom(object):
                                     ', '.join(neig_functions.keys())))
 
         if neighborhood_function in ['triangle',
-                                     'bubble'] and divmod(sigma, 1)[1] != 0:
-            warn('sigma should be an integer when triangle or bubble' +
+                                     'bubble'] and (divmod(sigma, 1)[1] != 0
+                                                    or sigma < 1):
+            warn('sigma should be an integer >=1 when triangle or bubble' +
                  'are used as neighborhood function')
 
         self.neighborhood = neig_functions[neighborhood_function]
