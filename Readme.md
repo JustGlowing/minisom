@@ -98,7 +98,7 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
-Daniel L. Donaldson, Dilan Jayaweera. <a href="https://www.mdpi.com/2072-4292/12/1/7/pdf">Effective solar prosumer identification using net smart meter data</a>. International Journal of Electrical Power & Energy Systems
+Daniel L. Donaldson, Dilan Jayaweera. <a href="https://www.sciencedirect.com/science/article/abs/pii/S0142061519322859">Effective solar prosumer identification using net smart meter data</a>. International Journal of Electrical Power & Energy Systems
 Volume 118. 2020.
 </li>
 <li>
