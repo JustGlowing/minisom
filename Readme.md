@@ -98,6 +98,13 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Daniel L. Donaldson, Dilan Jayaweera. <a href="https://www.sciencedirect.com/science/article/abs/pii/S0142061519322859">Effective solar prosumer identification using net smart meter data</a>. International Journal of Electrical Power & Energy Systems
+Volume 118. 2020.
+</li>
+<li>
+Pauli Tikka, Moritz Mercker, Ilya Skovorodkin, Ulla Saarela, Seppo Vainio, Veli-Pekka Ronkainen, James P. Sluka, James A. Glazier, Anna Marciniak-Czochra, Franz Schaefer. <a href="https://www.biorxiv.org/content/biorxiv/early/2020/01/14/2020.01.14.905711.full.pdf">Computational Modelling of Nephron Progenitor Cell Movement and Aggregation during Kidney Organogenesis</a>. Pre-print on biorxiv.org. 2020.
+</li>    
+<li>
 Felix M. Riese, Sina Keller, Stefan Hinz. <a href="https://www.mdpi.com/2072-4292/12/1/7/pdf">Supervised and Semi-Supervised Self-Organizing Maps for Regression and Classification Focusing on Hyperspectral Data</a>. Remote Sensing, special Issue Advanced Machine Learning Approaches for Hyperspectral Data Analysis. 2020.
 </li>    
 <li>
