@@ -414,7 +414,8 @@ class MiniSom(object):
         """Returns the quantization error computed as the average
         distance between each input sample and its best matching unit."""
         self._check_input_len(data)
-        return power((self.quantization(data) - data), 2).mean()
+        #return power((self.quantization(data) - data), 2).mean()
+        return norm(data-self.quantization(data), axis=1).mean()
 
     def topographic_error(self, data):
         """Returns the topographic error computed by finding
