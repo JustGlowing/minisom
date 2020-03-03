@@ -108,6 +108,9 @@ Pauli Tikka, Moritz Mercker, Ilya Skovorodkin, Ulla Saarela, Seppo Vainio, Veli-
 Felix M. Riese, Sina Keller, Stefan Hinz. <a href="https://www.mdpi.com/2072-4292/12/1/7/pdf">Supervised and Semi-Supervised Self-Organizing Maps for Regression and Classification Focusing on Hyperspectral Data</a>. Remote Sensing, special Issue Advanced Machine Learning Approaches for Hyperspectral Data Analysis. 2020.
 </li>    
 <li>
+Ujjawal Kamal Panchal, Sanjay Verma. <a href="https://ieeexplore.ieee.org/abstract/document/8944605">Identification of Potential Future Credit Card Defaulters from Non Defaulters using Self Organizing Maps</a>. 10th International Conference on Computing, Communication and Networking Technologies (ICCCNT). 2019.    
+</li>
+<li>
 Mengxia Luo, Can Yang, Xiaorui Gong, Lei Yu. <a href="https://link.springer.com/chapter/10.1007/978-3-030-37228-6_16">FuncNet: A Euclidean Embedding Approach for Lightweight Cross-platform Binary Recognition</a>. Security and Privacy in Communication Networks, 15th EAI International Conference, SecureComm 2019.    
 </li>
 <li>
