@@ -153,6 +153,9 @@ Katharina Dort. <a href="https://docs.belle2.org/record/1382/files/BELLE2-MTHESI
 Rahul Kumar. <a href="https://www.amazon.co.uk/Machine-Learning-Quick-Reference-Essential/dp/1788830571">Machine Learning Quick Reference: Quick and essential machine learning hacks for training smart data models</a>. Packt Publishing Ltd, 31 Jan 2019.
 </li>
 <li>
+Michaela Vystrčilova. <a href="https://dspace.cuni.cz/bitstream/handle/20.500.11956/108348/130257629.pdf?sequence=1">Similarity methods for music recommender systems</a>. Bachelor Thesis in Computer Science, Charles University, 2019.
+</li>
+<li>
 Felix M. Riese, Sina Keller. <a href="https://arxiv.org/pdf/1903.11114.pdf">SUSI: Supervised Self-Organizing Maps for Regression and Classification in Python</a>.
 </li>
 <li>
