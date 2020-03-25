@@ -99,6 +99,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Benyamin Motevalli, Baichuan Sun, Amanda S. Barnard. <a href="https://pubs.acs.org/doi/abs/10.1021/acs.jpcc.9b10615">Understanding and Predicting the Cause of Defects in Graphene Oxide Nanostructures Using Machine Learning</a>. The Journal of Physical Chemistry C. 2020.
+</li>
+<li>
 Daniel L. Donaldson, Dilan Jayaweera. <a href="https://www.sciencedirect.com/science/article/abs/pii/S0142061519322859">Effective solar prosumer identification using net smart meter data</a>. International Journal of Electrical Power & Energy Systems
 Volume 118. 2020.
 </li>
