@@ -90,6 +90,7 @@ Other tutorials
 - <a href="https://glowingpython.blogspot.com/2013/09/self-organizing-maps.html">Self Organizing Maps on the Glowing Python</a> by me ;-)
 - <a href="http://aa.ssdi.di.fct.unl.pt/files/AA-16_notes.pdf">Lecture notes from the Machine Learning course at the University of Lisbon</a>
 - <a href="https://heartbeat.fritz.ai/introduction-to-self-organizing-maps-soms-98e88b568f5d">Introduction to Self-Organizing</a> by Derrick Mwiti
+- <a href="http://inphronesys.com/?p=625">Self Organizing Maps on gapminder data</a> [in German]
 - <a href="https://medium.com/neuronio/discovering-som-an-unsupervised-neural-network-12e787f38f9">Discovering SOM, an Unsupervised Neural Network</a> by Gisely Alves
 - Video tutorials made by the GeoEngineerings School: <a href="https://www.youtube.com/watch?v=3osKNPyAxPM&list=PL-i8do33HJovC7xFKaYO21qT37vORJWXC&index=11">Part 1</a>; <a href="https://www.youtube.com/watch?v=uUpQ6MITlVs&list=PL-i8do33HJovC7xFKaYO21qT37vORJWXC&index=12">Part 2</a>; <a href="https://www.youtube.com/watch?v=mryFU0TEInk&list=PL-i8do33HJovC7xFKaYO21qT37vORJWXC&index=13">Part 3</a>; <a href="https://www.youtube.com/watch?v=9MzFOIoxxdk&index=14&list=PL-i8do33HJovC7xFKaYO21qT37vORJWXC">Part 4</a>
 - Video tutorial <a href="https://www.youtube.com/watch?v=0qtvb_Nx2tA">Self Organizing Maps: Introduction</a> by SuperDataScience
@@ -97,6 +98,9 @@ Other tutorials
 Who uses Minisom?
 ------------
 <ul>
+<li>
+Benyamin Motevalli, Baichuan Sun, Amanda S. Barnard. <a href="https://pubs.acs.org/doi/abs/10.1021/acs.jpcc.9b10615">Understanding and Predicting the Cause of Defects in Graphene Oxide Nanostructures Using Machine Learning</a>. The Journal of Physical Chemistry C. 2020.
+</li>
 <li>
 Daniel L. Donaldson, Dilan Jayaweera. <a href="https://www.sciencedirect.com/science/article/abs/pii/S0142061519322859">Effective solar prosumer identification using net smart meter data</a>. International Journal of Electrical Power & Energy Systems
 Volume 118. 2020.
@@ -151,6 +155,9 @@ Katharina Dort. <a href="https://docs.belle2.org/record/1382/files/BELLE2-MTHESI
 </li>
 <li>
 Rahul Kumar. <a href="https://www.amazon.co.uk/Machine-Learning-Quick-Reference-Essential/dp/1788830571">Machine Learning Quick Reference: Quick and essential machine learning hacks for training smart data models</a>. Packt Publishing Ltd, 31 Jan 2019.
+</li>
+<li>
+Michaela Vystrčilova. <a href="https://dspace.cuni.cz/bitstream/handle/20.500.11956/108348/130257629.pdf?sequence=1">Similarity methods for music recommender systems</a>. Bachelor Thesis in Computer Science, Charles University, 2019.
 </li>
 <li>
 Felix M. Riese, Sina Keller. <a href="https://arxiv.org/pdf/1903.11114.pdf">SUSI: Supervised Self-Organizing Maps for Regression and Classification in Python</a>.
