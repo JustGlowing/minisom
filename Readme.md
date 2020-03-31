@@ -99,6 +99,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Hadleigh D. Thompson  Stephen J. Déry  Peter L. Jackson  Bernard E. Laval. <a href="https://rmets.onlinelibrary.wiley.com/doi/abs/10.1002/joc.6560">A synoptic climatology of potential seiche‐inducing winds in a large intermontane lake: Quesnel Lake, British Columbia, Canada</a>. International Journal of Climatology . 2020.
+</li>
+<li>
 Benyamin Motevalli, Baichuan Sun, Amanda S. Barnard. <a href="https://pubs.acs.org/doi/abs/10.1021/acs.jpcc.9b10615">Understanding and Predicting the Cause of Defects in Graphene Oxide Nanostructures Using Machine Learning</a>. The Journal of Physical Chemistry C. 2020.
 </li>
 <li>
