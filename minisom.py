@@ -94,6 +94,10 @@ def euclidean_distance(x, w):
     return linalg.norm(subtract(x, w), axis=-1)
 
 
+def manhattan_distance(x, w):
+    return linalg.norm(subtract(x, w), ord=1, axis=-1)
+
+
 class MiniSom(object):
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
                  decay_function=asymptotic_decay,
@@ -151,7 +155,7 @@ class MiniSom(object):
 
         activation_distance : string, option (default='euclidean')
             Distance used to activate the map.
-            Possible values: 'euclidean', 'cosine'
+            Possible values: 'euclidean', 'cosine', 'manhattan'
 
         random_seed : int, optional (default=None)
             Random seed to use.
@@ -192,7 +196,8 @@ class MiniSom(object):
         self.neighborhood = neig_functions[neighborhood_function]
 
         distance_functions = {'euclidean': euclidean_distance,
-                              'cosine': cosine_distance}
+                              'cosine': cosine_distance,
+                              'manhattan': manhattan_distance}
 
         if activation_distance not in distance_functions:
             msg = '%s not supported. Distances available: %s'
@@ -527,6 +532,13 @@ class TestMinisom(unittest.TestCase):
         d = cosine_distance(x, w)
         assert_array_almost_equal(d, [[1., 1.],
                                       [1., 1.]])
+
+    def test_manhattan_distance(self):
+        x = zeros((1, 2))
+        w = ones((2, 2, 2))
+        d = manhattan_distance(x, w)
+        assert_array_almost_equal(d, [[2., 2.],
+                                      [2., 2.]])
 
     def test_check_input_len(self):
         with self.assertRaises(ValueError):
