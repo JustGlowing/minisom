@@ -1,9 +1,9 @@
 from math import sqrt
 
 from numpy import (array, unravel_index, nditer, linalg, random, subtract,
-                   power, exp, pi, zeros, arange, outer, meshgrid, dot,
+                   power, exp, pi, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
-                   einsum, prod, nan, sqrt, hstack, diff, argmin)
+                   einsum, prod, nan, sqrt, hstack, diff, argmin, multiply)
 from numpy import sum as npsum
 from numpy.linalg import norm
 from collections import defaultdict, Counter
@@ -84,10 +84,21 @@ def asymptotic_decay(learning_rate, t, max_iter):
     return learning_rate / (1+t/(max_iter/2))
 
 
+def cosine_distance(x, w):
+    num = (w * x).sum(axis=2)
+    denum = multiply(linalg.norm(w, axis=2), linalg.norm(x))
+    return 1 - num / (denum+1e-8)
+
+
+def euclidean_distance(x, w):
+    return linalg.norm(subtract(x, w), axis=-1)
+
+
 class MiniSom(object):
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
                  decay_function=asymptotic_decay,
-                 neighborhood_function='gaussian', random_seed=None):
+                 neighborhood_function='gaussian',
+                 activation_distance='euclidean', random_seed=None):
         """Initializes a Self Organizing Maps.
 
         A rule of thumb to set the size of the grid for a dimensionality
@@ -134,9 +145,13 @@ class MiniSom(object):
             Note that if a lambda function is used to define the decay
             MiniSom will not be pickable anymore.
 
-        neighborhood_function : function, optional (default='gaussian')
-            Function that weights the neighborhood of a position in the map
-            possible values: 'gaussian', 'mexican_hat', 'bubble', 'triangle'
+        neighborhood_function : string, optional (default='gaussian')
+            Function that weights the neighborhood of a position in the map.
+            Possible values: 'gaussian', 'mexican_hat', 'bubble', 'triangle'
+
+        activation_distance : string, option (default='euclidean')
+            Distance used to activate the map.
+            Possible values: 'euclidean', 'cosine'
 
         random_seed : int, optional (default=None)
             Random seed to use.
@@ -176,6 +191,16 @@ class MiniSom(object):
 
         self.neighborhood = neig_functions[neighborhood_function]
 
+        distance_functions = {'euclidean': euclidean_distance,
+                              'cosine': cosine_distance}
+
+        if activation_distance not in distance_functions:
+            msg = '%s not supported. Distances available: %s'
+            raise ValueError(msg % (activation_distance,
+                                    ', '.join(distance_functions.keys())))
+
+        self._activation_distance = distance_functions[activation_distance]
+
     def get_weights(self):
         """Returns the weights of the neural network."""
         return self._weights
@@ -183,8 +208,7 @@ class MiniSom(object):
     def _activate(self, x):
         """Updates matrix activation_map, in this matrix
            the element i,j is the response of the neuron i,j to x."""
-        s = subtract(x, self._weights)  # x - w
-        self._activation_map = linalg.norm(s, axis=-1)
+        self._activation_map = self._activation_distance(x, self._weights)
 
     def activate(self, x):
         """Returns the activation map to x."""
@@ -414,7 +438,6 @@ class MiniSom(object):
         """Returns the quantization error computed as the average
         distance between each input sample and its best matching unit."""
         self._check_input_len(data)
-        #return power((self.quantization(data) - data), 2).mean()
         return norm(data-self.quantization(data), axis=1).mean()
 
     def topographic_error(self, data):
@@ -491,6 +514,20 @@ class TestMinisom(unittest.TestCase):
     def test_fast_norm(self):
         assert fast_norm(array([1, 3])) == sqrt(1+9)
 
+    def test_euclidean_distance(self):
+        x = zeros((1, 2))
+        w = ones((2, 2, 2))
+        d = euclidean_distance(x, w)
+        assert_array_almost_equal(d, [[1.41421356, 1.41421356],
+                                      [1.41421356, 1.41421356]])
+
+    def test_cosine_distance(self):
+        x = zeros((1, 2))
+        w = ones((2, 2, 2))
+        d = cosine_distance(x, w)
+        assert_array_almost_equal(d, [[1., 1.],
+                                      [1., 1.]])
+
     def test_check_input_len(self):
         with self.assertRaises(ValueError):
             self.som.train_batch([[1, 2]], 1)
@@ -507,6 +544,10 @@ class TestMinisom(unittest.TestCase):
     def test_unavailable_neigh_function(self):
         with self.assertRaises(ValueError):
             MiniSom(5, 5, 1, neighborhood_function='boooom')
+
+    def test_unavailable_distance_function(self):
+        with self.assertRaises(ValueError):
+            MiniSom(5, 5, 1, activation_distance='ridethewave')
 
     def test_gaussian(self):
         bell = self.som._gaussian((2, 2), 1)
