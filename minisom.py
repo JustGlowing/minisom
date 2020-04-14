@@ -84,20 +84,6 @@ def asymptotic_decay(learning_rate, t, max_iter):
     return learning_rate / (1+t/(max_iter/2))
 
 
-def cosine_distance(x, w):
-    num = (w * x).sum(axis=2)
-    denum = multiply(linalg.norm(w, axis=2), linalg.norm(x))
-    return 1 - num / (denum+1e-8)
-
-
-def euclidean_distance(x, w):
-    return linalg.norm(subtract(x, w), axis=-1)
-
-
-def manhattan_distance(x, w):
-    return linalg.norm(subtract(x, w), ord=1, axis=-1)
-
-
 class MiniSom(object):
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
                  decay_function=asymptotic_decay,
@@ -195,9 +181,9 @@ class MiniSom(object):
 
         self.neighborhood = neig_functions[neighborhood_function]
 
-        distance_functions = {'euclidean': euclidean_distance,
-                              'cosine': cosine_distance,
-                              'manhattan': manhattan_distance}
+        distance_functions = {'euclidean': self._euclidean_distance,
+                              'cosine': self._cosine_distance,
+                              'manhattan': self._manhattan_distance}
 
         if activation_distance not in distance_functions:
             msg = '%s not supported. Distances available: %s'
@@ -251,6 +237,17 @@ class MiniSom(object):
         triangle_x[triangle_x < 0] = 0.
         triangle_y[triangle_y < 0] = 0.
         return outer(triangle_x, triangle_y)
+
+    def _cosine_distance(self, x, w):
+        num = (w * x).sum(axis=2)
+        denum = multiply(linalg.norm(w, axis=2), linalg.norm(x))
+        return 1 - num / (denum+1e-8)
+
+    def _euclidean_distance(self, x, w):
+        return linalg.norm(subtract(x, w), axis=-1)
+
+    def _manhattan_distance(self, x, w):
+        return linalg.norm(subtract(x, w), ord=1, axis=-1)
 
     def _check_iteration_number(self, num_iteration):
         if num_iteration < 1:
@@ -402,7 +399,8 @@ class MiniSom(object):
     def distance_map(self):
         """Returns the distance map of the weights.
         Each cell is the normalised sum of the distances between
-        a neuron and its neighbours."""
+        a neuron and its neighbours. Note that this method uses
+        the euclidean distance."""
         um = zeros((self._weights.shape[0], self._weights.shape[1]))
         it = nditer(um, flags=['multi_index'])
         while not it.finished:
@@ -522,21 +520,21 @@ class TestMinisom(unittest.TestCase):
     def test_euclidean_distance(self):
         x = zeros((1, 2))
         w = ones((2, 2, 2))
-        d = euclidean_distance(x, w)
+        d = self.som._euclidean_distance(x, w)
         assert_array_almost_equal(d, [[1.41421356, 1.41421356],
                                       [1.41421356, 1.41421356]])
 
     def test_cosine_distance(self):
         x = zeros((1, 2))
         w = ones((2, 2, 2))
-        d = cosine_distance(x, w)
+        d = self.som._cosine_distance(x, w)
         assert_array_almost_equal(d, [[1., 1.],
                                       [1., 1.]])
 
     def test_manhattan_distance(self):
         x = zeros((1, 2))
         w = ones((2, 2, 2))
-        d = manhattan_distance(x, w)
+        d = self.som._manhattan_distance(x, w)
         assert_array_almost_equal(d, [[2., 2.],
                                       [2., 2.]])
 
