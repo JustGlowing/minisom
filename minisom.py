@@ -358,9 +358,9 @@ class MiniSom(object):
         for t, iteration in enumerate(iterations):
             self.update(data[iteration], self.winner(data[iteration]),
                         t, num_iteration)
-        if verbose:
-            print('\n quantization error:', self.quantization_error(data))
-            print(' topographic error:', self.topographic_error(data))
+            if verbose:
+              print('\n quantization error:', self.quantization_error(data))
+              print(' topographic error:', self.topographic_error(data))
 
     def train_random(self, data, num_iteration, verbose=False):
         """Trains the SOM picking samples at random from data.
