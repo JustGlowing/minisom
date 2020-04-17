@@ -166,6 +166,9 @@ Michaela Vystrčilova. <a href="https://dspace.cuni.cz/bitstream/handle/20.500.
 Felix M. Riese, Sina Keller. <a href="https://arxiv.org/pdf/1903.11114.pdf">SUSI: Supervised Self-Organizing Maps for Regression and Classification in Python</a>.
 </li>
 <li>
+Y. Xie, L.Le, Y. Zhou, V. V. Raghavan <a href="https://books.google.co.uk/books?id=gRJrDwAAQBAJ&pg">Deep Learning for Natural Language Processing</a>. Chapter of Computational Analysis and Understanding Natural Languages, Elsevier, 2018
+</li>
+<li>
 Enea Mele, Charalambos Elias, Aphrodite Ktena. <a href="https://ieeexplore.ieee.org/abstract/document/8659866">Electricity use profiling and forecasting at microgrid level</a>. IEEE 59th International Scientific Conference on Power and Electrical Engineering of Riga Technical University (RTUCON), 2018.
 </li>
 <li>
