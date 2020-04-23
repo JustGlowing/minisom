@@ -87,7 +87,7 @@ def asymptotic_decay(learning_rate, t, max_iter):
 class MiniSom(object):
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
                  decay_function=asymptotic_decay,
-                 neighborhood_function='gaussian',
+                 neighborhood_function='gaussian', topology='rectangular',
                  activation_distance='euclidean', random_seed=None):
         """Initializes a Self Organizing Maps.
 
@@ -139,7 +139,11 @@ class MiniSom(object):
             Function that weights the neighborhood of a position in the map.
             Possible values: 'gaussian', 'mexican_hat', 'bubble', 'triangle'
 
-        activation_distance : string, option (default='euclidean')
+        topology : string, optional (default='rectangular')
+            Topology of the map.
+            Possible values: 'euclidean', 'hexagonal'
+
+        activation_distance : string, optional (default='euclidean')
             Distance used to activate the map.
             Possible values: 'euclidean', 'cosine', 'manhattan'
 
@@ -161,6 +165,20 @@ class MiniSom(object):
         self._activation_map = zeros((x, y))
         self._neigx = arange(x)
         self._neigy = arange(y)  # used to evaluate the neighborhood function
+
+        if topology not in ['hexagonal', 'rectangular']:
+            msg = '%s not supported only hexagonal and rectangular available'
+            raise ValueError(msg % topology)
+        self.topology = topology
+        self._xx, self._yy = meshgrid(self._neigx, self._neigy)
+        self._xx = self._xx.astype(float)
+        self._yy = self._yy.astype(float)
+        if topology == 'hexagonal':
+            self._xx[::-2] -= 0.5
+            if neighborhood_function in ['triangle']:
+                warn('triangle neighborhood function does not ' +
+                     'take in account hexagonal topology')
+
         self._decay_function = decay_function
 
         neig_functions = {'gaussian': self._gaussian,
@@ -196,6 +214,24 @@ class MiniSom(object):
         """Returns the weights of the neural network."""
         return self._weights
 
+    def get_euclidean_coordinates(self):
+        """Returns the position of the neurons on an euclidean
+        plane that reflects the chosen topology in two meshgrids xx and yy.
+        Neuron with map coordinates (1, 4) has coordinate (xx[1, 4], yy[1, 4])
+        in the euclidean plane.
+
+        Only useful if the topology chosen is not rectangular.
+        """
+        return self._xx.T, self._yy.T
+
+    def convert_map_to_euclidean(self, xy):
+        """Converts map coordinates into euclidean coordinates
+        that reflects the chosen topology.
+
+        Only useful if the topology chosen is not rectangular.
+        """
+        return self._xx.T[xy], self._yy.T[xy]
+
     def _activate(self, x):
         """Updates matrix activation_map, in this matrix
            the element i,j is the response of the neuron i,j to x."""
@@ -209,14 +245,13 @@ class MiniSom(object):
     def _gaussian(self, c, sigma):
         """Returns a Gaussian centered in c."""
         d = 2*pi*sigma*sigma
-        ax = exp(-power(self._neigx-c[0], 2)/d)
-        ay = exp(-power(self._neigy-c[1], 2)/d)
-        return outer(ax, ay)  # the external product gives a matrix
+        ax = exp(-power(self._xx-c[0], 2)/d)
+        ay = exp(-power(self._yy-c[1], 2)/d)
+        return (ax * ay).T  # the external product gives a matrix
 
     def _mexican_hat(self, c, sigma):
         """Mexican hat centered in c."""
-        xx, yy = meshgrid(self._neigx, self._neigy)
-        p = power(xx-c[0], 2) + power(yy-c[1], 2)
+        p = power(self._xx-c[0], 2) + power(self._yy-c[1], 2)
         d = 2*pi*sigma*sigma
         return exp(-p/d)*(1-2/d*p)
 
@@ -360,7 +395,6 @@ class MiniSom(object):
                         t, num_iteration)
         if verbose:
             print('\n quantization error:', self.quantization_error(data))
-            print(' topographic error:', self.topographic_error(data))
 
     def train_random(self, data, num_iteration, verbose=False):
         """Trains the SOM picking samples at random from data.
@@ -401,19 +435,29 @@ class MiniSom(object):
         Each cell is the normalised sum of the distances between
         a neuron and its neighbours. Note that this method uses
         the euclidean distance."""
-        um = zeros((self._weights.shape[0], self._weights.shape[1]))
-        it = nditer(um, flags=['multi_index'])
-        while not it.finished:
-            for ii in range(it.multi_index[0]-1, it.multi_index[0]+2):
-                for jj in range(it.multi_index[1]-1, it.multi_index[1]+2):
-                    if (ii >= 0 and ii < self._weights.shape[0] and
-                            jj >= 0 and jj < self._weights.shape[1]):
-                        w_1 = self._weights[ii, jj, :]
-                        w_2 = self._weights[it.multi_index]
-                        um[it.multi_index] += fast_norm(w_1-w_2)
-            it.iternext()
-        um = um/um.max()
-        return um
+        um = zeros((self._weights.shape[0],
+                    self._weights.shape[1],
+                    8))  # 2 spots more for hexagonal topology
+
+        ii = [[0, -1, -1, -1, 0, 1, 1, 1]]*2
+        jj = [[-1, -1, 0, 1, 1, 1, 0, -1]]*2
+
+        if self.topology == 'hexagonal':
+            ii = [[1, 1, 1, 0, -1, 0], [0, 1, 0, -1, -1, -1]]
+            jj = [[1, 0, -1, -1, 0, 1], [1, 0, -1, -1, 0, 1]]
+
+        for x in range(self._weights.shape[0]):
+            for y in range(self._weights.shape[1]):
+                w_2 = self._weights[x, y]
+                e = y % 2 == 0   # only used on hexagonal topology
+                for k, (i, j) in enumerate(zip(ii[e], jj[e])):
+                    if (x+i >= 0 and x+i < self._weights.shape[0] and
+                            y+j >= 0 and y+j < self._weights.shape[1]):
+                        w_1 = self._weights[x+i, y+j]
+                        um[x, y, k] = fast_norm(w_2-w_1)
+
+        um = um.sum(axis=2)
+        return um/um.max()
 
     def activation_response(self, data):
         """
@@ -455,17 +499,22 @@ class MiniSom(object):
         If the topographic error is 0, no error occurred.
         If 1, the topology was not preserved for any of the samples."""
         self._check_input_len(data)
+        if self.topology == 'hexagonal':
+            msg = 'Topographic error not implemented for hexagonal topology.'
+            raise NotImplementedError(msg)
         total_neurons = prod(self._activation_map.shape)
         if total_neurons == 1:
             warn('The topographic error is not defined for a 1-by-1 map.')
             return nan
+
+        t = 1.42
         # b2mu: best 2 matching units
         b2mu_inds = argsort(self._distance_from_weights(data), axis=1)[:, :2]
         b2my_xy = unravel_index(b2mu_inds, self._weights.shape[:2])
         b2mu_x, b2mu_y = b2my_xy[0], b2my_xy[1]
         dxdy = hstack([diff(b2mu_x), diff(b2mu_y)])
         distance = norm(dxdy, axis=1)
-        return (distance > 1.42).mean()
+        return (distance > t).mean()
 
     def win_map(self, data):
         """Returns a dictionary wm where wm[(i,j)] is a list
@@ -622,6 +671,11 @@ class TestMinisom(unittest.TestCase):
         assert self.som.topographic_error([[5]]) == 0.0
         assert self.som.topographic_error([[15]]) == 1.0
 
+        self.som.topology = 'hexagonal'
+        with self.assertRaises(NotImplementedError):
+            assert self.som.topographic_error([[5]]) == 0.0
+        self.som.topology = 'rectangular'
+
     def test_quantization(self):
         q = self.som.quantization(array([[4], [2]]))
         assert q[0] == 5.0
@@ -681,6 +735,10 @@ class TestMinisom(unittest.TestCase):
         som = MiniSom(2, 2, 2, random_seed=1)
         som._weights = array([[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]])
         assert_array_equal(som.distance_map(), array([[1., 1.], [1., 1.]]))
+
+        som = MiniSom(2, 2, 2, topology='hexagonal', random_seed=1)
+        som._weights = array([[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]])
+        assert_array_equal(som.distance_map(), array([[.5, 1.], [1., .5]]))
 
     def test_pickling(self):
         with open('som.p', 'wb') as outfile:
