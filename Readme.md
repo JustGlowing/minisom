@@ -82,7 +82,7 @@ Here are some of the charts you'll see how to generate in the examples:
 | | |
 :-------------------------:|:-------------------------:
 Iris map ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_iris.png)  | Class assignment ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_iris_pies.png)
-Handwritteng digits mapping ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_digts.png)  |  Images mapping <img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_digts_imgs.png" alt="handwritten digitts recognition" width=450>
+Handwritteng digits mapping ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_digts.png)  |  Hexagonal Topology <img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_iris_hex.png" alt="som hexagonal toplogy" width=450>
 Color quantization ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_color_quantization.png)  |  Outliers detection ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_outliers_detection_circle.png)
 
 Other tutorials
