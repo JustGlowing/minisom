@@ -34,17 +34,19 @@ data = [[ 0.80,  0.55,  0.22,  0.03],
         [ 0.77,  0.59,  0.22,  0.03]]      
 ```
 
- Then you can run MiniSom just as follows:
+ Then you can train MiniSom just as follows:
 
 ```python
 from minisom import MiniSom    
 som = MiniSom(6, 6, 4, sigma=0.3, learning_rate=0.5) # initialization of 6x6 SOM
-som.train_random(data, 100) # trains the SOM with 100 iterations
+som.train(data, 100) # trains the SOM with 100 iterations
 ```
 
-MiniSom implements two types of training. The random training (implemented by the method `train_random`), where the model is trained picking random samples from your data, and the batch training (implemented by the method `train_batch`), where the samples are picked in the order they are stored.
+and obtain the position of each data sample on the map as follows:
 
-The weights of the network are randomly initialized by default. Two additional methods are provided to initialize the weights in a data driven fashion: `random_weights_init` and `pca_weights_init`.
+```
+som.winner(data)
+```
 
 ### Using the trained SOM
 
