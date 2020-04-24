@@ -48,8 +48,6 @@ and obtain the position of each data sample on the map as follows:
 som.winner(data)
 ```
 
-### Using the trained SOM
-
 For an overview of all the features implemented in minisom you can browse the following examples: https://github.com/JustGlowing/minisom/tree/master/examples
 
 #### Export a SOM and load it again
