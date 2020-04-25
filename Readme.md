@@ -45,7 +45,7 @@ som.train(data, 100) # trains the SOM with 100 iterations
 and obtain the position of each data sample on the map as follows:
 
 ```
-som.winner(data)
+som.winner(data[0])
 ```
 
 For an overview of all the features implemented in minisom you can browse the following examples: https://github.com/JustGlowing/minisom/tree/master/examples
