@@ -42,7 +42,7 @@ som = MiniSom(6, 6, 4, sigma=0.3, learning_rate=0.5) # initialization of 6x6 SOM
 som.train(data, 100) # trains the SOM with 100 iterations
 ```
 
-and obtain the position of each data sample on the map as follows:
+You can obtain the position of the winning neuron on the map for a given sample as follows:
 
 ```
 som.winner(data[0])
