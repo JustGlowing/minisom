@@ -99,6 +99,13 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Jorge Amaya, Romain Dupuis, Maria Elena Innocenti, and Giovanni Lapenta. <a href="https://arxiv.org/pdf/2004.13430.pdf">Visualizing and Interpreting Unsupervised Solar Wind
+Classifications</a>. Frontiers in Astronomy and Space Sciences Space Physics. 2020.
+</li>
+<li>
+Odestål, Oscar and Palmqvist Sjövall, Anna. <a href="https://lup.lub.lu.se/student-papers/search/publication/9007379">Adaptive Reference Images for Blood Cells using Variational Autoencoders and Self-Organizing Maps</a>. Master Thesis, Lund University. 2020.
+</li>
+<li>
 Hadleigh D. Thompson  Stephen J. Déry  Peter L. Jackson  Bernard E. Laval. <a href="https://rmets.onlinelibrary.wiley.com/doi/abs/10.1002/joc.6560">A synoptic climatology of potential seiche‐inducing winds in a large intermontane lake: Quesnel Lake, British Columbia, Canada</a>. International Journal of Climatology. 2020.
 </li>
 <li>
