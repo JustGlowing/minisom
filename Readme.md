@@ -103,6 +103,9 @@ Jorge Amaya, Romain Dupuis, Maria Elena Innocenti, and Giovanni Lapenta. <a href
 Classifications</a>. Frontiers in Astronomy and Space Sciences Space Physics. 2020.
 </li>
 <li>
+Sandipan Dey. <a href="https://www.amazon.com/Python-Image-Processing-Cookbook-processing-ebook/dp/B084ZN7Y5F">Python Image Processing Cookbook: Over 60 recipes to help you perform complex image processing and computer vision tasks with ease</a>. Packt Publishing Ltd, April 2020.
+</li>
+<li>
 Odestål, Oscar and Palmqvist Sjövall, Anna. <a href="https://lup.lub.lu.se/student-papers/search/publication/9007379">Adaptive Reference Images for Blood Cells using Variational Autoencoders and Self-Organizing Maps</a>. Master Thesis, Lund University. 2020.
 </li>
 <li>
