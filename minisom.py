@@ -141,7 +141,7 @@ class MiniSom(object):
 
         topology : string, optional (default='rectangular')
             Topology of the map.
-            Possible values: 'euclidean', 'hexagonal'
+            Possible values: 'rectangular', 'hexagonal'
 
         activation_distance : string, optional (default='euclidean')
             Distance used to activate the map.
