@@ -99,8 +99,10 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
-Jorge Amaya, Romain Dupuis, Maria Elena Innocenti, and Giovanni Lapenta. <a href="https://arxiv.org/pdf/2004.13430.pdf">Visualizing and Interpreting Unsupervised Solar Wind
-Classifications</a>. Frontiers in Astronomy and Space Sciences Space Physics. 2020.
+Gennadi Lessin, Luca Polimene, Yuri Artioli, Momme Butenschön, Darren R. Clark, Ian Brown, Andrew P. Rees. <a href="https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2019JG005613">Modeling the seasonality and controls of nitrous oxide emissions on the northwest European continental shelf</a>. Journal of Geophysical Research: Biogeosciences. 2020.
+</li>
+<li>
+Jorge Amaya, Romain Dupuis, Maria Elena Innocenti, and Giovanni Lapenta. <a href="https://arxiv.org/pdf/2004.13430.pdf">Visualizing and Interpreting Unsupervised Solar Wind Classifications</a>. Frontiers in Astronomy and Space Sciences Space Physics. 2020.
 </li>
 <li>
 Sandipan Dey. <a href="https://www.amazon.com/Python-Image-Processing-Cookbook-processing-ebook/dp/B084ZN7Y5F">Python Image Processing Cookbook: Over 60 recipes to help you perform complex image processing and computer vision tasks with ease</a>. Packt Publishing Ltd, April 2020.
