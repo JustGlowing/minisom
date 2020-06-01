@@ -128,6 +128,9 @@ Pauli Tikka, Moritz Mercker, Ilya Skovorodkin, Ulla Saarela, Seppo Vainio, Veli-
 Felix M. Riese, Sina Keller, Stefan Hinz. <a href="https://www.mdpi.com/2072-4292/12/1/7/pdf">Supervised and Semi-Supervised Self-Organizing Maps for Regression and Classification Focusing on Hyperspectral Data</a>. Remote Sensing, special Issue Advanced Machine Learning Approaches for Hyperspectral Data Analysis. 2020.
 </li>    
 <li>
+Rohana, N. A., Yusof, N., Uti, M. N., and Din, A. H. M. <a href="https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.net/XLII-4-W16/543/2019/">Exploring spatio-temporal wave pattern using unsupervised technique</a>. Int. Arch. Photogramm. Remote Sens. Spatial Inf. Sci., XLII-4/W16, 543–548. 2019.    
+</li>
+<li>
 Ujjawal Kamal Panchal, Sanjay Verma. <a href="https://ieeexplore.ieee.org/abstract/document/8944605">Identification of Potential Future Credit Card Defaulters from Non Defaulters using Self Organizing Maps</a>. 10th International Conference on Computing, Communication and Networking Technologies (ICCCNT). 2019.    
 </li>
 <li>
