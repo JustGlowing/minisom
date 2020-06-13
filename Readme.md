@@ -100,6 +100,12 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Ko, Ili, Desmond Chambers, and Enda Barrett. <a href="https://arxiv.org/pdf/2003.10454">Feature dynamic deep learning approach for DDoS mitigation within the ISP domain</a>. International Journal of Information Security. 2020.
+</li>
+<li>
+Wesam Salah Alaloul and Abdul Hannan Qureshi. <a href="https://www.intechopen.com/online-first/data-processing-using-artificial-neural-networks">MData Processing Using Artificial Neural Networks</a>. In Dynamic Data Assimilation-Beating the Uncertainties. IntechOpen, 2020.
+</li>
+<li>
 Gennadi Lessin, Luca Polimene, Yuri Artioli, Momme Butenschön, Darren R. Clark, Ian Brown, Andrew P. Rees. <a href="https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2019JG005613">Modeling the seasonality and controls of nitrous oxide emissions on the northwest European continental shelf</a>. Journal of Geophysical Research: Biogeosciences. 2020.
 </li>
 <li>
