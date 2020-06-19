@@ -143,6 +143,9 @@ Silva, Roberto F., Gustavo M. Mostaço, Fernando Xavier, Antonio Mauro Saraiva, 
 Rohana, N. A., Yusof, N., Uti, M. N., and Din, A. H. M. <a href="https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.net/XLII-4-W16/543/2019/">Exploring spatio-temporal wave pattern using unsupervised technique</a>. Int. Arch. Photogramm. Remote Sens. Spatial Inf. Sci., XLII-4/W16, 543–548. 2019.    
 </li>
 <li>
+Nguyen, Thanh Hai. <a href="https://link.springer.com/chapter/10.1007/978-3-030-35653-8_20">Metagenome-Based Disease Classification with Deep Learning and Visualizations Based on Self-organizing Maps</a>. International Conference on Future Data and Security Engineering. Springer, Cham, 2019.
+</li>
+<li>
 Ujjawal Kamal Panchal, Sanjay Verma. <a href="https://ieeexplore.ieee.org/abstract/document/8944605">Identification of Potential Future Credit Card Defaulters from Non Defaulters using Self Organizing Maps</a>. 10th International Conference on Computing, Communication and Networking Technologies (ICCCNT). 2019.    
 </li>
 <li>
