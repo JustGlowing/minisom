@@ -132,7 +132,13 @@ Pauli Tikka, Moritz Mercker, Ilya Skovorodkin, Ulla Saarela, Seppo Vainio, Veli-
 </li>    
 <li>
 Felix M. Riese, Sina Keller, Stefan Hinz. <a href="https://www.mdpi.com/2072-4292/12/1/7/pdf">Supervised and Semi-Supervised Self-Organizing Maps for Regression and Classification Focusing on Hyperspectral Data</a>. Remote Sensing, special Issue Advanced Machine Learning Approaches for Hyperspectral Data Analysis. 2020.
-</li>    
+</li>
+<li>
+Silva, Roberto F., Gustavo M. Mostaço, Fernando Xavier, Antonio Mauro Saraiva, and Carlos E. Cugnasca. <a href="https://efita-org.eu/wp-content/uploads/2020/02/24.-efita7.pdf">COMPARISON OF THE K-MEANS AND SELF-ORGANIZING MAPS TECHNIQUES TO LABEL AGRICULTURAL SUPPLY CHAIN DATA</a>. Digitizing Agriculture, 12th EFITA International Conference. 2019.
+</li>
+<li>
+Üstünkök, Tolga, Ozan Can Acar, and Murat Karakaya. <a href="https://ieeexplore.ieee.org/abstract/document/8965477/">Image Tag Refinement with Self Organizing Maps.</a>. 2019 1st International Informatics and Software Engineering Conference (UBMYK). IEEE, 2019.
+</li>
 <li>
 Rohana, N. A., Yusof, N., Uti, M. N., and Din, A. H. M. <a href="https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.net/XLII-4-W16/543/2019/">Exploring spatio-temporal wave pattern using unsupervised technique</a>. Int. Arch. Photogramm. Remote Sens. Spatial Inf. Sci., XLII-4/W16, 543–548. 2019.    
 </li>
