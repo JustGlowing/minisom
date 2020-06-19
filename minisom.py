@@ -1,6 +1,6 @@
 from math import sqrt
 
-from numpy import (array, unravel_index, nditer, linalg, random, subtract,
+from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, pi, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply)
@@ -145,7 +145,7 @@ class MiniSom(object):
 
         activation_distance : string, optional (default='euclidean')
             Distance used to activate the map.
-            Possible values: 'euclidean', 'cosine', 'manhattan'
+            Possible values: 'euclidean', 'cosine', 'manhattan', 'chebyshev'
 
         random_seed : int, optional (default=None)
             Random seed to use.
@@ -201,7 +201,8 @@ class MiniSom(object):
 
         distance_functions = {'euclidean': self._euclidean_distance,
                               'cosine': self._cosine_distance,
-                              'manhattan': self._manhattan_distance}
+                              'manhattan': self._manhattan_distance,
+                              'chebyshev': self._chebyshev_distance}
 
         if activation_distance not in distance_functions:
             msg = '%s not supported. Distances available: %s'
@@ -283,6 +284,9 @@ class MiniSom(object):
 
     def _manhattan_distance(self, x, w):
         return linalg.norm(subtract(x, w), ord=1, axis=-1)
+
+    def _chebyshev_distance(self, x, w):
+        return max(subtract(x, w), axis=-1)
 
     def _check_iteration_number(self, num_iteration):
         if num_iteration < 1:
@@ -584,6 +588,13 @@ class TestMinisom(unittest.TestCase):
         x = zeros((1, 2))
         w = ones((2, 2, 2))
         d = self.som._manhattan_distance(x, w)
+        assert_array_almost_equal(d, [[2., 2.],
+                                      [2., 2.]])
+
+    def test_chebyshev_distance(self):
+        x = array([1, 3])
+        w = ones((2, 2, 2))
+        d = self.som._chebyshev_distance(x, w)
         assert_array_almost_equal(d, [[2., 2.],
                                       [2., 2.]])
 
