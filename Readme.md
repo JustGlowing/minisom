@@ -94,10 +94,29 @@ Other tutorials
 - <a href="https://medium.com/neuronio/discovering-som-an-unsupervised-neural-network-12e787f38f9">Discovering SOM, an Unsupervised Neural Network</a> by Gisely Alves
 - Video tutorials made by the GeoEngineerings School: <a href="https://www.youtube.com/watch?v=3osKNPyAxPM&list=PL-i8do33HJovC7xFKaYO21qT37vORJWXC&index=11">Part 1</a>; <a href="https://www.youtube.com/watch?v=uUpQ6MITlVs&list=PL-i8do33HJovC7xFKaYO21qT37vORJWXC&index=12">Part 2</a>; <a href="https://www.youtube.com/watch?v=mryFU0TEInk&list=PL-i8do33HJovC7xFKaYO21qT37vORJWXC&index=13">Part 3</a>; <a href="https://www.youtube.com/watch?v=9MzFOIoxxdk&index=14&list=PL-i8do33HJovC7xFKaYO21qT37vORJWXC">Part 4</a>
 - Video tutorial <a href="https://www.youtube.com/watch?v=0qtvb_Nx2tA">Self Organizing Maps: Introduction</a> by SuperDataScience
+- <a href="http://docs.unigrafia.fi/publications/kohonen_teuvo/">MATLAB Implementations and Applications of the Self-Organizing Map</a> by Teuvo Kohonen (Inventor of SOM)
 
 Who uses Minisom?
 ------------
 <ul>
+<li>
+Ko, Ili, Desmond Chambers, and Enda Barrett. <a href="https://arxiv.org/pdf/2003.10454">Feature dynamic deep learning approach for DDoS mitigation within the ISP domain</a>. International Journal of Information Security. 2020.
+</li>
+<li>
+Wesam Salah Alaloul and Abdul Hannan Qureshi. <a href="https://www.intechopen.com/online-first/data-processing-using-artificial-neural-networks">MData Processing Using Artificial Neural Networks</a>. In Dynamic Data Assimilation-Beating the Uncertainties. IntechOpen, 2020.
+</li>
+<li>
+Gennadi Lessin, Luca Polimene, Yuri Artioli, Momme Butenschön, Darren R. Clark, Ian Brown, Andrew P. Rees. <a href="https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2019JG005613">Modeling the seasonality and controls of nitrous oxide emissions on the northwest European continental shelf</a>. Journal of Geophysical Research: Biogeosciences. 2020.
+</li>
+<li>
+Jorge Amaya, Romain Dupuis, Maria Elena Innocenti, and Giovanni Lapenta. <a href="https://arxiv.org/pdf/2004.13430.pdf">Visualizing and Interpreting Unsupervised Solar Wind Classifications</a>. Frontiers in Astronomy and Space Sciences Space Physics. 2020.
+</li>
+<li>
+Sandipan Dey. <a href="https://www.amazon.com/Python-Image-Processing-Cookbook-processing-ebook/dp/B084ZN7Y5F">Python Image Processing Cookbook: Over 60 recipes to help you perform complex image processing and computer vision tasks with ease</a>. Packt Publishing Ltd, April 2020.
+</li>
+<li>
+Odestål, Oscar and Palmqvist Sjövall, Anna. <a href="https://lup.lub.lu.se/student-papers/search/publication/9007379">Adaptive Reference Images for Blood Cells using Variational Autoencoders and Self-Organizing Maps</a>. Master Thesis, Lund University. 2020.
+</li>
 <li>
 Hadleigh D. Thompson  Stephen J. Déry  Peter L. Jackson  Bernard E. Laval. <a href="https://rmets.onlinelibrary.wiley.com/doi/abs/10.1002/joc.6560">A synoptic climatology of potential seiche‐inducing winds in a large intermontane lake: Quesnel Lake, British Columbia, Canada</a>. International Journal of Climatology. 2020.
 </li>
@@ -114,6 +133,9 @@ Pauli Tikka, Moritz Mercker, Ilya Skovorodkin, Ulla Saarela, Seppo Vainio, Veli-
 <li>
 Felix M. Riese, Sina Keller, Stefan Hinz. <a href="https://www.mdpi.com/2072-4292/12/1/7/pdf">Supervised and Semi-Supervised Self-Organizing Maps for Regression and Classification Focusing on Hyperspectral Data</a>. Remote Sensing, special Issue Advanced Machine Learning Approaches for Hyperspectral Data Analysis. 2020.
 </li>    
+<li>
+Rohana, N. A., Yusof, N., Uti, M. N., and Din, A. H. M. <a href="https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.net/XLII-4-W16/543/2019/">Exploring spatio-temporal wave pattern using unsupervised technique</a>. Int. Arch. Photogramm. Remote Sens. Spatial Inf. Sci., XLII-4/W16, 543–548. 2019.    
+</li>
 <li>
 Ujjawal Kamal Panchal, Sanjay Verma. <a href="https://ieeexplore.ieee.org/abstract/document/8944605">Identification of Potential Future Credit Card Defaulters from Non Defaulters using Self Organizing Maps</a>. 10th International Conference on Computing, Communication and Networking Technologies (ICCCNT). 2019.    
 </li>
@@ -241,7 +263,7 @@ Pages 192-193.</li>
 
 Compatibility notes
 ---------------------
-Minisom has been tested under Python 3.6.2.
+Minisom has been tested under Python 3.8.0.
 
 License
 ---------------------
