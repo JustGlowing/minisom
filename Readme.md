@@ -134,6 +134,9 @@ Pauli Tikka, Moritz Mercker, Ilya Skovorodkin, Ulla Saarela, Seppo Vainio, Veli-
 Felix M. Riese, Sina Keller, Stefan Hinz. <a href="https://www.mdpi.com/2072-4292/12/1/7/pdf">Supervised and Semi-Supervised Self-Organizing Maps for Regression and Classification Focusing on Hyperspectral Data</a>. Remote Sensing, special Issue Advanced Machine Learning Approaches for Hyperspectral Data Analysis. 2020.
 </li>
 <li>
+Giobergia, Flavio, and Elena Baralis. <a href="https://ieeexplore.ieee.org/abstract/document/9006055">Fast Self-Organizing Maps Training</a>. 2019 IEEE International Conference on Big Data (Big Data). IEEE, 2019.
+</li>
+<li>
 Silva, Roberto F., Gustavo M. Mostaço, Fernando Xavier, Antonio Mauro Saraiva, and Carlos E. Cugnasca. <a href="https://efita-org.eu/wp-content/uploads/2020/02/24.-efita7.pdf">COMPARISON OF THE K-MEANS AND SELF-ORGANIZING MAPS TECHNIQUES TO LABEL AGRICULTURAL SUPPLY CHAIN DATA</a>. Digitizing Agriculture, 12th EFITA International Conference. 2019.
 </li>
 <li>
@@ -195,6 +198,9 @@ Michaela Vystrčilova. <a href="https://dspace.cuni.cz/bitstream/handle/20.500.
 </li>
 <li>
 Felix M. Riese, Sina Keller. <a href="https://arxiv.org/pdf/1903.11114.pdf">SUSI: Supervised Self-Organizing Maps for Regression and Classification in Python</a>.
+</li>
+<li>
+Dogo, E. M., et al. <a href="https://ieeexplore.ieee.org/abstract/document/8769276/">Sensed Outlier Detection for Water Monitoring Data and a Comparative Analysis of Quantization Error Using Kohonen Self-Organizing Maps</a>. 2018 International Conference on Computational Techniques, Electronics and Mechanical Systems (CTEMS). IEEE, 2018.
 </li>
 <li>
 Y. Xie, L.Le, Y. Zhou, V. V. Raghavan. <a href="https://books.google.co.uk/books?id=gRJrDwAAQBAJ&pg">Deep Learning for Natural Language Processing</a>. Chapter of Computational Analysis and Understanding Natural Languages, Elsevier, 2018
