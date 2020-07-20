@@ -441,7 +441,7 @@ class MiniSom(object):
         the euclidean distance."""
         um = zeros((self._weights.shape[0],
                     self._weights.shape[1],
-                    8))  # 2 spots more for hexagonal topology
+                    8))  # 2 spots more for hexagonal grology
 
         ii = [[0, -1, -1, -1, 0, 1, 1, 1]]*2
         jj = [[-1, -1, 0, 1, 1, 1, 0, -1]]*2
@@ -496,7 +496,7 @@ class MiniSom(object):
         the best-matching and second-best-matching neuron in the map
         for each input and then evaluating the positions.
 
-        A sample for which these two nodes are not ajacent conunts as
+        A sample for which these two nodes are not adjacent counts as
         an error. The topographic error is given by the
         the total number of errors divided by the total of samples.
 
