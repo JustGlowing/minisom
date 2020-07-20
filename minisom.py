@@ -441,7 +441,7 @@ class MiniSom(object):
         the euclidean distance."""
         um = zeros((self._weights.shape[0],
                     self._weights.shape[1],
-                    8))  # 2 spots more for hexagonal grology
+                    8))  # 2 spots more for hexagonal topology
 
         ii = [[0, -1, -1, -1, 0, 1, 1, 1]]*2
         jj = [[-1, -1, 0, 1, 1, 1, 0, -1]]*2
