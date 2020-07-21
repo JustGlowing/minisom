@@ -100,6 +100,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Massaro, Alessandro, Giuseppe Mastandrea, Luigi D'Oriano, Giuseppe Rocco Rana, Nicola Savino, and Angelo Galiano. <a href="https://ieeexplore.ieee.org/abstract/document/9138231">Systems for an intelligent application of Automated Processes in industry: a case study from “PMI IoT Industry 4.0” project</a>. 2020 IEEE International Workshop on Metrology for Industry 4.0 & IoT. 2020.
+</li>
+<li>
 Ko, Ili, Desmond Chambers, and Enda Barrett. <a href="https://arxiv.org/pdf/2003.10454">Feature dynamic deep learning approach for DDoS mitigation within the ISP domain</a>. International Journal of Information Security. 2020.
 </li>
 <li>

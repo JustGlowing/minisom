@@ -496,7 +496,7 @@ class MiniSom(object):
         the best-matching and second-best-matching neuron in the map
         for each input and then evaluating the positions.
 
-        A sample for which these two nodes are not ajacent conunts as
+        A sample for which these two nodes are not adjacent counts as
         an error. The topographic error is given by the
         the total number of errors divided by the total of samples.
 
