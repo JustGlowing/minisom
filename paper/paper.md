@@ -31,7 +31,7 @@ SOM are a well known type of Neural Network [kohonen1990self:1990]. Since its fi
 
 `Minisom` has already been currently cited by more than 50 documents including academic papers and theses. It has been used in many typcal Machine Learning applications, as time series modelling [@fortuin2018som:2018] and text mining [@makiyama2015text:2015]. And it has also been using in other fields as Geophysics [@lessin2020modeling:2020] and Climatology [@thompson2020synoptic:2020]. The paper was originally developed while developing on a methodology to embed structured data into vectorial spaces [@vettigli2017fuzzy:2017].
 
-The documentation of `MiniSom` shows how it can be used in combination with more general MAchine Learning framework `scikit-learn` [pedregosa2011scikit@2011]. Also, `MiniSom` has been used for the creation of teaching materials on Machine Learning. See [@author:2001] for an example of didactic material made using `MiniSom`.
+The documentation of `MiniSom` shows how it can be used in combination with more general MAchine Learning framework `scikit-learn` [@pedregosa2011scikit]. Also, `MiniSom` has been used for the creation of teaching materials on Machine Learning. See [@author:2001] for an example of didactic material made using `MiniSom`.
 
 
 # References
