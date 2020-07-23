@@ -12,8 +12,7 @@ authors:
 affiliations:
  - name: Centrica
    index: 1
- - name: Institute of Applied Sciences and Intelligent Systems “Eduardo Caianiello” of the
-Italian National Research Council
+ - name: Institute of Applied Sciences and Intelligent Systems “Eduardo Caianiello” of the Italian National Research Council
    index: 2
 date: 23 July 2020
 bibliography: paper.bib
