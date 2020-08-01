@@ -96,6 +96,16 @@ Other tutorials
 - Video tutorial <a href="https://www.youtube.com/watch?v=0qtvb_Nx2tA">Self Organizing Maps: Introduction</a> by SuperDataScience
 - <a href="http://docs.unigrafia.fi/publications/kohonen_teuvo/">MATLAB Implementations and Applications of the Self-Organizing Map</a> by Teuvo Kohonen (Inventor of SOM)
 
+How to cite MiniSom
+------------
+```
+@misc{vettigliminisom,
+  title={MiniSom: minimalistic and NumPy-based implementation of the Self Organizing Map},
+  author={Giuseppe Vettigli},
+  note={GitHub.[Online]. Available: https://github.com/JustGlowing/minisom/},
+}
+```
+
 Who uses Minisom?
 ------------
 <ul>
