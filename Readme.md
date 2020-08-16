@@ -110,7 +110,7 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
-Schillaci G, Ciria A, Lara B. <a href="https://arxiv.org/pdf/2007.14632.pdf">Tracking Emotions: Intrinsic Motivation Grounded on Multi-Level Prediction Error Dynamics. IEEE ICDL-Epirob 2020. 2020.
+Schillaci G, Ciria A, Lara B. <a href="https://arxiv.org/pdf/2007.14632.pdf">Tracking Emotions: Intrinsic Motivation Grounded on Multi-Level Prediction Error Dynamics</a>. IEEE ICDL-Epirob 2020. 2020.
 </li>
 <li>
 Massaro, Alessandro, Giuseppe Mastandrea, Luigi D'Oriano, Giuseppe Rocco Rana, Nicola Savino, and Angelo Galiano. <a href="https://ieeexplore.ieee.org/abstract/document/9138231">Systems for an intelligent application of Automated Processes in industry: a case study from “PMI IoT Industry 4.0” project</a>. 2020 IEEE International Workshop on Metrology for Industry 4.0 & IoT. 2020.
