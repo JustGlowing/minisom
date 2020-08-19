@@ -189,6 +189,9 @@ I Ko, D Chambers, E Barrett . <a href="http://ceur-ws.org/Vol-2421/MEX-A3T_paper
 Leonardo Barreto, Edjard Mota. <a href="https://arxiv.org/abs/1906.06761">Self-organized inductive reasoning with NeMuS</a>. June 2019.
 </li>
 <li>
+Casavantes, Marco, Roberto López, Luis Carlos González-Gurrola, and Manuel Montes-y-Gómez. <a href="http://ceur-ws.org/Vol-2517/T3-16.pdf">UACh-INAOE at HASOC 2019: Detecting Aggressive Tweets by Incorporating Authors' Traits as Descriptors</a>. In FIRE (Working Notes). 2019.
+</li>
+<li>
 Marco Casavantes, Roberto Lopez, and Luis Carlos Gonzalez. <a href="http://ceur-ws.org/Vol-2421/MEX-A3T_paper_8.pdf">UACh at MEX-A3T 2019: Preliminary Results on Detecting Aggressive Tweets by Adding Author Information Via an Unsupervised Strategy</a>. Proceedings of the Iberian Languages Evaluation Forum (IberLEF 2019), 2019.
 </li>
 <li>
