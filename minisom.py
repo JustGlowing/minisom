@@ -88,7 +88,7 @@ class MiniSom(object):
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
                  decay_function=asymptotic_decay,
                  neighborhood_function='gaussian', topology='rectangular',
-                 activation_distance='euclidean', random_seed=None):
+                 activation_distance='euclidean', random_seed=None, z = None):
         """Initializes a Self Organizing Maps.
 
         A rule of thumb to set the size of the grid for a dimensionality
@@ -152,33 +152,58 @@ class MiniSom(object):
         """
         if sigma >= x or sigma >= y:
             warn('Warning: sigma is too high for the dimension of the map.')
-
+        if z != None and sigma >= z:
+            warn('Warning: sigma is too high for the dimension of the map.')
+            
+        self.z = z
+            
         self._random_generator = random.RandomState(random_seed)
 
         self._learning_rate = learning_rate
         self._sigma = sigma
         self._input_len = input_len
         # random initialization
-        self._weights = self._random_generator.rand(x, y, input_len)*2-1
+        if z != None: 
+            self._weights = self._random_generator.rand(x, y, z, input_len)*2-1
+        else:
+            self._weights = self._random_generator.rand(x, y, input_len)*2-1
+            
         self._weights /= linalg.norm(self._weights, axis=-1, keepdims=True)
-
-        self._activation_map = zeros((x, y))
+        
+        if z != None: 
+            self._activation_map = zeros((x, y, z))
+        else:
+            self._activation_map = zeros((x, y))
+        
+        #0-x, 0-y
         self._neigx = arange(x)
         self._neigy = arange(y)  # used to evaluate the neighborhood function
-
+        if z != None: 
+            self._neigz = arange(z)
+                    
         if topology not in ['hexagonal', 'rectangular']:
             msg = '%s not supported only hexagonal and rectangular available'
             raise ValueError(msg % topology)
         self.topology = topology
-        self._xx, self._yy = meshgrid(self._neigx, self._neigy)
+        
+        if z != None:
+            self._xx, self._yy, self._zz = meshgrid(self._neigx, self._neigy, self._neigz)
+            self._zz = self._zz.astype(float)
+        else:
+            self._xx, self._yy = meshgrid(self._neigx, self._neigy)
+        
         self._xx = self._xx.astype(float)
         self._yy = self._yy.astype(float)
+        
         if topology == 'hexagonal':
             self._xx[::-2] -= 0.5
             if neighborhood_function in ['triangle']:
                 warn('triangle neighborhood function does not ' +
                      'take in account hexagonal topology')
-
+            if z != None:
+                warn('3D mapping does not go with hexagonal topology')
+            
+            
         self._decay_function = decay_function
 
         neig_functions = {'gaussian': self._gaussian,
@@ -223,7 +248,10 @@ class MiniSom(object):
 
         Only useful if the topology chosen is not rectangular.
         """
-        return self._xx.T, self._yy.T
+        if self.z != None:
+            return self._xx.T, self._yy.T, self._zz.T
+        else:
+            return self._xx.T, self._yy.T
 
     def convert_map_to_euclidean(self, xy):
         """Converts map coordinates into euclidean coordinates
@@ -248,7 +276,11 @@ class MiniSom(object):
         d = 2*pi*sigma*sigma
         ax = exp(-power(self._xx-self._xx.T[c], 2)/d)
         ay = exp(-power(self._yy-self._yy.T[c], 2)/d)
-        return (ax * ay).T  # the external product gives a matrix
+        if self.z != None:
+            az = exp(-power(self._zz-self._zz.T[c], 2)/d)
+            return (ax * ay * az).T
+        else: 
+            return (ax * ay).T  # the external product gives a matrix
 
     def _mexican_hat(self, c, sigma):
         """Mexican hat centered in c."""
@@ -325,8 +357,14 @@ class MiniSom(object):
         sig = self._decay_function(self._sigma, t, max_iteration)
         # improves the performances
         g = self.neighborhood(win, sig)*eta
-        # w_new = eta * neighborhood_function * (x-w)
-        self._weights += einsum('ij, ijk->ijk', g, x-self._weights)
+        
+        if self.z != None:
+            self._weights += einsum('ijk, ijkl->ijkl', g, x-self._weights)
+        else:
+            # w_new = eta * neighborhood_function * (x-w)
+            self._weights += einsum('ij, ijk->ijk', g, x-self._weights)
+        
+        
 
     def quantization(self, data):
         """Assigns a code book (weights vector of the winning neuron)
@@ -334,7 +372,7 @@ class MiniSom(object):
         self._check_input_len(data)
         winners_coords = argmin(self._distance_from_weights(data), axis=1)
         return self._weights[unravel_index(winners_coords,
-                                           self._weights.shape[:2])]
+                                           self._weights.shape[:-1])]
 
     def random_weights_init(self, data):
         """Initializes the weights of the SOM
@@ -479,7 +517,7 @@ class MiniSom(object):
         data[i] and the j-th weight.
         """
         input_data = array(data)
-        weights_flat = self._weights.reshape(-1, self._weights.shape[2])
+        weights_flat = self._weights.reshape(-1, self._weights.shape[-1])
         input_data_sq = power(input_data, 2).sum(axis=1, keepdims=True)
         weights_flat_sq = power(weights_flat, 2).sum(axis=1, keepdims=True)
         cross_term = dot(input_data, weights_flat.T)
