@@ -3,7 +3,8 @@ from math import sqrt
 from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, pi, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
-                   einsum, prod, nan, sqrt, hstack, diff, argmin, multiply)
+                   einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
+                   ndarray)
 from numpy import sum as npsum
 from numpy.linalg import norm
 from collections import defaultdict, Counter
@@ -88,7 +89,7 @@ class MiniSom(object):
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
                  decay_function=asymptotic_decay,
                  neighborhood_function='gaussian', topology='rectangular',
-                 activation_distance='euclidean', random_seed=None, z = None):
+                 activation_distance='euclidean', random_seed=None, z = None, weights = None):
         """Initializes a Self Organizing Maps.
 
         A rule of thumb to set the size of the grid for a dimensionality
@@ -149,6 +150,16 @@ class MiniSom(object):
 
         random_seed : int, optional (default=None)
             Random seed to use.
+            
+        z : int, optional
+            z dimension of the SOM, for 3D map
+        
+        weights : float np array, optional
+            use pre-defined weights instead of random weights
+            shape: (x, y, input_len) 
+                or (x, y, z, input_len)
+            
+            
         """
         if sigma >= x or sigma >= y:
             warn('Warning: sigma is too high for the dimension of the map.')
@@ -162,13 +173,19 @@ class MiniSom(object):
         self._learning_rate = learning_rate
         self._sigma = sigma
         self._input_len = input_len
-        # random initialization
-        if z != None: 
-            self._weights = self._random_generator.rand(x, y, z, input_len)*2-1
-        else:
-            self._weights = self._random_generator.rand(x, y, input_len)*2-1
+        
+        if type(weights) == ndarray:
+            self._weights = weights
             
-        self._weights /= linalg.norm(self._weights, axis=-1, keepdims=True)
+        else:
+            # random initialization
+            if z != None: 
+                self._weights = self._random_generator.rand(x, y, z, input_len)*2-1
+            else:
+                self._weights = self._random_generator.rand(x, y, input_len)*2-1
+                
+            self._weights /= linalg.norm(self._weights, axis=-1, keepdims=True)
+        
         
         if z != None: 
             self._activation_map = zeros((x, y, z))
@@ -284,7 +301,9 @@ class MiniSom(object):
 
     def _mexican_hat(self, c, sigma):
         """Mexican hat centered in c."""
-        p = power(self._xx-self._xx.T[c], 2) + power(self._yy-self._yy.T[c], 2)
+        p = power(self._xx-self._xx.T[c], 2) \
+            + power(self._yy-self._yy.T[c], 2) \
+            + power(self._zz-self._zz.T[c], 2)
         d = 2*pi*sigma*sigma
         return (exp(-p/d)*(1-2/d*p)).T
 
@@ -296,19 +315,32 @@ class MiniSom(object):
                          self._neigx < c[0]+sigma)
         ay = logical_and(self._neigy > c[1]-sigma,
                          self._neigy < c[1]+sigma)
-        return outer(ax, ay)*1.
+        
+        if self.z != None:
+            az = logical_and(self._neigz > c[1]-sigma, 
+                             self._neigz < c[1]+sigma)
+            return np.einsum('i,j,k',ax,ay,az) #3 way outer
+        else:
+            return outer(ax, ay)*1.
 
     def _triangle(self, c, sigma):
         """Triangular function centered in c with spread sigma."""
         triangle_x = (-abs(c[0] - self._neigx)) + sigma
         triangle_y = (-abs(c[1] - self._neigy)) + sigma
+        
         triangle_x[triangle_x < 0] = 0.
         triangle_y[triangle_y < 0] = 0.
-        return outer(triangle_x, triangle_y)
+        
+        if self.z != None:
+            triangle_z = (-abs(c[2] - self._neigz)) + sigma
+            triangle_z[triangle_z < 0] = 0.
+            return np.einsum('i,j,k',triangle_x,triangle_y,triangle_z) #3 way outer
+        else:
+            return outer(triangle_x, triangle_y)
 
     def _cosine_distance(self, x, w):
         num = (w * x).sum(axis=2)
-        denum = multiply(linalg.norm(w, axis=2), linalg.norm(x))
+        denum = multiply(linalg.norm(w, axis=-1), linalg.norm(x))
         return 1 - num / (denum+1e-8)
 
     def _euclidean_distance(self, x, w):
