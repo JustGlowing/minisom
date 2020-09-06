@@ -110,6 +110,12 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Chen, Yang, Nami Ashizawa, Seanglidet Yean, Chai Kiat Yeo, and Naoto Yanai. <a href="https://arxiv.org/pdf/2008.12686.pdf">Self-Organizing Map assisted Deep Autoencoding Gaussian Mixture Model for Intrusion Detection</a>. arXiv preprint arXiv:2008.12686 2020.
+</li>
+<li>
+Athanasakis E, <a href="http://ikee.lib.auth.gr/record/320630/files/GRI-2020-28133.pdf">Data-Analysis in environmental and traffic data for Thessaloniki Greece</a>. Master Thesis at Aristotle University of Thessaloniki. 2020.
+</li>
+<li>
 Schillaci G, Ciria A, Lara B. <a href="https://arxiv.org/pdf/2007.14632.pdf">Tracking Emotions: Intrinsic Motivation Grounded on Multi-Level Prediction Error Dynamics</a>. IEEE ICDL-Epirob 2020. 2020.
 </li>
 <li>
