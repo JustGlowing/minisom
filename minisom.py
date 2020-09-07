@@ -1,5 +1,5 @@
 from math import sqrt
-
+import numpy as np
 from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, pi, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
@@ -161,6 +161,9 @@ class MiniSom(object):
             
             
         """
+        if z != None and isinstance(z, int) == False:
+            warn('The z dimension must be an integer')
+        
         if sigma >= x or sigma >= y:
             warn('Warning: sigma is too high for the dimension of the map.')
         if z != None and sigma >= z:
@@ -302,8 +305,9 @@ class MiniSom(object):
     def _mexican_hat(self, c, sigma):
         """Mexican hat centered in c."""
         p = power(self._xx-self._xx.T[c], 2) \
-            + power(self._yy-self._yy.T[c], 2) \
-            + power(self._zz-self._zz.T[c], 2)
+            + power(self._yy-self._yy.T[c], 2)
+        if self.z != None:
+            p += power(self._zz-self._zz.T[c], 2)
         d = 2*pi*sigma*sigma
         return (exp(-p/d)*(1-2/d*p)).T
 
@@ -317,9 +321,9 @@ class MiniSom(object):
                          self._neigy < c[1]+sigma)
         
         if self.z != None:
-            az = logical_and(self._neigz > c[1]-sigma, 
-                             self._neigz < c[1]+sigma)
-            return np.einsum('i,j,k',ax,ay,az) #3 way outer
+            az = logical_and(self._neigz > c[2]-sigma, 
+                                 self._neigz < c[2]+sigma)
+            return np.einsum('i,j,k',ax,ay,az).astype(int) #3 way outer
         else:
             return outer(ax, ay)*1.
 
@@ -517,6 +521,8 @@ class MiniSom(object):
         jj = [[-1, -1, 0, 1, 1, 1, 0, -1]]*2
 
         if self.topology == 'hexagonal':
+            if self.z != None:
+                warn('3D mapping cannot have hexagonal topology')
             ii = [[1, 1, 1, 0, -1, 0], [0, 1, 0, -1, -1, -1]]
             jj = [[1, 0, -1, -1, 0, 1], [1, 0, -1, -1, 0, 1]]
 
@@ -633,12 +639,26 @@ class TestMinisom(unittest.TestCase):
         self.som._weights = zeros((5, 5, 1))  # fake weights
         self.som._weights[2, 3] = 5.0
         self.som._weights[1, 1] = 2.0
-
+        
+        #test som with 3d map
+        self.som3d = MiniSom(5, 5, 1, z = 5)
+        for i in range(5):
+            for j in range(5):
+                for k in range(5):
+                    # checking weights normalization
+                    assert_almost_equal(1.0, linalg.norm(self.som3d._weights[i, j, k]))
+        self.som3d._weights = zeros((5, 5, 5, 1))  # fake weights
+        self.som3d._weights[2, 3, 4] = 5.0
+        self.som3d._weights[1, 1, 1] = 2.0
+        
+    
+    
     def test_decay_function(self):
         assert self.som._decay_function(1., 2., 3.) == 1./(1.+2./(3./2))
 
     def test_fast_norm(self):
         assert fast_norm(array([1, 3])) == sqrt(1+9)
+        assert fast_norm(array([1, 3, 3])) == sqrt(1+9+9)
 
     def test_euclidean_distance(self):
         x = zeros((1, 2))
@@ -646,6 +666,15 @@ class TestMinisom(unittest.TestCase):
         d = self.som._euclidean_distance(x, w)
         assert_array_almost_equal(d, [[1.41421356, 1.41421356],
                                       [1.41421356, 1.41421356]])
+        
+    def test_euclidean_distance_3d(self):
+        x = zeros((1, 2, 2))
+        w = ones((2, 2, 2, 2))
+        d = self.som3d._euclidean_distance(x, w)
+        assert_array_almost_equal(d, [[[1.41421356, 1.41421356], 
+                                       [1.41421356, 1.41421356]],
+                                      [[1.41421356, 1.41421356],
+                                       [1.41421356, 1.41421356]]])
 
     def test_cosine_distance(self):
         x = zeros((1, 2))
@@ -654,12 +683,30 @@ class TestMinisom(unittest.TestCase):
         assert_array_almost_equal(d, [[1., 1.],
                                       [1., 1.]])
 
+    def test_cosine_distance_3d(self):
+        x = zeros((1, 2, 2))
+        w = ones((2, 2, 2, 2))
+        d = self.som3d._cosine_distance(x, w)
+        assert_array_almost_equal(d, [[[1., 1.],
+                                       [1., 1.]], 
+                                      [[1., 1.],
+                                       [1., 1.]]])
+
     def test_manhattan_distance(self):
         x = zeros((1, 2))
         w = ones((2, 2, 2))
         d = self.som._manhattan_distance(x, w)
         assert_array_almost_equal(d, [[2., 2.],
                                       [2., 2.]])
+        
+    def test_manhattan_distance_3d(self):
+        x = zeros((1, 2, 2))
+        w = ones((2, 2, 2, 2))
+        d = self.som3d._manhattan_distance(x, w)
+        assert_array_almost_equal(d, [[[2., 2.], 
+                                       [2., 2.]], 
+                                      [[2., 2.], 
+                                       [2., 2.]]])
 
     def test_chebyshev_distance(self):
         x = array([1, 3])
@@ -667,7 +714,16 @@ class TestMinisom(unittest.TestCase):
         d = self.som._chebyshev_distance(x, w)
         assert_array_almost_equal(d, [[2., 2.],
                                       [2., 2.]])
-
+    
+    def test_chebyshev_distance_3d(self):
+        x = array([[[1, 3], [1, 3]]])
+        w = ones((2, 2, 2, 2))
+        d = self.som3d._chebyshev_distance(x, w)
+        assert_array_almost_equal(d, [[[2., 2.], 
+                                       [2., 2.]], 
+                                      [[2., 2.], 
+                                       [2., 2.]]])
+    
     def test_check_input_len(self):
         with self.assertRaises(ValueError):
             self.som.train_batch([[1, 2]], 1)
@@ -693,26 +749,51 @@ class TestMinisom(unittest.TestCase):
         bell = self.som._gaussian((2, 2), 1)
         assert bell.max() == 1.0
         assert bell.argmax() == 12  # unravel(12) = (2,2)
+    
+    def test_gaussian_3d(self):
+        bell = self.som3d._gaussian((2, 2, 2), 1)
+        assert bell.max() == 1.0
+        assert bell.argmax() == 62
 
     def test_mexican_hat(self):
         bell = self.som._mexican_hat((2, 2), 1)
         assert bell.max() == 1.0
         assert bell.argmax() == 12  # unravel(12) = (2,2)
 
+    def test_mexican_hat_3d(self):
+        bell = self.som3d._mexican_hat((2, 2, 2), 1)
+        assert bell.max() == 1.0
+        assert bell.argmax() == 62  # unravel(12) = (2,2)
+
     def test_bubble(self):
         bubble = self.som._bubble((2, 2), 1)
         assert bubble[2, 2] == 1
         assert sum(sum(bubble)) == 1
+        
+    def test_bubble_3d(self):
+        bubble = self.som3d._bubble((2, 2, 2), 1)
+        assert bubble[2, 2, 2] == 1
+        assert sum(sum(sum(bubble))) == 1
 
     def test_triangle(self):
         bubble = self.som._triangle((2, 2), 1)
         assert bubble[2, 2] == 1
         assert sum(sum(bubble)) == 1
+        
+    def test_triangle_3d(self):
+        bubble = self.som3d._triangle((2, 2, 2), 1)
+        assert bubble[2, 2, 2] == 1
+        assert sum(sum(sum(bubble))) == 1
 
     def test_win_map(self):
         winners = self.som.win_map([[5.0], [2.0]])
         assert winners[(2, 3)][0] == [5.0]
         assert winners[(1, 1)][0] == [2.0]
+        
+    def test_win_map_3d(self):
+        winners = self.som3d.win_map([[5.0], [2.0]])
+        assert winners[(2, 3, 4)][0] == [5.0]
+        assert winners[(1, 1, 1)][0] == [2.0]
 
     def test_labels_map(self):
         labels_map = self.som.labels_map([[5.0], [2.0]], ['a', 'b'])
@@ -720,7 +801,19 @@ class TestMinisom(unittest.TestCase):
         assert labels_map[(1, 1)]['b'] == 1
         with self.assertRaises(ValueError):
             self.som.labels_map([[5.0]], ['a', 'b'])
+            
+    def test_labels_map_3d(self):
+        labels_map = self.som3d.labels_map([[5.0], [2.0]], ['a', 'b'])
+        assert labels_map[(2, 3, 4)]['a'] == 1
+        assert labels_map[(1, 1, 1)]['b'] == 1
+        with self.assertRaises(ValueError):
+            self.som.labels_map([[5.0]], ['a', 'b'])
 
+    def test_activation_reponse(self):
+        response = self.som.activation_response([[5.0], [2.0]])
+        assert response[2, 3] == 1
+        assert response[1, 1] == 1
+        
     def test_activation_reponse(self):
         response = self.som.activation_response([[5.0], [2.0]])
         assert response[2, 3] == 1
@@ -827,3 +920,6 @@ class TestMinisom(unittest.TestCase):
         with open('som.p', 'rb') as infile:
             pickle.load(infile)
         os.remove('som.p')
+
+if __name__ == '__main__':
+    unittest.main()
