@@ -343,7 +343,7 @@ class MiniSom(object):
             return outer(triangle_x, triangle_y)
 
     def _cosine_distance(self, x, w):
-        num = (w * x).sum(axis=2)
+        num = (w * x).sum(axis=-1)
         denum = multiply(linalg.norm(w, axis=-1), linalg.norm(x))
         return 1 - num / (denum+1e-8)
 
@@ -545,7 +545,8 @@ class MiniSom(object):
             that the neuron i,j have been winner.
         """
         self._check_input_len(data)
-        a = zeros((self._weights.shape[0], self._weights.shape[1]))
+        #a = zeros((self._weights.shape[0], self._weights.shape[1]))
+        a = zeros(self._weights.shape[:-1])
         for x in data:
             a[self.winner(x)] += 1
         return a
@@ -814,14 +815,17 @@ class TestMinisom(unittest.TestCase):
         assert response[2, 3] == 1
         assert response[1, 1] == 1
         
-    def test_activation_reponse(self):
-        response = self.som.activation_response([[5.0], [2.0]])
-        assert response[2, 3] == 1
-        assert response[1, 1] == 1
+    def test_activation_reponse_3d(self):
+        response = self.som3d.activation_response([[5.0], [2.0]])
+        assert response[2, 3, 4] == 1
+        assert response[1, 1, 1] == 1
 
     def test_activate(self):
         assert self.som.activate(5.0).argmin() == 13.0  # unravel(13) = (2,3)
-
+        
+    def test_activate_3d(self):
+        assert self.som3d.activate(5.0).argmin() == 69.0     
+    
     def test_distance_from_weights(self):
         data = arange(-5, 5).reshape(-1, 1)
         weights = self.som._weights.reshape(-1, self.som._weights.shape[2])
@@ -829,10 +833,22 @@ class TestMinisom(unittest.TestCase):
         for i in range(len(data)):
             for j in range(len(weights)):
                 assert(distances[i][j] == norm(data[i] - weights[j]))
+                
+    def test_distance_from_weights_3d(self):
+        data = arange(-5, 5).reshape(-1, 1)
+        weights = self.som3d._weights.reshape(-1, self.som3d._weights.shape[-1])
+        distances = self.som3d._distance_from_weights(data)
+        for i in range(len(data)):
+            for j in range(len(weights)):
+                assert(distances[i][j] == norm(data[i] - weights[j]))
 
     def test_quantization_error(self):
         assert self.som.quantization_error([[5], [2]]) == 0.0
         assert self.som.quantization_error([[4], [1]]) == 1.0
+        
+    def test_quantization_error_3d(self):
+        assert self.som3d.quantization_error([[5], [2]]) == 0.0
+        assert self.som3d.quantization_error([[4], [1]]) == 1.0
 
     def test_topographic_error(self):
         # 5 will have bmu_1 in (2,3) and bmu_2 in (2, 4)
@@ -849,7 +865,23 @@ class TestMinisom(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             assert self.som.topographic_error([[5]]) == 0.0
         self.som.topology = 'rectangular'
+        
+    def test_topographic_error_3d(self):
+        # 5 will have bmu_1 in (2,3) and bmu_2 in (2, 4)
+        # which are in the same neighborhood
+        self.som3d._weights[2, 4] = 6.0
+        # 15 will have bmu_1 in (4, 4) and bmu_2 in (0, 0)
+        # which are not in the same neighborhood
+        self.som3d._weights[4, 4] = 15.0
+        self.som3d._weights[0, 0] = 14.
+        assert self.som3d.topographic_error([[5]]) == 0.0
+        assert self.som3d.topographic_error([[15]]) == 1.0
 
+        self.som.topology = 'hexagonal'
+        with self.assertRaises(NotImplementedError):
+            assert self.som.topographic_error([[5]]) == 0.0
+        self.som.topology = 'rectangular'    
+    
     def test_quantization(self):
         q = self.som.quantization(array([[4], [2]]))
         assert q[0] == 5.0
