@@ -536,7 +536,7 @@ class MiniSom(object):
                         w_1 = self._weights[x+i, y+j]
                         um[x, y, k] = fast_norm(w_2-w_1)
 
-        um = um.sum(axis=2)
+        um = um.sum(axis=-1)
         return um/um.max()
 
     def activation_response(self, data):
@@ -591,10 +591,16 @@ class MiniSom(object):
         t = 1.42
         # b2mu: best 2 matching units
         b2mu_inds = argsort(self._distance_from_weights(data), axis=1)[:, :2]
-        b2my_xy = unravel_index(b2mu_inds, self._weights.shape[:2])
+        b2my_xy = unravel_index(b2mu_inds, self._weights.shape[:-1])
         b2mu_x, b2mu_y = b2my_xy[0], b2my_xy[1]
         dxdy = hstack([diff(b2mu_x), diff(b2mu_y)])
-        distance = norm(dxdy, axis=1)
+        distance = norm(dxdy, axis=-1)
+        
+        if self.z != None:
+            b2mu_z = b2my_xy[2]
+            dxdydz = hstack([diff(b2mu_x), diff(b2mu_y), diff(b2mu_z)])
+            distance = norm(dxdydz, axis=-1)
+        
         return (distance > t).mean()
 
     def win_map(self, data):
@@ -867,13 +873,13 @@ class TestMinisom(unittest.TestCase):
         self.som.topology = 'rectangular'
         
     def test_topographic_error_3d(self):
-        # 5 will have bmu_1 in (2,3) and bmu_2 in (2, 4)
+        # 5 will have bmu_1 in (2, 3, 4) and bmu_2 in (2, 3, 3)
         # which are in the same neighborhood
-        self.som3d._weights[2, 4] = 6.0
-        # 15 will have bmu_1 in (4, 4) and bmu_2 in (0, 0)
+        self.som3d._weights[2, 3, 3] = 6.0
+        # 15 will have bmu_1 in (4, 4, 4) and bmu_2 in (0, 0, 0)
         # which are not in the same neighborhood
-        self.som3d._weights[4, 4] = 15.0
-        self.som3d._weights[0, 0] = 14.
+        self.som3d._weights[4, 4, 4] = 15.0
+        self.som3d._weights[0, 0, 0] = 14.
         assert self.som3d.topographic_error([[5]]) == 0.0
         assert self.som3d.topographic_error([[15]]) == 1.0
 
@@ -899,6 +905,7 @@ class TestMinisom(unittest.TestCase):
         som2.train_random(data, 10)
         # same state after training
         assert_array_almost_equal(som1._weights, som2._weights)
+        
 
     def test_train_batch(self):
         som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
@@ -945,6 +952,13 @@ class TestMinisom(unittest.TestCase):
         som = MiniSom(2, 2, 2, topology='hexagonal', random_seed=1)
         som._weights = array([[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]])
         assert_array_equal(som.distance_map(), array([[.5, 1.], [1., .5]]))
+        
+    def test_distance_map_3d(self):
+        som = MiniSom(2, 2, 2, random_seed=1, z = 2)
+        som._weights = array([[[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]],
+                              [[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]]])
+        assert_array_equal(som.distance_map(), array([[1., 1.], [1., 1.]]))
+
 
     def test_pickling(self):
         with open('som.p', 'wb') as outfile:
