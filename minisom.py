@@ -4,7 +4,7 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, pi, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
-                   ndarray)
+                   ndarray, moveaxis)
 from numpy import sum as npsum
 from numpy.linalg import norm
 from collections import defaultdict, Counter
@@ -209,11 +209,17 @@ class MiniSom(object):
         if z != None:
             self._xx, self._yy, self._zz = meshgrid(self._neigx, self._neigy, self._neigz)
             self._zz = self._zz.astype(float)
+            print('xx,yy,zz shape: ')
+            print(self._xx.shape, self._yy.shape, self._zz.shape)
+            print('xx,yy,zz trans shape: ')
+            print(self._xx.T.shape, self._yy.T.shape, self._zz.T.shape)
+            
         else:
             self._xx, self._yy = meshgrid(self._neigx, self._neigy)
         
         self._xx = self._xx.astype(float)
         self._yy = self._yy.astype(float)
+
         
         if topology == 'hexagonal':
             self._xx[::-2] -= 0.5
@@ -294,11 +300,13 @@ class MiniSom(object):
     def _gaussian(self, c, sigma):
         """Returns a Gaussian centered in c."""
         d = 2*pi*sigma*sigma
-        ax = exp(-power(self._xx-self._xx.T[c], 2)/d)
-        ay = exp(-power(self._yy-self._yy.T[c], 2)/d)
+        print('neighborhood_gaussian: c: ', c)
+        print('xx moveaxis: ', moveaxis(self._xx, 0, 1).shape)
+        ax = exp(-power(self._xx-moveaxis(self._xx, 0, 1)[c], 2)/d)
+        ay = exp(-power(self._yy-moveaxis(self._yy, 0, 1)[c], 2)/d)
         if self.z != None:
-            az = exp(-power(self._zz-self._zz.T[c], 2)/d)
-            return (ax * ay * az).T
+            az = exp(-power(self._zz-moveaxis(self._zz, 0, 1)[c], 2)/d)
+            return moveaxis((ax * ay * az), 0, 1)
         else: 
             return (ax * ay).T  # the external product gives a matrix
 
@@ -371,6 +379,7 @@ class MiniSom(object):
     def winner(self, x):
         """Computes the coordinates of the winning neuron for the sample x."""
         self._activate(x)
+        print('winner: x: ', x, 'coordinates: ', unravel_index(self._activation_map.argmin(), self._activation_map.shape))
         return unravel_index(self._activation_map.argmin(),
                              self._activation_map.shape)
 
@@ -528,13 +537,17 @@ class MiniSom(object):
 
         for x in range(self._weights.shape[0]):
             for y in range(self._weights.shape[1]):
-                w_2 = self._weights[x, y]
-                e = y % 2 == 0   # only used on hexagonal topology
-                for k, (i, j) in enumerate(zip(ii[e], jj[e])):
-                    if (x+i >= 0 and x+i < self._weights.shape[0] and
-                            y+j >= 0 and y+j < self._weights.shape[1]):
-                        w_1 = self._weights[x+i, y+j]
-                        um[x, y, k] = fast_norm(w_2-w_1)
+                if self.z != None:
+                    #for z in range(self._weights.shape[2])
+                    print(self.z)
+                else:
+                    w_2 = self._weights[x, y]
+                    e = y % 2 == 0   # only used on hexagonal topology
+                    for k, (i, j) in enumerate(zip(ii[e], jj[e])):
+                        if (x+i >= 0 and x+i < self._weights.shape[0] and
+                                y+j >= 0 and y+j < self._weights.shape[1]):
+                            w_1 = self._weights[x+i, y+j]
+                            um[x, y, k] = fast_norm(w_2-w_1)
 
         um = um.sum(axis=-1)
         return um/um.max()
