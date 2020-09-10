@@ -9,7 +9,7 @@ from minisom import *
 #get pos and color
 def get_pos_and_color(weights):
     positions = np.zeros((N1*N2*N3, 3))
-    color = np.zeros((N1*N2*N3, 3))
+    colors = np.zeros((N1*N2*N3, 3))
     idx = 0
     
     for i, x in enumerate(weights):
@@ -19,13 +19,13 @@ def get_pos_and_color(weights):
           c = z #color
           #c = np.append(z, [a]) #color
           positions[idx] = p
-          color[idx] = c
+          colors[idx] = c
           
           idx += 1
     
-    return positions, color
+    return positions, colors
 
-def plot_pos_and_color(pos, color):
+def plot_pos_and_color(positions, colors):
     # build your visuals, that's all
     Scatter3D = scene.visuals.create_visual_node(visuals.MarkersVisual)
     canvas = scene.SceneCanvas(keys='interactive', show=True)
@@ -38,19 +38,18 @@ def plot_pos_and_color(pos, color):
     
     p1 = Scatter3D(parent=view.scene)
     p1.set_gl_state('translucent', blend=True, depth_test=True)
-    p1.set_data(pos, face_color=color, symbol='o', size=10,
-                edge_width=0.5, edge_color='blue')
-    
+    p1.set_data(positions, face_color=colors, symbol='o', size=10)
+    canvas.show()
 
 #map space x, y, z
-N1 = 5
-N2 = 20
+N1 = 10
+N2 = 10
 N3 = 10
 
 from minisom import * 
 
 #Training inputs for RGBcolors
-colors = [[0., 0., 0.],
+data = [[0., 0., 0.],
       [0., 0., 1.],
       [0., 0., 0.5],
       [0.125, 0.529, 1.0],
@@ -69,13 +68,13 @@ colors = [[0., 0., 0.],
 #initialize som
 som = MiniSom(N1, N2, 3, sigma=3., learning_rate=2.5, 
               neighborhood_function='gaussian', z = N3)
-
+#get positions and colors, then plot
 weights = abs(som.get_weights())
 pos, color = get_pos_and_color(weights)
 plot_pos_and_color(pos, color)
 
 #train som
-som.train(colors, 500, random_order=True, verbose=True)
+som.train(data, 500, random_order=True, verbose=True)
 weights = abs(som.get_weights())
 pos, color = get_pos_and_color(weights)
 plot_pos_and_color(pos, color)
@@ -83,8 +82,3 @@ plot_pos_and_color(pos, color)
 
 
 
-
-# # run
-# if __name__ == '__main__':
-#     if sys.flags.interactive != 1:
-#         app.run()

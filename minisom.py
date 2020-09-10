@@ -24,6 +24,7 @@ import unittest
     Minimalistic implementation of the Self Organizing Maps (SOM).
 """
 
+random.seed(1337)
 
 def _build_iteration_indexes(data_len, num_iterations,
                              verbose=False, random_generator=None):
@@ -209,10 +210,6 @@ class MiniSom(object):
         if z != None:
             self._xx, self._yy, self._zz = meshgrid(self._neigx, self._neigy, self._neigz)
             self._zz = self._zz.astype(float)
-            print('xx,yy,zz shape: ')
-            print(self._xx.shape, self._yy.shape, self._zz.shape)
-            print('xx,yy,zz trans shape: ')
-            print(self._xx.T.shape, self._yy.T.shape, self._zz.T.shape)
             
         else:
             self._xx, self._yy = meshgrid(self._neigx, self._neigy)
@@ -300,24 +297,33 @@ class MiniSom(object):
     def _gaussian(self, c, sigma):
         """Returns a Gaussian centered in c."""
         d = 2*pi*sigma*sigma
-        print('neighborhood_gaussian: c: ', c)
-        print('xx moveaxis: ', moveaxis(self._xx, 0, 1).shape)
         ax = exp(-power(self._xx-moveaxis(self._xx, 0, 1)[c], 2)/d)
         ay = exp(-power(self._yy-moveaxis(self._yy, 0, 1)[c], 2)/d)
         if self.z != None:
             az = exp(-power(self._zz-moveaxis(self._zz, 0, 1)[c], 2)/d)
+            global gaussian
+            gaussian = moveaxis((ax * ay * az), 0, 1)
             return moveaxis((ax * ay * az), 0, 1)
         else: 
             return (ax * ay).T  # the external product gives a matrix
 
+
+    # def _mexican_hat(self, c, sigma):
+    #     """Mexican hat centered in c."""
+    #     p = power(self._xx-self._xx.T[c], 2) + power(self._yy-self._yy.T[c], 2)
+    #     d = 2*pi*sigma*sigma
+    #     return (exp(-p/d)*(1-2/d*p)).T
+
+
     def _mexican_hat(self, c, sigma):
         """Mexican hat centered in c."""
-        p = power(self._xx-self._xx.T[c], 2) \
-            + power(self._yy-self._yy.T[c], 2)
-        if self.z != None:
-            p += power(self._zz-self._zz.T[c], 2)
         d = 2*pi*sigma*sigma
-        return (exp(-p/d)*(1-2/d*p)).T
+        p = power(self._xx-moveaxis(self._xx, 0, 1)[c], 2) \
+          + power(self._yy-moveaxis(self._yy, 0, 1)[c], 2)
+        if self.z != None:
+            p += power(self._zz-moveaxis(self._zz, 0, 1)[c], 2)
+            
+        return moveaxis((exp(-p/d)*(1-2/d*p)), 0, 1)
 
     def _bubble(self, c, sigma):
         """Constant function centered in c with spread sigma.
@@ -379,7 +385,6 @@ class MiniSom(object):
     def winner(self, x):
         """Computes the coordinates of the winning neuron for the sample x."""
         self._activate(x)
-        print('winner: x: ', x, 'coordinates: ', unravel_index(self._activation_map.argmin(), self._activation_map.shape))
         return unravel_index(self._activation_map.argmin(),
                              self._activation_map.shape)
 
@@ -534,13 +539,10 @@ class MiniSom(object):
                 warn('3D mapping cannot have hexagonal topology')
             ii = [[1, 1, 1, 0, -1, 0], [0, 1, 0, -1, -1, -1]]
             jj = [[1, 0, -1, -1, 0, 1], [1, 0, -1, -1, 0, 1]]
-
-        for x in range(self._weights.shape[0]):
-            for y in range(self._weights.shape[1]):
-                if self.z != None:
-                    #for z in range(self._weights.shape[2])
-                    print(self.z)
-                else:
+        
+        if self.z == None:
+            for x in range(self._weights.shape[0]):
+                for y in range(self._weights.shape[1]):
                     w_2 = self._weights[x, y]
                     e = y % 2 == 0   # only used on hexagonal topology
                     for k, (i, j) in enumerate(zip(ii[e], jj[e])):
@@ -548,7 +550,23 @@ class MiniSom(object):
                                 y+j >= 0 and y+j < self._weights.shape[1]):
                             w_1 = self._weights[x+i, y+j]
                             um[x, y, k] = fast_norm(w_2-w_1)
-
+        else: #z != None:
+            um = zeros((self._weights.shape[0],
+                    self._weights.shape[1],
+                    self._weights.shape[2], 26))  # 26 neighbours for 3D map
+            ii = [0, -1, -1, -1, 0, 1, 1, 1] * 3 + [0, 0]
+            jj = [-1, -1, 0, 1, 1, 1, 0, -1] * 3 + [0, 0]
+            kk = [-1]*8 + [0]*8 + [1]*8          + [1, -1]
+            for x in range(self._weights.shape[0]):
+                for y in range(self._weights.shape[1]):
+                    for z in range(self._weights.shape[2]):
+                        w_2 = self._weights[x, y, z]
+                        for t, (i, j, k) in enumerate(zip(ii, jj, kk)):
+                            if (x+i >= 0 and x+i < self._weights.shape[0] and
+                                    y+j >= 0 and y+j < self._weights.shape[1] and
+                                    z+k >= 0 and z+k < self._weights.shape[2]):
+                                w_1 = self._weights[x+i, y+j, z+k]
+                                um[x, y, k, t] = fast_norm(w_2-w_1)
         um = um.sum(axis=-1)
         return um/um.max()
 
@@ -968,9 +986,12 @@ class TestMinisom(unittest.TestCase):
         
     def test_distance_map_3d(self):
         som = MiniSom(2, 2, 2, random_seed=1, z = 2)
-        som._weights = array([[[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]],
-                              [[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]]])
-        assert_array_equal(som.distance_map(), array([[1., 1.], [1., 1.]]))
+        som._weights = array([[[[1.,  0.], [0., 1.]], [[0., 1.], [1., 0.]]],
+                              [[[1.,  0.], [0., 1.]], [[0., 1.], [1., 0.]]]])
+        
+        
+        assert_array_equal(som.distance_map(), array([[[0.5, 1. ], [0.5, 1. ]], 
+                                                      [[0.5, 1. ], [0.5, 1. ]]]))
 
 
     def test_pickling(self):
@@ -981,4 +1002,7 @@ class TestMinisom(unittest.TestCase):
         os.remove('som.p')
 
 if __name__ == '__main__':
+    gaussian = mexican_hat = mexican_hat_2d = None
+    
     unittest.main()
+    
