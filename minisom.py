@@ -352,7 +352,7 @@ class MiniSom(object):
         if self.z != None:
             triangle_z = (-abs(c[2] - self._neigz)) + sigma
             triangle_z[triangle_z < 0] = 0.
-            return np.einsum('i,j,k',triangle_x,triangle_y,triangle_z) #3 way outer
+            return np.einsum('i,j,k -> ijk',triangle_x,triangle_y,triangle_z) #3 way outer
         else:
             return outer(triangle_x, triangle_y)
 
