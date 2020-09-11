@@ -89,7 +89,7 @@ class MiniSom(object):
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
                  decay_function=asymptotic_decay,
                  neighborhood_function='gaussian', topology='rectangular',
-                 activation_distance='euclidean', random_seed=None, z = None, weights = None):
+                 activation_distance='euclidean', random_seed=None, z = None):
         """Initializes a Self Organizing Maps.
 
         A rule of thumb to set the size of the grid for a dimensionality
