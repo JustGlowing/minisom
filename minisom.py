@@ -1,5 +1,5 @@
 from math import sqrt
-import numpy as np
+
 from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, pi, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
@@ -153,13 +153,7 @@ class MiniSom(object):
             
         z : int, optional
             z dimension of the SOM, for 3D map
-        
-        weights : float np array, optional
-            use pre-defined weights instead of random weights
-            shape: (x, y, input_len) 
-                or (x, y, z, input_len)
-            
-            
+         
         """
         if z != None :
             if isinstance(z, int) == False or z <= 0:
@@ -179,18 +173,15 @@ class MiniSom(object):
         self._learning_rate = learning_rate
         self._sigma = sigma
         self._input_len = input_len
-        
-        if type(weights) == ndarray:
-            self._weights = weights
+
             
+        # random initialization
+        if z != None: 
+            self._weights = self._random_generator.rand(x, y, z, input_len)*2-1
         else:
-            # random initialization
-            if z != None: 
-                self._weights = self._random_generator.rand(x, y, z, input_len)*2-1
-            else:
-                self._weights = self._random_generator.rand(x, y, input_len)*2-1
-                
-            self._weights /= linalg.norm(self._weights, axis=-1, keepdims=True)
+            self._weights = self._random_generator.rand(x, y, input_len)*2-1
+            
+        self._weights /= linalg.norm(self._weights, axis=-1, keepdims=True)
         
         
         if z != None: 
@@ -339,7 +330,7 @@ class MiniSom(object):
         if self.z != None:
             az = logical_and(self._neigz > c[2]-sigma, 
                                  self._neigz < c[2]+sigma)
-            return np.einsum('i,j,k',ax,ay,az).astype(int) #3 way outer
+            return einsum('i,j,k',ax,ay,az).astype(int) #3 way outer
         else:
             return outer(ax, ay)*1.
 
@@ -354,7 +345,7 @@ class MiniSom(object):
         if self.z != None:
             triangle_z = (-abs(c[2] - self._neigz)) + sigma
             triangle_z[triangle_z < 0] = 0.
-            return np.einsum('i,j,k -> ijk',triangle_x,triangle_y,triangle_z) #3 way outer
+            return einsum('i,j,k -> ijk',triangle_x,triangle_y,triangle_z) #3 way outer
         else:
             return outer(triangle_x, triangle_y)
 
