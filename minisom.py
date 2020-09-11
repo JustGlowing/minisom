@@ -24,7 +24,6 @@ import unittest
     Minimalistic implementation of the Self Organizing Maps (SOM).
 """
 
-random.seed(1337)
 
 def _build_iteration_indexes(data_len, num_iterations,
                              verbose=False, random_generator=None):
@@ -162,9 +161,12 @@ class MiniSom(object):
             
             
         """
-        if z != None and isinstance(z, int) == False:
-            warn('The z dimension must be an integer')
-        
+        if z != None :
+            if isinstance(z, int) == False or z <= 0:
+                warn('Warning: the z dimension must be a positive integer')
+            elif z == 1:
+                z = None
+                
         if sigma >= x or sigma >= y:
             warn('Warning: sigma is too high for the dimension of the map.')
         if z != None and sigma >= z:
@@ -1000,9 +1002,3 @@ class TestMinisom(unittest.TestCase):
         with open('som.p', 'rb') as infile:
             pickle.load(infile)
         os.remove('som.p')
-
-if __name__ == '__main__':
-    gaussian = mexican_hat = mexican_hat_2d = None
-    
-    unittest.main()
-    
