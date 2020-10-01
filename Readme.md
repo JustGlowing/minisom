@@ -311,6 +311,8 @@ Minisom has been tested under Python 3.8.0.
 License
 ---------------------
 
+This program is distributed in the hope that it will be useful, but without warranty; without even the implied warranty of merchantability or fitness for a particular purpose.
+
 MiniSom by Giuseppe Vettigli is licensed under the Creative Commons Attribution 3.0 Unported License. To view a copy of this license, visit [http://creativecommons.org/licenses/by/3.0/](http://creativecommons.org/licenses/by/3.0/ "http://creativecommons.org/licenses/by/3.0/").
 
 ![License]( http://i.creativecommons.org/l/by/3.0/88x31.png "Creative Commons Attribution 3.0 Unported License")
