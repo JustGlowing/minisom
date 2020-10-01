@@ -110,6 +110,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Mancini, R., Ritacco, A., Lanciano, G., & Cucinotta, T. <a href="http://retis.sssup.it/~tommaso/publications/IEEE-SBAC-PAD-2020.pdf">XPySom: High-Performance Self-Organizing Maps</a>. ReTiS Lab report, Sant'Anna School of Advanced Studies. 2020.
+</li>
+<li>
 Chen, Yang, Nami Ashizawa, Seanglidet Yean, Chai Kiat Yeo, and Naoto Yanai. <a href="https://arxiv.org/pdf/2008.12686.pdf">Self-Organizing Map assisted Deep Autoencoding Gaussian Mixture Model for Intrusion Detection</a>. arXiv preprint arXiv:2008.12686 2020.
 </li>
 <li>
