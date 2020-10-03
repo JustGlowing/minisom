@@ -110,6 +110,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Bonelli Toro, A. G., and M. P. Gómez. <a href="https://www.researchgate.net/profile/Miguel_Zitto/publication/344397710_Energy_and_Shannon_entropy_in_acoustic_emission_signals_for_damage_evaluation_in_andesite_rock/links/5f70a7f7458515b7cf511057/Energy-and-Shannon-entropy-in-acoustic-emission-signals-for-damage-evaluation-in-andesite-rock.pdf#page=123">Machine Learning Applied to Acoustic Emission tor Tool Wear Classification during Milling of Composite Materials</a>. An International Forum For The AE Science and Technology. Vol. 37. 2020.
+</li>    
+<li>
 Mancini, R., Ritacco, A., Lanciano, G., & Cucinotta, T. <a href="http://retis.sssup.it/~tommaso/publications/IEEE-SBAC-PAD-2020.pdf">XPySom: High-Performance Self-Organizing Maps</a>. Proceedings of IEEE 32nd International Symposium on Computer Architecture and High Performance Computing. 2020.
 </li>
 <li>
