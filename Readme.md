@@ -110,6 +110,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Gorgoglione, A., Castro, A., Gioia, A., & Iacobellis, V. <a href="https://link.springer.com/chapter/10.1007/978-3-030-58811-3_49">Application of the Self-organizing Map (SOM) to Characterize Nutrient Urban Runoff</a>. International Conference on Computational Science and Its Applications. Springer, Cham, 2020.
+</li>        
+<li>
 Bonelli Toro, A. G., and M. P. Gómez. <a href="https://www.researchgate.net/profile/Miguel_Zitto/publication/344397710_Energy_and_Shannon_entropy_in_acoustic_emission_signals_for_damage_evaluation_in_andesite_rock/links/5f70a7f7458515b7cf511057/Energy-and-Shannon-entropy-in-acoustic-emission-signals-for-damage-evaluation-in-andesite-rock.pdf#page=123">Machine Learning Applied to Acoustic Emission tor Tool Wear Classification during Milling of Composite Materials</a>. An International Forum For The AE Science and Technology. Vol. 37. 2020.
 </li>    
 <li>
