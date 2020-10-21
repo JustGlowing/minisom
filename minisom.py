@@ -521,9 +521,8 @@ class MiniSom(object):
         return (distance > t).mean()
 
     def win_map(self, data, return_indices=False):
-        """Returns a dictionary wm where wm[(i,j)] is a list
-        with:
-        - all the patterns that have been mapped in the position (i,j),
+        """Returns a dictionary wm where wm[(i,j)] is a list with:
+        - all the patterns that have been mapped to the position (i,j),
           if return_indices=False (default)
         - all indices of the elements that have been mapped to the
           position (i,j) if return_indices=True"""
