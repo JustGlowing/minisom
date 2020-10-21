@@ -520,13 +520,17 @@ class MiniSom(object):
         distance = norm(dxdy, axis=1)
         return (distance > t).mean()
 
-    def win_map(self, data):
+    def win_map(self, data, return_indices=False):
         """Returns a dictionary wm where wm[(i,j)] is a list
-        with all the patterns that have been mapped in the position i,j."""
+        with:
+        - all the patterns that have been mapped in the position (i,j),
+          if return_indices=False (default)
+        - all indices of the elements that have been mapped to the
+          position (i,j) if return_indices=True"""
         self._check_input_len(data)
         winmap = defaultdict(list)
-        for x in data:
-            winmap[self.winner(x)].append(x)
+        for i, x in enumerate(data):
+            winmap[self.winner(x)].append(i if return_indices else x)
         return winmap
 
     def labels_map(self, data, labels):
@@ -643,6 +647,11 @@ class TestMinisom(unittest.TestCase):
         winners = self.som.win_map([[5.0], [2.0]])
         assert winners[(2, 3)][0] == [5.0]
         assert winners[(1, 1)][0] == [2.0]
+
+    def test_win_map_indices(self):
+        winners = self.som.win_map([[5.0], [2.0]], return_indices=True)
+        assert winners[(2, 3)] == [0]
+        assert winners[(1, 1)] == [1]
 
     def test_labels_map(self):
         labels_map = self.som.labels_map([[5.0], [2.0]], ['a', 'b'])
