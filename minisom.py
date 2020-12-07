@@ -3,7 +3,8 @@ from math import sqrt
 from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, pi, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
-                   einsum, prod, nan, sqrt, hstack, diff, argmin, multiply)
+                   einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
+                   ndarray, moveaxis)
 from numpy import sum as npsum
 from numpy.linalg import norm
 from collections import defaultdict, Counter
@@ -88,7 +89,7 @@ class MiniSom(object):
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
                  decay_function=asymptotic_decay,
                  neighborhood_function='gaussian', topology='rectangular',
-                 activation_distance='euclidean', random_seed=None):
+                 activation_distance='euclidean', random_seed=None, z = None):
         """Initializes a Self Organizing Maps.
 
         A rule of thumb to set the size of the grid for a dimensionality
@@ -149,36 +150,76 @@ class MiniSom(object):
 
         random_seed : int, optional (default=None)
             Random seed to use.
+            
+        z : int, optional
+            z dimension of the SOM, for 3D map
+         
         """
+        if z != None :
+            if isinstance(z, int) == False or z <= 0:
+                warn('Warning: the z dimension must be a positive integer')
+            elif z == 1:
+                z = None
+                
         if sigma >= x or sigma >= y:
             warn('Warning: sigma is too high for the dimension of the map.')
-
+        if z != None and sigma >= z:
+            warn('Warning: sigma is too high for the dimension of the map.')
+            
+        self.z = z
+            
         self._random_generator = random.RandomState(random_seed)
 
         self._learning_rate = learning_rate
         self._sigma = sigma
         self._input_len = input_len
-        # random initialization
-        self._weights = self._random_generator.rand(x, y, input_len)*2-1
-        self._weights /= linalg.norm(self._weights, axis=-1, keepdims=True)
 
-        self._activation_map = zeros((x, y))
+            
+        # random initialization
+        if z != None: 
+            self._weights = self._random_generator.rand(x, y, z, input_len)*2-1
+        else:
+            self._weights = self._random_generator.rand(x, y, input_len)*2-1
+            
+        self._weights /= linalg.norm(self._weights, axis=-1, keepdims=True)
+        
+        
+        if z != None: 
+            self._activation_map = zeros((x, y, z))
+        else:
+            self._activation_map = zeros((x, y))
+        
+        #0-x, 0-y
         self._neigx = arange(x)
         self._neigy = arange(y)  # used to evaluate the neighborhood function
-
+        if z != None: 
+            self._neigz = arange(z)
+                    
         if topology not in ['hexagonal', 'rectangular']:
             msg = '%s not supported only hexagonal and rectangular available'
             raise ValueError(msg % topology)
         self.topology = topology
-        self._xx, self._yy = meshgrid(self._neigx, self._neigy)
+        
+        if z != None:
+            self._xx, self._yy, self._zz = meshgrid(self._neigx, self._neigy, self._neigz)
+            self._zz = self._zz.astype(float)
+            
+        else:
+            self._xx, self._yy = meshgrid(self._neigx, self._neigy)
+        
         self._xx = self._xx.astype(float)
         self._yy = self._yy.astype(float)
+
+        
         if topology == 'hexagonal':
             self._xx[::-2] -= 0.5
             if neighborhood_function in ['triangle']:
                 warn('triangle neighborhood function does not ' +
                      'take in account hexagonal topology')
-
+            if z != None:
+                warn('3D mapping does not go with hexagonal topology')
+            
+            
         self._decay_function = decay_function
 
         neig_functions = {'gaussian': self._gaussian,
@@ -223,7 +264,10 @@ class MiniSom(object):
 
         Only useful if the topology chosen is not rectangular.
         """
-        return self._xx.T, self._yy.T
+        if self.z != None:
+            return self._xx.T, self._yy.T, self._zz.T
+        else:
+            return self._xx.T, self._yy.T
 
     def convert_map_to_euclidean(self, xy):
         """Converts map coordinates into euclidean coordinates
@@ -246,15 +290,33 @@ class MiniSom(object):
     def _gaussian(self, c, sigma):
         """Returns a Gaussian centered in c."""
         d = 2*pi*sigma*sigma
-        ax = exp(-power(self._xx-self._xx.T[c], 2)/d)
-        ay = exp(-power(self._yy-self._yy.T[c], 2)/d)
-        return (ax * ay).T  # the external product gives a matrix
+        ax = exp(-power(self._xx-moveaxis(self._xx, 0, 1)[c], 2)/d)
+        ay = exp(-power(self._yy-moveaxis(self._yy, 0, 1)[c], 2)/d)
+        if self.z != None:
+            az = exp(-power(self._zz-moveaxis(self._zz, 0, 1)[c], 2)/d)
+            global gaussian
+            gaussian = moveaxis((ax * ay * az), 0, 1)
+            return moveaxis((ax * ay * az), 0, 1)
+        else: 
+            return (ax * ay).T  # the external product gives a matrix
+
+
+    # def _mexican_hat(self, c, sigma):
+    #     """Mexican hat centered in c."""
+    #     p = power(self._xx-self._xx.T[c], 2) + power(self._yy-self._yy.T[c], 2)
+    #     d = 2*pi*sigma*sigma
+    #     return (exp(-p/d)*(1-2/d*p)).T
+
 
     def _mexican_hat(self, c, sigma):
         """Mexican hat centered in c."""
-        p = power(self._xx-self._xx.T[c], 2) + power(self._yy-self._yy.T[c], 2)
         d = 2*pi*sigma*sigma
-        return (exp(-p/d)*(1-2/d*p)).T
+        p = power(self._xx-moveaxis(self._xx, 0, 1)[c], 2) \
+          + power(self._yy-moveaxis(self._yy, 0, 1)[c], 2)
+        if self.z != None:
+            p += power(self._zz-moveaxis(self._zz, 0, 1)[c], 2)
+            
+        return moveaxis((exp(-p/d)*(1-2/d*p)), 0, 1)
 
     def _bubble(self, c, sigma):
         """Constant function centered in c with spread sigma.
@@ -264,19 +326,32 @@ class MiniSom(object):
                          self._neigx < c[0]+sigma)
         ay = logical_and(self._neigy > c[1]-sigma,
                          self._neigy < c[1]+sigma)
-        return outer(ax, ay)*1.
+        
+        if self.z != None:
+            az = logical_and(self._neigz > c[2]-sigma, 
+                                 self._neigz < c[2]+sigma)
+            return einsum('i,j,k',ax,ay,az).astype(int) #3 way outer
+        else:
+            return outer(ax, ay)*1.
 
     def _triangle(self, c, sigma):
         """Triangular function centered in c with spread sigma."""
         triangle_x = (-abs(c[0] - self._neigx)) + sigma
         triangle_y = (-abs(c[1] - self._neigy)) + sigma
+        
         triangle_x[triangle_x < 0] = 0.
         triangle_y[triangle_y < 0] = 0.
-        return outer(triangle_x, triangle_y)
+        
+        if self.z != None:
+            triangle_z = (-abs(c[2] - self._neigz)) + sigma
+            triangle_z[triangle_z < 0] = 0.
+            return einsum('i,j,k -> ijk',triangle_x,triangle_y,triangle_z) #3 way outer
+        else:
+            return outer(triangle_x, triangle_y)
 
     def _cosine_distance(self, x, w):
-        num = (w * x).sum(axis=2)
-        denum = multiply(linalg.norm(w, axis=2), linalg.norm(x))
+        num = (w * x).sum(axis=-1)
+        denum = multiply(linalg.norm(w, axis=-1), linalg.norm(x))
         return 1 - num / (denum+1e-8)
 
     def _euclidean_distance(self, x, w):
@@ -325,8 +400,14 @@ class MiniSom(object):
         sig = self._decay_function(self._sigma, t, max_iteration)
         # improves the performances
         g = self.neighborhood(win, sig)*eta
-        # w_new = eta * neighborhood_function * (x-w)
-        self._weights += einsum('ij, ijk->ijk', g, x-self._weights)
+        
+        if self.z != None:
+            self._weights += einsum('ijk, ijkl->ijkl', g, x-self._weights)
+        else:
+            # w_new = eta * neighborhood_function * (x-w)
+            self._weights += einsum('ij, ijk->ijk', g, x-self._weights)
+        
+        
 
     def quantization(self, data):
         """Assigns a code book (weights vector of the winning neuron)
@@ -334,7 +415,7 @@ class MiniSom(object):
         self._check_input_len(data)
         winners_coords = argmin(self._distance_from_weights(data), axis=1)
         return self._weights[unravel_index(winners_coords,
-                                           self._weights.shape[:2])]
+                                           self._weights.shape[:-1])]
 
     def random_weights_init(self, data):
         """Initializes the weights of the SOM
@@ -447,20 +528,39 @@ class MiniSom(object):
         jj = [[-1, -1, 0, 1, 1, 1, 0, -1]]*2
 
         if self.topology == 'hexagonal':
+            if self.z != None:
+                warn('3D mapping cannot have hexagonal topology')
             ii = [[1, 1, 1, 0, -1, 0], [0, 1, 0, -1, -1, -1]]
             jj = [[1, 0, -1, -1, 0, 1], [1, 0, -1, -1, 0, 1]]
-
-        for x in range(self._weights.shape[0]):
-            for y in range(self._weights.shape[1]):
-                w_2 = self._weights[x, y]
-                e = y % 2 == 0   # only used on hexagonal topology
-                for k, (i, j) in enumerate(zip(ii[e], jj[e])):
-                    if (x+i >= 0 and x+i < self._weights.shape[0] and
-                            y+j >= 0 and y+j < self._weights.shape[1]):
-                        w_1 = self._weights[x+i, y+j]
-                        um[x, y, k] = fast_norm(w_2-w_1)
-
-        um = um.sum(axis=2)
+        
+        if self.z == None:
+            for x in range(self._weights.shape[0]):
+                for y in range(self._weights.shape[1]):
+                    w_2 = self._weights[x, y]
+                    e = y % 2 == 0   # only used on hexagonal topology
+                    for k, (i, j) in enumerate(zip(ii[e], jj[e])):
+                        if (x+i >= 0 and x+i < self._weights.shape[0] and
+                                y+j >= 0 and y+j < self._weights.shape[1]):
+                            w_1 = self._weights[x+i, y+j]
+                            um[x, y, k] = fast_norm(w_2-w_1)
+        else: #z != None:
+            um = zeros((self._weights.shape[0],
+                    self._weights.shape[1],
+                    self._weights.shape[2], 26))  # 26 neighbours for 3D map
+            ii = [0, -1, -1, -1, 0, 1, 1, 1] * 3 + [0, 0]
+            jj = [-1, -1, 0, 1, 1, 1, 0, -1] * 3 + [0, 0]
+            kk = [-1]*8 + [0]*8 + [1]*8          + [1, -1]
+            for x in range(self._weights.shape[0]):
+                for y in range(self._weights.shape[1]):
+                    for z in range(self._weights.shape[2]):
+                        w_2 = self._weights[x, y, z]
+                        for t, (i, j, k) in enumerate(zip(ii, jj, kk)):
+                            if (x+i >= 0 and x+i < self._weights.shape[0] and
+                                    y+j >= 0 and y+j < self._weights.shape[1] and
+                                    z+k >= 0 and z+k < self._weights.shape[2]):
+                                w_1 = self._weights[x+i, y+j, z+k]
+                                um[x, y, k, t] = fast_norm(w_2-w_1)
+        um = um.sum(axis=-1)
         return um/um.max()
 
     def activation_response(self, data):
@@ -469,7 +569,8 @@ class MiniSom(object):
             that the neuron i,j have been winner.
         """
         self._check_input_len(data)
-        a = zeros((self._weights.shape[0], self._weights.shape[1]))
+        #a = zeros((self._weights.shape[0], self._weights.shape[1]))
+        a = zeros(self._weights.shape[:-1])
         for x in data:
             a[self.winner(x)] += 1
         return a
@@ -479,7 +580,7 @@ class MiniSom(object):
         data[i] and the j-th weight.
         """
         input_data = array(data)
-        weights_flat = self._weights.reshape(-1, self._weights.shape[2])
+        weights_flat = self._weights.reshape(-1, self._weights.shape[-1])
         input_data_sq = power(input_data, 2).sum(axis=1, keepdims=True)
         weights_flat_sq = power(weights_flat, 2).sum(axis=1, keepdims=True)
         cross_term = dot(input_data, weights_flat.T)
@@ -514,10 +615,16 @@ class MiniSom(object):
         t = 1.42
         # b2mu: best 2 matching units
         b2mu_inds = argsort(self._distance_from_weights(data), axis=1)[:, :2]
-        b2my_xy = unravel_index(b2mu_inds, self._weights.shape[:2])
+        b2my_xy = unravel_index(b2mu_inds, self._weights.shape[:-1])
         b2mu_x, b2mu_y = b2my_xy[0], b2my_xy[1]
         dxdy = hstack([diff(b2mu_x), diff(b2mu_y)])
-        distance = norm(dxdy, axis=1)
+        distance = norm(dxdy, axis=-1)
+        
+        if self.z != None:
+            b2mu_z = b2my_xy[2]
+            dxdydz = hstack([diff(b2mu_x), diff(b2mu_y), diff(b2mu_z)])
+            distance = norm(dxdydz, axis=-1)
+        
         return (distance > t).mean()
 
     def win_map(self, data, return_indices=False):
@@ -566,12 +673,26 @@ class TestMinisom(unittest.TestCase):
         self.som._weights = zeros((5, 5, 1))  # fake weights
         self.som._weights[2, 3] = 5.0
         self.som._weights[1, 1] = 2.0
-
+        
+        #test som with 3d map
+        self.som3d = MiniSom(5, 5, 1, z = 5)
+        for i in range(5):
+            for j in range(5):
+                for k in range(5):
+                    # checking weights normalization
+                    assert_almost_equal(1.0, linalg.norm(self.som3d._weights[i, j, k]))
+        self.som3d._weights = zeros((5, 5, 5, 1))  # fake weights
+        self.som3d._weights[2, 3, 4] = 5.0
+        self.som3d._weights[1, 1, 1] = 2.0
+        
+    
+    
     def test_decay_function(self):
         assert self.som._decay_function(1., 2., 3.) == 1./(1.+2./(3./2))
 
     def test_fast_norm(self):
         assert fast_norm(array([1, 3])) == sqrt(1+9)
+        assert fast_norm(array([1, 3, 3])) == sqrt(1+9+9)
 
     def test_euclidean_distance(self):
         x = zeros((1, 2))
@@ -579,6 +700,15 @@ class TestMinisom(unittest.TestCase):
         d = self.som._euclidean_distance(x, w)
         assert_array_almost_equal(d, [[1.41421356, 1.41421356],
                                       [1.41421356, 1.41421356]])
+        
+    def test_euclidean_distance_3d(self):
+        x = zeros((1, 2, 2))
+        w = ones((2, 2, 2, 2))
+        d = self.som3d._euclidean_distance(x, w)
+        assert_array_almost_equal(d, [[[1.41421356, 1.41421356], 
+                                       [1.41421356, 1.41421356]],
+                                      [[1.41421356, 1.41421356],
+                                       [1.41421356, 1.41421356]]])
 
     def test_cosine_distance(self):
         x = zeros((1, 2))
@@ -587,12 +717,30 @@ class TestMinisom(unittest.TestCase):
         assert_array_almost_equal(d, [[1., 1.],
                                       [1., 1.]])
 
+    def test_cosine_distance_3d(self):
+        x = zeros((1, 2, 2))
+        w = ones((2, 2, 2, 2))
+        d = self.som3d._cosine_distance(x, w)
+        assert_array_almost_equal(d, [[[1., 1.],
+                                       [1., 1.]], 
+                                      [[1., 1.],
+                                       [1., 1.]]])
+
     def test_manhattan_distance(self):
         x = zeros((1, 2))
         w = ones((2, 2, 2))
         d = self.som._manhattan_distance(x, w)
         assert_array_almost_equal(d, [[2., 2.],
                                       [2., 2.]])
+        
+    def test_manhattan_distance_3d(self):
+        x = zeros((1, 2, 2))
+        w = ones((2, 2, 2, 2))
+        d = self.som3d._manhattan_distance(x, w)
+        assert_array_almost_equal(d, [[[2., 2.], 
+                                       [2., 2.]], 
+                                      [[2., 2.], 
+                                       [2., 2.]]])
 
     def test_chebyshev_distance(self):
         x = array([1, 3])
@@ -600,7 +748,16 @@ class TestMinisom(unittest.TestCase):
         d = self.som._chebyshev_distance(x, w)
         assert_array_almost_equal(d, [[2., 2.],
                                       [2., 2.]])
-
+    
+    def test_chebyshev_distance_3d(self):
+        x = array([[[1, 3], [1, 3]]])
+        w = ones((2, 2, 2, 2))
+        d = self.som3d._chebyshev_distance(x, w)
+        assert_array_almost_equal(d, [[[2., 2.], 
+                                       [2., 2.]], 
+                                      [[2., 2.], 
+                                       [2., 2.]]])
+    
     def test_check_input_len(self):
         with self.assertRaises(ValueError):
             self.som.train_batch([[1, 2]], 1)
@@ -626,26 +783,51 @@ class TestMinisom(unittest.TestCase):
         bell = self.som._gaussian((2, 2), 1)
         assert bell.max() == 1.0
         assert bell.argmax() == 12  # unravel(12) = (2,2)
+    
+    def test_gaussian_3d(self):
+        bell = self.som3d._gaussian((2, 2, 2), 1)
+        assert bell.max() == 1.0
+        assert bell.argmax() == 62
 
     def test_mexican_hat(self):
         bell = self.som._mexican_hat((2, 2), 1)
         assert bell.max() == 1.0
         assert bell.argmax() == 12  # unravel(12) = (2,2)
 
+    def test_mexican_hat_3d(self):
+        bell = self.som3d._mexican_hat((2, 2, 2), 1)
+        assert bell.max() == 1.0
+        assert bell.argmax() == 62  # unravel(12) = (2,2)
+
     def test_bubble(self):
         bubble = self.som._bubble((2, 2), 1)
         assert bubble[2, 2] == 1
         assert sum(sum(bubble)) == 1
+        
+    def test_bubble_3d(self):
+        bubble = self.som3d._bubble((2, 2, 2), 1)
+        assert bubble[2, 2, 2] == 1
+        assert sum(sum(sum(bubble))) == 1
 
     def test_triangle(self):
         bubble = self.som._triangle((2, 2), 1)
         assert bubble[2, 2] == 1
         assert sum(sum(bubble)) == 1
+        
+    def test_triangle_3d(self):
+        bubble = self.som3d._triangle((2, 2, 2), 1)
+        assert bubble[2, 2, 2] == 1
+        assert sum(sum(sum(bubble))) == 1
 
     def test_win_map(self):
         winners = self.som.win_map([[5.0], [2.0]])
         assert winners[(2, 3)][0] == [5.0]
         assert winners[(1, 1)][0] == [2.0]
+        
+    def test_win_map_3d(self):
+        winners = self.som3d.win_map([[5.0], [2.0]])
+        assert winners[(2, 3, 4)][0] == [5.0]
+        assert winners[(1, 1, 1)][0] == [2.0]
 
     def test_win_map_indices(self):
         winners = self.som.win_map([[5.0], [2.0]], return_indices=True)
@@ -658,15 +840,30 @@ class TestMinisom(unittest.TestCase):
         assert labels_map[(1, 1)]['b'] == 1
         with self.assertRaises(ValueError):
             self.som.labels_map([[5.0]], ['a', 'b'])
+            
+    def test_labels_map_3d(self):
+        labels_map = self.som3d.labels_map([[5.0], [2.0]], ['a', 'b'])
+        assert labels_map[(2, 3, 4)]['a'] == 1
+        assert labels_map[(1, 1, 1)]['b'] == 1
+        with self.assertRaises(ValueError):
+            self.som.labels_map([[5.0]], ['a', 'b'])
 
     def test_activation_reponse(self):
         response = self.som.activation_response([[5.0], [2.0]])
         assert response[2, 3] == 1
         assert response[1, 1] == 1
+        
+    def test_activation_reponse_3d(self):
+        response = self.som3d.activation_response([[5.0], [2.0]])
+        assert response[2, 3, 4] == 1
+        assert response[1, 1, 1] == 1
 
     def test_activate(self):
         assert self.som.activate(5.0).argmin() == 13.0  # unravel(13) = (2,3)
-
+        
+    def test_activate_3d(self):
+        assert self.som3d.activate(5.0).argmin() == 69.0     
+    
     def test_distance_from_weights(self):
         data = arange(-5, 5).reshape(-1, 1)
         weights = self.som._weights.reshape(-1, self.som._weights.shape[2])
@@ -674,10 +871,22 @@ class TestMinisom(unittest.TestCase):
         for i in range(len(data)):
             for j in range(len(weights)):
                 assert(distances[i][j] == norm(data[i] - weights[j]))
+                
+    def test_distance_from_weights_3d(self):
+        data = arange(-5, 5).reshape(-1, 1)
+        weights = self.som3d._weights.reshape(-1, self.som3d._weights.shape[-1])
+        distances = self.som3d._distance_from_weights(data)
+        for i in range(len(data)):
+            for j in range(len(weights)):
+                assert(distances[i][j] == norm(data[i] - weights[j]))
 
     def test_quantization_error(self):
         assert self.som.quantization_error([[5], [2]]) == 0.0
         assert self.som.quantization_error([[4], [1]]) == 1.0
+        
+    def test_quantization_error_3d(self):
+        assert self.som3d.quantization_error([[5], [2]]) == 0.0
+        assert self.som3d.quantization_error([[4], [1]]) == 1.0
 
     def test_topographic_error(self):
         # 5 will have bmu_1 in (2,3) and bmu_2 in (2, 4)
@@ -694,7 +903,23 @@ class TestMinisom(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             assert self.som.topographic_error([[5]]) == 0.0
         self.som.topology = 'rectangular'
+        
+    def test_topographic_error_3d(self):
+        # 5 will have bmu_1 in (2, 3, 4) and bmu_2 in (2, 3, 3)
+        # which are in the same neighborhood
+        self.som3d._weights[2, 3, 3] = 6.0
+        # 15 will have bmu_1 in (4, 4, 4) and bmu_2 in (0, 0, 0)
+        # which are not in the same neighborhood
+        self.som3d._weights[4, 4, 4] = 15.0
+        self.som3d._weights[0, 0, 0] = 14.
+        assert self.som3d.topographic_error([[5]]) == 0.0
+        assert self.som3d.topographic_error([[15]]) == 1.0
 
+        self.som.topology = 'hexagonal'
+        with self.assertRaises(NotImplementedError):
+            assert self.som.topographic_error([[5]]) == 0.0
+        self.som.topology = 'rectangular'    
+    
     def test_quantization(self):
         q = self.som.quantization(array([[4], [2]]))
         assert q[0] == 5.0
@@ -712,6 +937,7 @@ class TestMinisom(unittest.TestCase):
         som2.train_random(data, 10)
         # same state after training
         assert_array_almost_equal(som1._weights, som2._weights)
+        
 
     def test_train_batch(self):
         som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
@@ -758,6 +984,16 @@ class TestMinisom(unittest.TestCase):
         som = MiniSom(2, 2, 2, topology='hexagonal', random_seed=1)
         som._weights = array([[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]])
         assert_array_equal(som.distance_map(), array([[.5, 1.], [1., .5]]))
+        
+    def test_distance_map_3d(self):
+        som = MiniSom(2, 2, 2, random_seed=1, z = 2)
+        som._weights = array([[[[1.,  0.], [0., 1.]], [[0., 1.], [1., 0.]]],
+                              [[[1.,  0.], [0., 1.]], [[0., 1.], [1., 0.]]]])
+        
+        
+        assert_array_equal(som.distance_map(), array([[[0.5, 1. ], [0.5, 1. ]], 
+                                                      [[0.5, 1. ], [0.5, 1. ]]]))
+
 
     def test_pickling(self):
         with open('som.p', 'wb') as outfile:
