@@ -110,6 +110,9 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
+Julianna C. Oliveira, Eduardo Zorita, Vimal Koul, Thomas Ludwig, Johanna Baehr.<a href="https://dl.acm.org/doi/abs/10.1145/3429309.3429319">Forecast opportunities for European summer climate ensemble predictions using Self-Organising Maps</a>. CI2020: Proceedings of the 10th International Conference on Climate Informatics. 2020.
+</li>
+<li>
 Gorgoglione, A., Castro, A., Gioia, A., & Iacobellis, V. <a href="https://link.springer.com/chapter/10.1007/978-3-030-58811-3_49">Application of the Self-organizing Map (SOM) to Characterize Nutrient Urban Runoff</a>. International Conference on Computational Science and Its Applications. Springer, Cham, 2020.
 </li>        
 <li>
