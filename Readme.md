@@ -102,7 +102,8 @@ How to cite MiniSom
 @misc{vettigliminisom,
   title={MiniSom: minimalistic and NumPy-based implementation of the Self Organizing Map},
   author={Giuseppe Vettigli},
-  note={GitHub.[Online]. Available: https://github.com/JustGlowing/minisom/},
+  year={2018},
+  url={https://github.com/JustGlowing/minisom/},
 }
 ```
 
