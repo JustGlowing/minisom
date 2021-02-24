@@ -245,7 +245,7 @@ class MiniSom(object):
 
     def _gaussian(self, c, sigma):
         """Returns a Gaussian centered in c."""
-        d = 2*pi*sigma*sigma
+        d = 2*sigma*sigma
         ax = exp(-power(self._xx-self._xx.T[c], 2)/d)
         ay = exp(-power(self._yy-self._yy.T[c], 2)/d)
         return (ax * ay).T  # the external product gives a matrix
@@ -253,7 +253,7 @@ class MiniSom(object):
     def _mexican_hat(self, c, sigma):
         """Mexican hat centered in c."""
         p = power(self._xx-self._xx.T[c], 2) + power(self._yy-self._yy.T[c], 2)
-        d = 2*pi*sigma*sigma
+        d = 2*sigma*sigma
         return (exp(-p/d)*(1-2/d*p)).T
 
     def _bubble(self, c, sigma):
