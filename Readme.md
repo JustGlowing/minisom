@@ -109,6 +109,10 @@ How to cite MiniSom
 
 Who uses Minisom?
 ------------
+
+<iframe src="https://www.w3schools.com" title="W3Schools Free Online Web Tutorials"></iframe>
+
+<!--
 <ul>
 <li>
 Mazin A, Hawkins SH, Stringfield O, Dhillon J, Manley BJ, Jeong DK, Raghunand N. <a href="https://www.nature.com/articles/s41598-021-83271-4">Identification of sarcomatoid differentiation in renal cell carcinoma by machine learning on multiparametric MRI</a>. Nature, Scientific Reports. 2021.
@@ -319,7 +323,7 @@ Unsupervised Fraud Detection</a>. Royal Institute of Technology School of Comput
 <li>Ivana Kajić, Guido Schillaci, Saša Bodiroža, Verena V. Hafner, <a href="http://dl.acm.org/citation.cfm?id=2559816">Learning hand-eye coordination for a humanoid robot using SOMs</a>. Proceedings of the 2014 ACM/IEEE international conference on Human-robot interaction
 Pages 192-193.</li>
 </ul>
-
+-->
 Guidelines to contribute
 ---------------------
 1. In the description of your Pull Request explain clearly what does it implements/fixes and your changes. Possibly give an example in the description of the PR. In cases that the PR is about a code speedup, report a reproducible example and quantify the speedup.
