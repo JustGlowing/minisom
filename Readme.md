@@ -111,10 +111,10 @@ Who uses Minisom?
 ------------
 <ul>
 <li>
-Mazin A, Hawkins SH, Stringfield O, Dhillon J, Manley BJ, Jeong DK, Raghunand N.<a href="https://www.nature.com/articles/s41598-021-83271-4">Identification of sarcomatoid differentiation in renal cell carcinoma by machine learning on multiparametric MRI</a>. Nature, Scientific Reports. 2021.
+Mazin A, Hawkins SH, Stringfield O, Dhillon J, Manley BJ, Jeong DK, Raghunand N. <a href="https://www.nature.com/articles/s41598-021-83271-4">Identification of sarcomatoid differentiation in renal cell carcinoma by machine learning on multiparametric MRI</a>. Nature, Scientific Reports. 2021.
 </li>
 <li>
-Qi J, Ma G, Navarro-Alarcon D, Zhang H, Lyu Y.<a href="https://arxiv.org/pdf/2101.07513.pdf">Towards Latent Space Based Manipulation of Elastic Rods using Autoencoder Models and Robust Centerline Extractions</a>. arXiv:2101.07513. 2021.
+Qi J, Ma G, Navarro-Alarcon D, Zhang H, Lyu Y. <a href="https://arxiv.org/pdf/2101.07513.pdf">Towards Latent Space Based Manipulation of Elastic Rods using Autoencoder Models and Robust Centerline Extractions</a>. arXiv:2101.07513. 2021.
 </li>
 <li>
 Julianna C. Oliveira, Eduardo Zorita, Vimal Koul, Thomas Ludwig, Johanna Baehr.<a href="https://dl.acm.org/doi/abs/10.1145/3429309.3429319">Forecast opportunities for European summer climate ensemble predictions using Self-Organising Maps</a>. CI2020: Proceedings of the 10th International Conference on Climate Informatics. 2020.
