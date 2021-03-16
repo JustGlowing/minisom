@@ -109,7 +109,14 @@ How to cite MiniSom
 
 Who uses Minisom?
 ------------
+
 <ul>
+<li>
+Mazin A, Hawkins SH, Stringfield O, Dhillon J, Manley BJ, Jeong DK, Raghunand N. <a href="https://www.nature.com/articles/s41598-021-83271-4">Identification of sarcomatoid differentiation in renal cell carcinoma by machine learning on multiparametric MRI</a>. Nature, Scientific Reports. 2021.
+</li>
+<li>
+Qi J, Ma G, Navarro-Alarcon D, Zhang H, Lyu Y. <a href="https://arxiv.org/pdf/2101.07513.pdf">Towards Latent Space Based Manipulation of Elastic Rods using Autoencoder Models and Robust Centerline Extractions</a>. arXiv:2101.07513. 2021.
+</li>
 <li>
 Julianna C. Oliveira, Eduardo Zorita, Vimal Koul, Thomas Ludwig, Johanna Baehr.<a href="https://dl.acm.org/doi/abs/10.1145/3429309.3429319">Forecast opportunities for European summer climate ensemble predictions using Self-Organising Maps</a>. CI2020: Proceedings of the 10th International Conference on Climate Informatics. 2020.
 </li>
@@ -314,9 +321,20 @@ Unsupervised Fraud Detection</a>. Royal Institute of Technology School of Comput
 Pages 192-193.</li>
 </ul>
 
-Compatibility notes
+Guidelines to contribute
 ---------------------
-Minisom has been tested under Python 3.8.0.
+1. In the description of your Pull Request explain clearly what does it implements/fixes and your changes. Possibly give an example in the description of the PR. In cases that the PR is about a code speedup, report a reproducible example and quantify the speedup.
+2. Give your pull request a helpful title that summarises what your contribution does. 
+3. Write unit tests for your code and make sure the existing tests are up to date. `pytest` can be used for this:
+```
+pytest minisom.py
+```
+4. Make sure that there a no stylistic issues using `pycodestyle`:
+```
+pycodestyle minisom.py
+```
+5. Make sure your code is properly commented and documented. Each public method needs to be documented as the existing ones.
+
 
 License
 ---------------------
