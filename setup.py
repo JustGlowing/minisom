@@ -5,7 +5,7 @@ description = 'Minimalistic implementation of the Self Organizing Maps (SOM)'
 keywords = ['machine learning', 'neural networks', 'clustering', 'dimentionality reduction']
 
 setup(name='MiniSom',
-      version='2.2.7',
+      version='2.2.8',
       description=description,
       author='Giuseppe Vettigli',
       package_data={'': ['Readme.md']},
