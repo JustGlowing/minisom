@@ -112,6 +112,9 @@ Who uses Minisom?
 
 <ul>
 <li>
+Gorgoglione, Angela, Alberto Castro, Vito Iacobellis, and Andrea Gioia. <a href="https://www.mdpi.com/2071-1050/13/4/2054/pdf">A Comparison of Linear and Non-linear Machine Learning Techniques (PCA and SOM) for Characterizing Urban Nutrient Runoff</a>. Sustainability 13, no. 4. 2021.
+</li>
+<li>
 Mazin A, Hawkins SH, Stringfield O, Dhillon J, Manley BJ, Jeong DK, Raghunand N. <a href="https://www.nature.com/articles/s41598-021-83271-4">Identification of sarcomatoid differentiation in renal cell carcinoma by machine learning on multiparametric MRI</a>. Nature, Scientific Reports. 2021.
 </li>
 <li>
