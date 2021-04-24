@@ -337,13 +337,3 @@ pytest minisom.py
 pycodestyle minisom.py
 ```
 5. Make sure your code is properly commented and documented. Each public method needs to be documented as the existing ones.
-
-
-License
----------------------
-
-This program is distributed in the hope that it will be useful, but without warranty; without even the implied warranty of merchantability or fitness for a particular purpose.
-
-MiniSom distributed under MIT license.
-
-***
