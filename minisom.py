@@ -83,6 +83,25 @@ def asymptotic_decay(learning_rate, t, max_iter):
     """
     return learning_rate / (1+t/(max_iter/2))
 
+def get_coordinates_from_index(n, x, y):
+    if n<0:
+        return(-1,-1)
+    return(n%y, int(n/y))
+
+def get_index_from_coordinates(c, x, y):
+    if c[0]<0 or c[1]<0 or c[0]>y or c[1]>x:
+        return(-1)
+    return(c[1]*y + c[0])
+
+def get_neighbors_from_index(n, x, y):
+    c = get_coordinates_from_index(n, x, y)
+    offset_x = -1 if c[1]%2==0 else 1
+    neighbors_c =[(c[0]-1,c[1]), (c[0]+1,c[1]), (c[0],c[1]-1), (c[0]+offset_x,c[1]-1), (c[0],c[1]+1), 
+                (c[0]+offset_x,c[1]+1)] 
+    neighbors_c = list(filter(lambda c: (c[0]>=0) and (c[1]>=0) and (c[1]<x) and (c[0]<y), neighbors_c))
+    neighbors = list(map(lambda c: get_index_from_coordinates(c, x, y), neighbors_c))
+    return list(set(neighbors))
+
 
 class MiniSom(object):
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
@@ -555,6 +574,37 @@ class MiniSom(object):
             winmap[position] = Counter(winmap[position])
         return winmap
 
+    def partitioned_quant_error(self,data,chunks):
+        n=len(data)
+        n_chunks = list(range(0,n,chunks))
+        n_chunks.append(n)
+        errorq=0
+        for j in range(len(n_chunks)-1):
+            interval = n_chunks[j+1]-n_chunks[j]
+            errorq = errorq+self.quantization_error(data[n_chunks[j]:n_chunks[j+1]])*interval/n
+        return errorq
+
+    def calculate_hexa_topographical_error(self, data):
+        bmus_1st_and_2nd = argsort(self._distance_from_weights(data), axis=1)[:, :2]
+        n_rows = self._weights.shape[0]
+        n_columns = self._weights.shape[1]
+        neighbors=list(map(lambda t:get_neighbors_from_index(t, n_rows, n_columns), bmus_1st_and_2nd[:,0]))
+
+        e_t=1-mean([second in neighs for (second,neighs) in zip(bmus_1st_and_2nd[:,1], neighbors)])
+        return(e_t)
+
+    def partitioned_topo_error(self,data,chunks):
+        n=len(data)
+        n_chunks = list(range(0,n,chunks))
+        n_chunks.append(n)
+        errort=0
+        for j in range(len(n_chunks)-1):
+            interval = n_chunks[j+1]-n_chunks[j]
+            errort = errort+self.calculate_hexa_topographical_error(data[n_chunks[j]:n_chunks[j+1]])*interval/n
+        return errort
+
+
+
 
 class TestMinisom(unittest.TestCase):
     def setUp(self):
@@ -765,3 +815,4 @@ class TestMinisom(unittest.TestCase):
         with open('som.p', 'rb') as infile:
             pickle.load(infile)
         os.remove('som.p')
+    
