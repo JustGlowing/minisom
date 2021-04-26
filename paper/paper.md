@@ -22,7 +22,7 @@ bibliography: paper.bib
 
 # Summary
 
-Self Organizing Maps (SOM) is a type of Artificial Neural Network [@kohonen1990self] that is able to organize itself so that specific areas respond in a similar way to input patterns that are similar. Since its first formulation, it has been successfully used for a plethora of applications in many scientific fields [@kohonen2012self] and the Machine Learning community has developed a staggering amount of variants of the original model. `MiniSom` is a minimalistic and Numpy [@numpy] based implementation of SOM.
+Self Organizing Maps (SOM) is a type of Artificial Neural Network [@kohonen1990self] that is able to organize itself so that specific areas respond in a similar way to input patterns that are similar. Since its first formulation, it has been successfully used for a plethora of applications in many scientific fields and the Machine Learning community has developed a staggering amount of variants of the original model. In [@kohonen2014matlab] is reported that over 10,000 scientific papers and more than 20 books have been published on it. `MiniSom` is a minimalistic and Numpy [@numpy] based implementation of SOM.
 
 
 # Statement of need
