@@ -52,7 +52,7 @@ fig = plt.figure(figsize=(10, 9))
 markers = ['o', 's', 'D']
 colors = ['C0', 'C1', 'C2']
 
-single_marker = st.checkbox('Single Marker Visualization')
+single_marker = st.checkbox('Fixed Marker Visualization')
 if single_marker:
 	plt.pcolor(som.distance_map().T, cmap='bone_r', alpha=.5)  # plotting the distance map as background
 	plt.colorbar()
@@ -85,7 +85,7 @@ st.write('`{e:2.6f}` Topographic error'.format(e=som.topographic_error(data)))
 """
 ***
 - The background represents the U-Matrix of the SOM (the darker, the more separated are the weights/codebooks).
-- In the single marker visualization each marker represents a sample in the data but they're like to overlap.
+- In the fixed marker visualization each marker represents a sample in the data but they're like to overlap.
 - In the default visualization jittering is used to spread the markers in the cells.
 - Each type of marker represents a class.
 """
