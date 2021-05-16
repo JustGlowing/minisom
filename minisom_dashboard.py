@@ -90,7 +90,7 @@ st.write('`{e:2.6f}` Topographic error'.format(e=som.topographic_error(data)))
 - Each type of marker represents a class.
 """
 
-st.sidebar.markdown('Dataset description: https://archive.ics.uci.edu/ml/datasets/seeds')
+st.markdown('Dataset description: https://archive.ics.uci.edu/ml/datasets/seeds')
 
 if st.checkbox('Show input data (before normalization)'):
 	data_df['class'] = target
