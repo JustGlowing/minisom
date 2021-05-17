@@ -84,10 +84,9 @@ st.write('`{e:2.6f}` Topographic error'.format(e=som.topographic_error(data)))
 
 """
 ***
-- The background represents the U-Matrix of the SOM (the darker, the more separated are the weights/codebooks).
-- In the fixed marker visualization each marker represents a sample in the data but they're like to overlap.
-- In the default visualization jittering is used to spread the markers in the cells.
-- Each type of marker represents a class.
+- The background represents the U-Matrix of the SOM (the darker, the more separated are the weights in the neighbourhood).
+- In the fixed marker visualization each type of marker represents a sample in the data but they're like to overlap.
+- In the default visualization each marker represents a sample in the data, jittering is used to spread the markers in the cells and avoid overlap.
 """
 
 st.markdown('Dataset description: https://archive.ics.uci.edu/ml/datasets/seeds')
