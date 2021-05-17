@@ -36,8 +36,8 @@ activation_distance = st.sidebar.selectbox('activation_distance',
 	                                 ['euclidean', 'cosine', 'manhattan', 'chebyshev'])
 n_neurons = st.sidebar.slider('map size (N x N)', 1, 150, 9, step=1)
 m_neurons = n_neurons
-sigma = st.sidebar.slider('sigma', 0.1, 10.0, 1.5, step=0.1)
-learning_rate = st.sidebar.slider('learning rate', 0.1, 50.0, 0.5, step=0.1)
+sigma = st.sidebar.slider('sigma', 0.1, 50.0, 1.5, step=0.1)
+learning_rate = st.sidebar.slider('learning rate', 0.1, 5.0, 0.5, step=0.1)
 iterations = st.sidebar.slider('training iterations', 0, 2000, 500, step=1)
 som = MiniSom(n_neurons, m_neurons, data.shape[1], sigma=sigma,
               neighborhood_function=neighborhood_function, activation_distance=activation_distance,
