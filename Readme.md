@@ -74,6 +74,11 @@ with open('som.p', 'rb') as infile:
 
 Note that if a lambda function is used to define the decay factor MiniSom will not be pickable anymore.
 
+Explore parameters
+---------------------
+
+You can use this dashboard to explore the effect of the parameters on a sample dataset: https://share.streamlit.io/justglowing/minisom/dashboard/dashboard.py
+
 Examples
 ---------------------
 
