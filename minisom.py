@@ -442,7 +442,7 @@ class MiniSom(object):
         the euclidean distance.
 
         If neighbour_average is True, each cell will be the normalized
-        average of distances, making it independent of the number of
+        by the average of distances, making it independent of the number of
         neighbours.
         """
         um = nan * zeros((self._weights.shape[0],
