@@ -3,7 +3,8 @@ from math import sqrt
 from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, pi, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
-                   einsum, prod, nan, sqrt, hstack, diff, argmin, multiply)
+                   einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
+                   nanmean, nansum)
 from numpy import sum as npsum
 from numpy.linalg import norm
 from collections import defaultdict, Counter
@@ -434,14 +435,19 @@ class MiniSom(object):
         """
         self.train(data, num_iteration, random_order=False, verbose=verbose)
 
-    def distance_map(self):
+    def distance_map(self, neighbour_average=False):
         """Returns the distance map of the weights.
         Each cell is the normalised sum of the distances between
         a neuron and its neighbours. Note that this method uses
-        the euclidean distance."""
-        um = zeros((self._weights.shape[0],
-                    self._weights.shape[1],
-                    8))  # 2 spots more for hexagonal topology
+        the euclidean distance.
+
+        If neighbour_average is True, each cell will be the normalized
+        average of distances, making it independent of the number of
+        neighbours.
+        """
+        um = nan * zeros((self._weights.shape[0],
+                          self._weights.shape[1],
+                          8))  # 2 spots more for hexagonal topology
 
         ii = [[0, -1, -1, -1, 0, 1, 1, 1]]*2
         jj = [[-1, -1, 0, 1, 1, 1, 0, -1]]*2
@@ -460,7 +466,11 @@ class MiniSom(object):
                         w_1 = self._weights[x+i, y+j]
                         um[x, y, k] = fast_norm(w_2-w_1)
 
-        um = um.sum(axis=2)
+        if neighbour_average:
+            um = nanmean(um, axis=2)
+        else:
+            um = nansum(um, axis=2)
+
         return um/um.max()
 
     def activation_response(self, data):
