@@ -437,11 +437,11 @@ class MiniSom(object):
 
     def distance_map(self, scaling='sum'):
         """Returns the distance map of the weights.
-        Each cell is the normalised sum of the distances between
-        a neuron and its neighbours. Note that this method uses
-        the euclidean distance.
+        If scaling is 'sum' (default), each cell is the normalised sum of
+        the distances between a neuron and its neighbours. Note that this
+        method uses the euclidean distance.
 
-        If neighbour_average is True, each cell will be the normalized
+        If scaling is 'mean', each cell will be the normalized
         by the average of distances, making it independent of the number of
         neighbours.
         """
