@@ -445,6 +445,11 @@ class MiniSom(object):
         by the average of distances, making it independent of the number of
         neighbours.
         """
+
+        if scaling not in ['sum', 'mean']:
+            raise ValueError(f'scaling should be either "sum" or "mean" ('
+                             f'"{scaling}" not valid)')
+
         um = nan * zeros((self._weights.shape[0],
                           self._weights.shape[1],
                           8))  # 2 spots more for hexagonal topology
