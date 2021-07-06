@@ -435,7 +435,7 @@ class MiniSom(object):
         """
         self.train(data, num_iteration, random_order=False, verbose=verbose)
 
-    def distance_map(self, scaling="sum"):
+    def distance_map(self, scaling='sum'):
         """Returns the distance map of the weights.
         Each cell is the normalised sum of the distances between
         a neuron and its neighbours. Note that this method uses
@@ -466,9 +466,9 @@ class MiniSom(object):
                         w_1 = self._weights[x+i, y+j]
                         um[x, y, k] = fast_norm(w_2-w_1)
 
-        if scaling == "mean":
+        if scaling == 'mean':
             um = nanmean(um, axis=2)
-        if scaling == "sum":
+        if scaling == 'sum':
             um = nansum(um, axis=2)
 
         return um/um.max()
@@ -768,6 +768,11 @@ class TestMinisom(unittest.TestCase):
         som = MiniSom(2, 2, 2, topology='hexagonal', random_seed=1)
         som._weights = array([[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]])
         assert_array_equal(som.distance_map(), array([[.5, 1.], [1., .5]]))
+
+        som = MiniSom(3, 3, 1, random_seed=1)
+        som._weights = array([[1, 0, 1], [0, 1, 0], [1, 0, 1]])
+        dist = array([[2/3, 3/5, 2/3], [3/5, 4/8, 3/5], [2/3, 3/5, 2/3]])
+        assert_array_equal(som.distance_map(scaling='mean'), dist/max(dist))
 
     def test_pickling(self):
         with open('som.p', 'wb') as outfile:
