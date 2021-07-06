@@ -435,7 +435,7 @@ class MiniSom(object):
         """
         self.train(data, num_iteration, random_order=False, verbose=verbose)
 
-    def distance_map(self, neighbour_average=False):
+    def distance_map(self, scaling="sum"):
         """Returns the distance map of the weights.
         Each cell is the normalised sum of the distances between
         a neuron and its neighbours. Note that this method uses
@@ -466,9 +466,9 @@ class MiniSom(object):
                         w_1 = self._weights[x+i, y+j]
                         um[x, y, k] = fast_norm(w_2-w_1)
 
-        if neighbour_average:
+        if scaling == "mean":
             um = nanmean(um, axis=2)
-        else:
+        if scaling == "sum":
             um = nansum(um, axis=2)
 
         return um/um.max()
