@@ -441,9 +441,13 @@ class MiniSom(object):
         the distances between a neuron and its neighbours. Note that this
         method uses the euclidean distance.
 
-        If scaling is 'mean', each cell will be the normalized
-        by the average of distances, making it independent of the number of
-        neighbours.
+        Parameters
+        ----------
+        scaling : string (default='sum')
+            If set to 'mean', each cell will be the normalized
+            by the average of the distances of the neighbours.
+            If set to 'sum', the normalization is done
+            by the sum of the distances.
         """
 
         if scaling not in ['sum', 'mean']:
@@ -778,6 +782,9 @@ class TestMinisom(unittest.TestCase):
         som._weights = array([[1, 0, 1], [0, 1, 0], [1, 0, 1]])
         dist = array([[2/3, 3/5, 2/3], [3/5, 4/8, 3/5], [2/3, 3/5, 2/3]])
         assert_array_equal(som.distance_map(scaling='mean'), dist/max(dist))
+
+        with self.assertRaises(ValueError):
+            som.distance_map(scaling='puppies')
 
     def test_pickling(self):
         with open('som.p', 'wb') as outfile:
