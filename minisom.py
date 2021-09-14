@@ -42,6 +42,23 @@ def _build_iteration_indexes(data_len, num_iterations,
         return iterations
 
 
+def _build_iteration_indexes_alternative(data_len,
+                             verbose=False, random_generator=None):
+    """Returns an iterable with the indexes of the samples
+    to pick at each iteration of the training.
+
+    If random_generator is not None, it must be an instalce
+    of numpy.random.RandomState and it will be used
+    to randomize the order of the samples."""
+    iterations = arange(data_len)
+    if random_generator:
+        random_generator.shuffle(iterations)
+    if verbose:
+        return _wrap_index__in_verbose(iterations)
+    else:
+        return iterations
+
+
 def _wrap_index__in_verbose(iterations):
     """Yields the values in iterations printing the status on the stdout."""
     m = len(iterations)
@@ -329,6 +346,25 @@ class MiniSom(object):
         # w_new = eta * neighborhood_function * (x-w)
         self._weights += einsum('ij, ijk->ijk', g, x-self._weights)
 
+    def update_alternative(self, x, win, eta, sig):
+        """Updates the weights of the neurons.
+
+        Parameters
+        ----------
+        x : np.array
+            Current pattern to learn.
+        win : tuple
+            Position of the winning neuron for x (array or tuple).
+        t : int
+            Iteration index
+        max_iteration : int
+            Maximum number of training itarations.
+        """
+        # improves the performances
+        g = self.neighborhood(win, sig)*eta
+        # w_new = eta * neighborhood_function * (x-w)
+        self._weights += einsum('ij, ijk->ijk', g, x-self._weights)
+
     def quantization(self, data):
         """Assigns a code book (weights vector of the winning neuron)
         to each sample in data."""
@@ -393,13 +429,16 @@ class MiniSom(object):
         random_generator = None
         if random_order:
             random_generator = self._random_generator
-        iterations = _build_iteration_indexes(len(data), num_iteration,
+        iterations = _build_iteration_indexes_alternative(len(data),
                                               verbose, random_generator)
-        for t, iteration in enumerate(iterations):
-            self.update(data[iteration], self.winner(data[iteration]),
-                        t, num_iteration)
-        if verbose:
-            print('\n quantization error:', self.quantization_error(data))
+        for i in range(0, num_iteration):
+            eta = self._decay_function(self._learning_rate, i, num_iteration)
+            sig = self._decay_function(self._sigma, i, num_iteration)
+            for t, iteration in enumerate(iterations):
+                self.update_alternative(data[iteration], self.winner(data[iteration]),
+                            eta, sig)
+            if verbose:
+                print('\n quantization error:', self.quantization_error(data))
 
     def train_random(self, data, num_iteration, verbose=False):
         """Trains the SOM picking samples at random from data.
