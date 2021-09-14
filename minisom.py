@@ -794,6 +794,18 @@ class TestMinisom(unittest.TestCase):
         som.train_random(data, 10, verbose=True)
         assert q1 > som.quantization_error(data)
 
+    def test_train_epoch(self):
+        som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
+        data = array([[4, 2], [3, 1]])
+        q1 = som.quantization_error(data)
+        som.train(data, 10, random_order=True)
+        assert q1 > som.quantization_error(data)
+
+        data = array([[1, 5], [6, 7]])
+        q1 = som.quantization_error(data)
+        som.train_epochs(data, 10, verbose=True)
+        assert q1 > som.quantization_error(data)
+
     def test_random_weights_init(self):
         som = MiniSom(2, 2, 2, random_seed=1)
         som.random_weights_init(array([[1.0, .0]]))
