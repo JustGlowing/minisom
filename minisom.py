@@ -292,7 +292,7 @@ class MiniSom(object):
     def _check_iteration_number(self, num_iteration):
         if num_iteration < 1:
             raise ValueError('num_iteration must be > 1')
-    
+
     def _check_epoch_number(self, num_epoch):
         if num_epoch < 1:
             raise ValueError('num_epoch must be > 1')
@@ -465,11 +465,11 @@ class MiniSom(object):
         if random_order:
             random_generator = self._random_generator
             random_generator.shuffle(iterations)
-            
+
         for i in range(0, num_epoch):
             for t, iteration in enumerate(iterations):
                 self.update(data[iteration], self.winner(data[iteration]),
-                        i, num_epoch)
+                            i, num_epoch)
         if verbose:
             print('\n quantization error:', self.quantization_error(data))
 
