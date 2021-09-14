@@ -470,8 +470,8 @@ class MiniSom(object):
             for t, iteration in enumerate(iterations):
                 self.update(data[iteration], self.winner(data[iteration]),
                         i, num_epoch)
-            if verbose:
-                print('\n quantization error:', self.quantization_error(data))
+        if verbose:
+            print('\n quantization error:', self.quantization_error(data))
 
     def distance_map(self, scaling='sum'):
         """Returns the distance map of the weights.
@@ -803,7 +803,7 @@ class TestMinisom(unittest.TestCase):
 
         data = array([[1, 5], [6, 7]])
         q1 = som.quantization_error(data)
-        som.train_epochs(data, 10, verbose=True)
+        som.train_epochs(data, 5, verbose=True)
         assert q1 > som.quantization_error(data)
 
     def test_random_weights_init(self):
