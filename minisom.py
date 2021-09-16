@@ -4,7 +4,7 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, pi, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
-                   nanmean, nansum)
+                   nanmean, nansum, tile)
 from numpy import sum as npsum
 from numpy.linalg import norm
 from collections import defaultdict, Counter
@@ -26,16 +26,22 @@ import unittest
 
 
 def _build_iteration_indexes(data_len, num_iterations,
-                             verbose=False, random_generator=None):
+                             verbose=False, random_generator=None,
+                             use_epochs=False):
     """Returns an iterable with the indexes of the samples
     to pick at each iteration of the training.
 
-    If random_generator is not None, it must be an instalce
+    If random_generator is not None, it must be an instance
     of numpy.random.RandomState and it will be used
     to randomize the order of the samples."""
-    iterations = arange(num_iterations) % data_len
-    if random_generator:
-        random_generator.shuffle(iterations)
+    if use_epochs:
+        iterations_per_epoch = arange(data_len)
+        if random_generator:
+            iterations = tile(iterations_per_epoch, num_iterations)
+    else:
+        iterations = arange(num_iterations) % data_len
+        if random_generator:
+            random_generator.shuffle(iterations)
     if verbose:
         return _wrap_index__in_verbose(iterations)
     else:
@@ -59,6 +65,17 @@ def _wrap_index__in_verbose(iterations):
         progress += ' {p:3.0f}%'.format(p=100*(i+1)/m)
         progress += ' - {time_left} left '.format(time_left=time_left)
         stdout.write(progress)
+
+
+def _get_decay_factor(iteration_index, data_len, use_epochs):
+    """Returns the decay_factor for one update of the SOM.
+    If epochs are used, the decay factor is being kept constant
+    during one epoch. Otherwise the decay factor is equivalent
+    to the current iteration index."""
+    if use_epochs:
+        return int(iteration_index/len(data_len))
+    else:
+        return iteration_index
 
 
 def fast_norm(x):
@@ -293,10 +310,6 @@ class MiniSom(object):
         if num_iteration < 1:
             raise ValueError('num_iteration must be > 1')
 
-    def _check_epoch_number(self, num_epoch):
-        if num_epoch < 1:
-            raise ValueError('num_epoch must be > 1')
-
     def _check_input_len(self, data):
         """Checks that the data in input is of the correct shape."""
         data_len = len(data[0])
@@ -374,7 +387,7 @@ class MiniSom(object):
             for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
                 self._weights[i, j] = c1*pc[pc_order[0]] + c2*pc[pc_order[1]]
 
-    def train(self, data, num_iteration, random_order=False, verbose=False):
+    def train(self, data, num_iteration, random_order=False, verbose=False, use_epochs=False):
         """Trains the SOM.
 
         Parameters
@@ -383,7 +396,11 @@ class MiniSom(object):
             Data matrix.
 
         num_iteration : int
-            Maximum number of iterations (one iteration per sample).
+            If use_epochs is True:
+                Maximum number of iterations (one iteration per sample).
+            If use_epochs is False:
+                Number of epochs the SOM will be trained for
+
         random_order : bool (default=False)
             If True, samples are picked in random order.
             Otherwise the samples are picked sequentially.
@@ -391,6 +408,11 @@ class MiniSom(object):
         verbose : bool (default=False)
             If True the status of the training
             will be printed at each iteration.
+
+        use_epochs : bool (default=False)
+            If True the SOM will be trained for num_iteration epochs.
+            One epoch updates the SOM len(data) times.
+            During one epoch the decay_factor stays constant.
         """
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
@@ -398,10 +420,12 @@ class MiniSom(object):
         if random_order:
             random_generator = self._random_generator
         iterations = _build_iteration_indexes(len(data), num_iteration,
-                                              verbose, random_generator)
+                                              verbose, random_generator,
+                                              use_epochs)
         for t, iteration in enumerate(iterations):
+            decay_factor = _get_decay_factor(t, len(data), use_epochs)
             self.update(data[iteration], self.winner(data[iteration]),
-                        t, num_iteration)
+                        decay_factor, num_iteration)
         if verbose:
             print('\n quantization error:', self.quantization_error(data))
 
@@ -438,40 +462,6 @@ class MiniSom(object):
             will be printed at each iteration.
         """
         self.train(data, num_iteration, random_order=False, verbose=verbose)
-
-    def train_epochs(self, data, num_epoch, random_order=False, verbose=False):
-        """Trains the SOM while decreasing eta and sigma (only) every epoch.
-
-        Parameters
-        ----------
-        data : np.array or list
-            Data matrix.
-
-        num_epoch : int
-            number of epochs
-
-        random_order : bool (default=False)
-            If True, samples are picked in random order.
-            Otherwise the samples are picked sequentially.
-
-        verbose : bool (default=False)
-            If True the status of the training
-            will be printed at each iteration.
-        """
-        self._check_epoch_number(num_epoch)
-        self._check_input_len(data)
-
-        iterations = arange(len(data))
-        if random_order:
-            random_generator = self._random_generator
-            random_generator.shuffle(iterations)
-
-        for i in range(0, num_epoch):
-            for t, iteration in enumerate(iterations):
-                self.update(data[iteration], self.winner(data[iteration]),
-                            i, num_epoch)
-        if verbose:
-            print('\n quantization error:', self.quantization_error(data))
 
     def distance_map(self, scaling='sum'):
         """Returns the distance map of the weights.
@@ -792,18 +782,6 @@ class TestMinisom(unittest.TestCase):
         data = array([[1, 5], [6, 7]])
         q1 = som.quantization_error(data)
         som.train_random(data, 10, verbose=True)
-        assert q1 > som.quantization_error(data)
-
-    def test_train_epoch(self):
-        som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
-        data = array([[4, 2], [3, 1]])
-        q1 = som.quantization_error(data)
-        som.train(data, 10, random_order=True)
-        assert q1 > som.quantization_error(data)
-
-        data = array([[1, 5], [6, 7]])
-        q1 = som.quantization_error(data)
-        som.train_epochs(data, 5, verbose=True)
         assert q1 > som.quantization_error(data)
 
     def test_random_weights_init(self):
