@@ -92,7 +92,7 @@ Color quantization ![](https://github.com/JustGlowing/minisom/raw/master/example
 
 Other tutorials
 ------------
-- <a href="https://glowingpython.blogspot.com/2013/09/self-organizing-maps.html">Self Organizing Maps on the Glowing Python</a> by me ;-)
+- <a href="https://glowingpython.blogspot.com/2013/09/self-organizing-maps.html">Self Organizing Maps on the Glowing Python</a>
 - <a href="http://aa.ssdi.di.fct.unl.pt/files/AA-16_notes.pdf">Lecture notes from the Machine Learning course at the University of Lisbon</a>
 - <a href="https://heartbeat.fritz.ai/introduction-to-self-organizing-maps-soms-98e88b568f5d">Introduction to Self-Organizing</a> by Derrick Mwiti
 - <a href="http://inphronesys.com/?p=625">Self Organizing Maps on gapminder data</a> [in German]
