@@ -148,6 +148,11 @@ class MiniSom(object):
             Distance used to activate the map.
             Possible values: 'euclidean', 'cosine', 'manhattan', 'chebyshev'
 
+            Example of callable that can be passed:
+
+            def euclidean(x, w):
+                return linalg.norm(subtract(x, w), axis=-1)
+
         random_seed : int, optional (default=None)
             Random seed to use.
         """
@@ -797,11 +802,12 @@ class TestMinisom(unittest.TestCase):
         os.remove('som.p')
 
     def test_callable_activation_distance(self):
-        def eucledian(x, w):
+        def euclidean(x, w):
             return linalg.norm(subtract(x, w), axis=-1)
 
         data = random.rand(100, 2)
-        som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, activation_distance=eucledian, random_seed=1)
+        som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5,
+                       activation_distance=euclidean, random_seed=1)
         som1.train_random(data, 10)
         som2 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
         som2.train_random(data, 10)
