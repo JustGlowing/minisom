@@ -2,11 +2,16 @@
 from distutils.core import setup
 
 description = 'Minimalistic implementation of the Self Organizing Maps (SOM)'
-keywords = ['machine learning', 'neural networks', 'clustering', 'dimentionality reduction']
+keywords = ['machine learning', 'neural networks',
+            'clustering', 'dimentionality reduction']
+
+long_description='See the github page https://github.com/JustGlowing/minisom'
 
 setup(name='MiniSom',
-      version='2.2.9',
+      version='2.3.0',
       description=description,
+      long_description=long_description,
+      long_description_content_type='text/markdown',
       author='Giuseppe Vettigli',
       package_data={'': ['Readme.md']},
       include_package_data=True,
