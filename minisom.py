@@ -144,7 +144,7 @@ class MiniSom(object):
             Topology of the map.
             Possible values: 'rectangular', 'hexagonal'
 
-        activation_distance : string, optional (default='euclidean')
+        activation_distance : string, callable optional (default='euclidean')
             Distance used to activate the map.
             Possible values: 'euclidean', 'cosine', 'manhattan', 'chebyshev'
 
@@ -205,12 +205,15 @@ class MiniSom(object):
                               'manhattan': self._manhattan_distance,
                               'chebyshev': self._chebyshev_distance}
 
-        if activation_distance not in distance_functions:
-            msg = '%s not supported. Distances available: %s'
-            raise ValueError(msg % (activation_distance,
-                                    ', '.join(distance_functions.keys())))
+        if isinstance(activation_distance, str):
+            if activation_distance not in distance_functions:
+                msg = '%s not supported. Distances available: %s'
+                raise ValueError(msg % (activation_distance,
+                                        ', '.join(distance_functions.keys())))
 
-        self._activation_distance = distance_functions[activation_distance]
+            self._activation_distance = distance_functions[activation_distance]
+        elif callable(activation_distance):
+            self._activation_distance = activation_distance
 
     def get_weights(self):
         """Returns the weights of the neural network."""
@@ -792,3 +795,15 @@ class TestMinisom(unittest.TestCase):
         with open('som.p', 'rb') as infile:
             pickle.load(infile)
         os.remove('som.p')
+
+    def test_callable_activation_distance(self):
+        def eucledian(x, w):
+            return linalg.norm(subtract(x, w), axis=-1)
+
+        data = random.rand(100, 2)
+        som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, activation_distance=eucledian, random_seed=1)
+        som1.train_random(data, 10)
+        som2 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
+        som2.train_random(data, 10)
+        # same state after training
+        assert_array_almost_equal(som1._weights, som2._weights)
