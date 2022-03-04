@@ -68,17 +68,6 @@ def _wrap_index__in_verbose(iterations):
         stdout.write(progress)
 
 
-def _get_decay_factor(iteration_index, data_len, use_epochs):
-    """Returns the decay_factor for one update of the SOM.
-    If use_epochs is True, the decay factor is being kept constant
-    during one epoch. Otherwise the decay factor is equivalent
-    to the current iteration index."""
-    if use_epochs:
-        return int(iteration_index/data_len)
-    else:
-        return iteration_index
-
-
 def fast_norm(x):
     """Returns norm-2 of a 1-D numpy array.
 
