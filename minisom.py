@@ -413,9 +413,10 @@ class MiniSom(object):
         iterations = _build_iteration_indexes(len(data), num_iteration,
                                               verbose, random_generator,
                                               use_epochs)
-        get_decay_factor = lambda iteration_index, data_len: int(iteration_index)
+
+        def get_decay_factor(iteration_index, data_len): return int(iteration_index)
         if use_epochs:
-            get_decay_factor = lambda iteration_index, data_len: int(iteration_index / data_len)
+            def get_decay_factor(iteration_index, data_len): return int(iteration_index / data_len)
         for t, iteration in enumerate(iterations):
             decay_factor = get_decay_factor(t, len(data))
             self.update(data[iteration], self.winner(data[iteration]),
