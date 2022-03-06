@@ -805,7 +805,7 @@ class TestMinisom(unittest.TestCase):
         # and that its values range from 0 to num_epochs-1
         decay_factors = []
         for t, iteration in enumerate(iterations):
-            decay_factor = _get_decay_factor(t, len_data, use_epochs=True)
+            decay_factor = int(t / len_data)
             decay_factors.append(decay_factor)
         for i in range(num_epochs):
             decay_factors_i_epoch = decay_factors[i*len_data:(i+1)*len_data]
