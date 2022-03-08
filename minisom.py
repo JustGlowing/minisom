@@ -314,7 +314,7 @@ class MiniSom(object):
         return unravel_index(self._activation_map.argmin(),
                              self._activation_map.shape)
 
-    def update(self, x, win, t, max_iteration):
+    def update(self, x, win, decay_rate, max_iteration):
         """Updates the weights of the neurons.
 
         Parameters
@@ -323,14 +323,17 @@ class MiniSom(object):
             Current pattern to learn.
         win : tuple
             Position of the winning neuron for x (array or tuple).
-        t : int
-            Iteration index
+        decay_rate : float
+            rate of decay for sigma and learning rate
         max_iteration : int
-            Maximum number of training itarations.
+            If use_epochs is True:
+                Number of epochs the SOM will be trained for
+            If use_epochs is False:
+                Maximum number of iterations (one iteration per sample).
         """
-        eta = self._decay_function(self._learning_rate, t, max_iteration)
+        eta = self._decay_function(self._learning_rate, decay_rate, max_iteration)
         # sigma and learning rate decrease with the same rule
-        sig = self._decay_function(self._sigma, t, max_iteration)
+        sig = self._decay_function(self._sigma, decay_rate, max_iteration)
         # improves the performances
         g = self.neighborhood(win, sig)*eta
         # w_new = eta * neighborhood_function * (x-w)
@@ -388,9 +391,9 @@ class MiniSom(object):
 
         num_iteration : int
             If use_epochs is True:
-                Maximum number of iterations (one iteration per sample).
-            If use_epochs is False:
                 Number of epochs the SOM will be trained for
+            If use_epochs is False:
+                Maximum number of iterations (one iteration per sample).
 
         random_order : bool (default=False)
             If True, samples are picked in random order.
@@ -403,7 +406,7 @@ class MiniSom(object):
         use_epochs : bool (default=False)
             If True the SOM will be trained for num_iteration epochs.
             One epoch updates the SOM len(data) times.
-            During one epoch the decay_factor stays constant.
+            During one epoch the decay_rate stays constant.
         """
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
@@ -414,13 +417,13 @@ class MiniSom(object):
                                               verbose, random_generator,
                                               use_epochs)
 
-        def get_decay_factor(iteration_index, data_len): return int(iteration_index)
+        def get_decay_rate(iteration_index, data_len): return int(iteration_index)
         if use_epochs:
-            def get_decay_factor(iteration_index, data_len): return int(iteration_index / data_len)
+            def get_decay_rate(iteration_index, data_len): return int(iteration_index / data_len)
         for t, iteration in enumerate(iterations):
-            decay_factor = get_decay_factor(t, len(data))
+            decay_rate = get_decay_rate(t, len(data))
             self.update(data[iteration], self.winner(data[iteration]),
-                        decay_factor, num_iteration)
+                        decay_rate, num_iteration)
         if verbose:
             print('\n quantization error:', self.quantization_error(data))
 
