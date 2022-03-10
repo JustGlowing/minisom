@@ -314,7 +314,7 @@ class MiniSom(object):
         return unravel_index(self._activation_map.argmin(),
                              self._activation_map.shape)
 
-    def update(self, x, win, decay_rate, max_iteration):
+    def update(self, x, win, t, max_iteration):
         """Updates the weights of the neurons.
 
         Parameters
@@ -323,7 +323,7 @@ class MiniSom(object):
             Current pattern to learn.
         win : tuple
             Position of the winning neuron for x (array or tuple).
-        decay_rate : float
+        t : int
             rate of decay for sigma and learning rate
         max_iteration : int
             If use_epochs is True:
@@ -331,9 +331,9 @@ class MiniSom(object):
             If use_epochs is False:
                 Maximum number of iterations (one iteration per sample).
         """
-        eta = self._decay_function(self._learning_rate, decay_rate, max_iteration)
+        eta = self._decay_function(self._learning_rate, t, max_iteration)
         # sigma and learning rate decrease with the same rule
-        sig = self._decay_function(self._sigma, decay_rate, max_iteration)
+        sig = self._decay_function(self._sigma, t, max_iteration)
         # improves the performances
         g = self.neighborhood(win, sig)*eta
         # w_new = eta * neighborhood_function * (x-w)
