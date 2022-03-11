@@ -400,8 +400,8 @@ class MiniSom(object):
             Otherwise the samples are picked sequentially.
 
         verbose : bool (default=False)
-            If True the status of the training
-            will be printed at each iteration.
+            If True the status of the training will be
+            printed each time the weights are updated.
 
         use_epochs : bool (default=False)
             If True the SOM will be trained for num_iteration epochs.
