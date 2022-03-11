@@ -82,7 +82,7 @@ You can use this dashboard to explore the effect of the parameters on a sample d
 Examples
 ---------------------
 
-Here are some of the charts you'll see how to generate in the examples:
+Here are some of the charts you'll see how to generate in the [examples](https://github.com/JustGlowing/minisom/tree/master/examples):
 
 | | |
 :-------------------------:|:-------------------------:
