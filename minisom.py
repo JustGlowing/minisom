@@ -398,10 +398,9 @@ class MiniSom(object):
             Data matrix.
 
         num_iteration : int
-            If use_epochs is True:
-                Number of epochs the SOM will be trained for
-            If use_epochs is False:
-                Maximum number of iterations (one iteration per sample).
+            If use_epochs is False, the weights will be
+            updated num_iteration times. Otherwise they will be updated
+            len(data)*num_iteration times.
 
         random_order : bool (default=False)
             If True, samples are picked in random order.
@@ -413,8 +412,8 @@ class MiniSom(object):
 
         use_epochs : bool (default=False)
             If True the SOM will be trained for num_iteration epochs.
-            One epoch updates the SOM len(data) times.
-            During one epoch the decay_rate stays constant.
+            In one epoch the weights are updated len(data) times and
+            the learning rate is constat throughout a single epoch.
         """
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
@@ -425,9 +424,11 @@ class MiniSom(object):
                                               verbose, random_generator,
                                               use_epochs)
 
-        def get_decay_rate(iteration_index, data_len): return int(iteration_index)
+        def get_decay_rate(iteration_index, data_len):
+            return int(iteration_index)
         if use_epochs:
-            def get_decay_rate(iteration_index, data_len): return int(iteration_index / data_len)
+            def get_decay_rate(iteration_index, data_len):
+                return int(iteration_index / data_len)
         for t, iteration in enumerate(iterations):
             decay_rate = get_decay_rate(t, len(data))
             self.update(data[iteration], self.winner(data[iteration]),
@@ -448,7 +449,7 @@ class MiniSom(object):
 
         verbose : bool (default=False)
             If True the status of the training
-            will be printed at each iteration.
+            will be printed at each time the weights are updated.
         """
         self.train(data, num_iteration, random_order=True, verbose=verbose)
 
@@ -465,7 +466,7 @@ class MiniSom(object):
 
         verbose : bool (default=False)
             If True the status of the training
-            will be printed at each iteration.
+            will be printed at each time the weights are updated.
         """
         self.train(data, num_iteration, random_order=False, verbose=verbose)
 
