@@ -4,7 +4,7 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, pi, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, std, cov, argsort, linspace, transpose,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
-                   nanmean, nansum)
+                   nanmean, nansum, tile, array_equal)
 from numpy import sum as npsum
 from numpy.linalg import norm
 from collections import defaultdict, Counter
@@ -26,16 +26,23 @@ import unittest
 
 
 def _build_iteration_indexes(data_len, num_iterations,
-                             verbose=False, random_generator=None):
+                             verbose=False, random_generator=None,
+                             use_epochs=False):
     """Returns an iterable with the indexes of the samples
     to pick at each iteration of the training.
 
-    If random_generator is not None, it must be an instalce
+    If random_generator is not None, it must be an instance
     of numpy.random.RandomState and it will be used
     to randomize the order of the samples."""
-    iterations = arange(num_iterations) % data_len
-    if random_generator:
-        random_generator.shuffle(iterations)
+    if use_epochs:
+        iterations_per_epoch = arange(data_len)
+        if random_generator:
+            random_generator.shuffle(iterations_per_epoch)
+        iterations = tile(iterations_per_epoch, num_iterations)
+    else:
+        iterations = arange(num_iterations) % data_len
+        if random_generator:
+            random_generator.shuffle(iterations)
     if verbose:
         return _wrap_index__in_verbose(iterations)
     else:
@@ -325,9 +332,12 @@ class MiniSom(object):
         win : tuple
             Position of the winning neuron for x (array or tuple).
         t : int
-            Iteration index
+            rate of decay for sigma and learning rate
         max_iteration : int
-            Maximum number of training itarations.
+            If use_epochs is True:
+                Number of epochs the SOM will be trained for
+            If use_epochs is False:
+                Maximum number of iterations (one iteration per sample).
         """
         eta = self._decay_function(self._learning_rate, t, max_iteration)
         # sigma and learning rate decrease with the same rule
@@ -378,7 +388,8 @@ class MiniSom(object):
             for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
                 self._weights[i, j] = c1*pc[pc_order[0]] + c2*pc[pc_order[1]]
 
-    def train(self, data, num_iteration, random_order=False, verbose=False):
+    def train(self, data, num_iteration,
+              random_order=False, verbose=False, use_epochs=False):
         """Trains the SOM.
 
         Parameters
@@ -387,14 +398,23 @@ class MiniSom(object):
             Data matrix.
 
         num_iteration : int
-            Maximum number of iterations (one iteration per sample).
+            If use_epochs is True:
+                Number of epochs the SOM will be trained for
+            If use_epochs is False:
+                Maximum number of iterations (one iteration per sample).
+
         random_order : bool (default=False)
             If True, samples are picked in random order.
             Otherwise the samples are picked sequentially.
 
         verbose : bool (default=False)
-            If True the status of the training
-            will be printed at each iteration.
+            If True the status of the training will be
+            printed each time the weights are updated.
+
+        use_epochs : bool (default=False)
+            If True the SOM will be trained for num_iteration epochs.
+            One epoch updates the SOM len(data) times.
+            During one epoch the decay_rate stays constant.
         """
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
@@ -402,10 +422,16 @@ class MiniSom(object):
         if random_order:
             random_generator = self._random_generator
         iterations = _build_iteration_indexes(len(data), num_iteration,
-                                              verbose, random_generator)
+                                              verbose, random_generator,
+                                              use_epochs)
+
+        def get_decay_rate(iteration_index, data_len): return int(iteration_index)
+        if use_epochs:
+            def get_decay_rate(iteration_index, data_len): return int(iteration_index / data_len)
         for t, iteration in enumerate(iterations):
+            decay_rate = get_decay_rate(t, len(data))
             self.update(data[iteration], self.winner(data[iteration]),
-                        t, num_iteration)
+                        decay_rate, num_iteration)
         if verbose:
             print('\n quantization error:', self.quantization_error(data))
 
@@ -763,6 +789,38 @@ class TestMinisom(unittest.TestCase):
         q1 = som.quantization_error(data)
         som.train_random(data, 10, verbose=True)
         assert q1 > som.quantization_error(data)
+
+    def test_train_use_epochs(self):
+        som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
+        data = array([[4, 2], [3, 1]])
+        q1 = som.quantization_error(data)
+        som.train(data, 10, use_epochs=True)
+        assert q1 > som.quantization_error(data)
+
+    def test_use_epochs_variables(self):
+        len_data = 100000
+        num_epochs = 100
+        random_gen = random.RandomState(1)
+        iterations = _build_iteration_indexes(len_data, num_epochs,
+                                              random_generator=random_gen,
+                                              use_epochs=True)
+        assert num_epochs*len_data == len(iterations)
+
+        # checks whether all epochs share the same order of indexes
+        first_epoch = iterations[0:len_data]
+        for i in range(num_epochs):
+            i_epoch = iterations[i*len_data:(i+1)*len_data]
+            assert array_equal(first_epoch, i_epoch)
+
+        # checks whether the decay_factor stays constant during one epoch
+        # and that its values range from 0 to num_epochs-1
+        decay_factors = []
+        for t, iteration in enumerate(iterations):
+            decay_factor = int(t / len_data)
+            decay_factors.append(decay_factor)
+        for i in range(num_epochs):
+            decay_factors_i_epoch = decay_factors[i*len_data:(i+1)*len_data]
+            assert decay_factors_i_epoch == [i]*len_data
 
     def test_random_weights_init(self):
         som = MiniSom(2, 2, 2, random_seed=1)
