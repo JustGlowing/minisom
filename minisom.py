@@ -522,13 +522,12 @@ class MiniSom(object):
         If the topographic error is 0, no error occurred.
         If 1, the topology was not preserved for any of the samples."""
         self._check_input_len(data)
-        if self.topology == 'hexagonal':
-            msg = 'Topographic error not implemented for hexagonal topology.'
-            raise NotImplementedError(msg)
         total_neurons = prod(self._activation_map.shape)
         if total_neurons == 1:
             warn('The topographic error is not defined for a 1-by-1 map.')
             return nan
+        if self.topology == 'hexagonal':
+            return self.topographic_error_hexagonal(data)
 
         t = 1.42
         # b2mu: best 2 matching units
@@ -538,6 +537,27 @@ class MiniSom(object):
         dxdy = hstack([diff(b2mu_x), diff(b2mu_y)])
         distance = norm(dxdy, axis=1)
         return (distance > t).mean()
+    
+    def topographic_error_hexagonal(self, data):
+        """Return the topographic error for hexagonal grid"""
+        b2mu_inds = argsort(self.som._distance_from_weights(data), axis=1)[:, :2]
+        b2mu_coords = [[self.idx_to_coord(bmu[0]), self.idx_to_coord(bmu[1])] 
+                            for bmu in b2mu_inds]
+        b2mu_coords = array(b2mu_coords)
+        b2mu_neighbors = [(bmu1 >= bmu2-1) & ((bmu1 <= bmu2+1)) 
+                            for bmu1, bmu2 in b2mu_coords]
+        b2mu_neighbors = [neighbors.prod() for neighbors in b2mu_neighbors]
+        te = 1 - mean(b2mu_neighbors)
+        return te
+        
+    def get_euclidean_coordinates_from_index(self, index):
+        """Returns the Euclidean coordinated of a neuron using its
+        index as the input"""
+        if index < 0:
+            return (-1, -1)
+        y = self._weights.shape[1]
+        coords = self.som.convert_map_to_euclidean((index%y, int(index/y)))
+        return coords
 
     def win_map(self, data, return_indices=False):
         """Returns a dictionary wm where wm[(i,j)] is a list with:
