@@ -540,8 +540,9 @@ class MiniSom(object):
     
     def topographic_error_hexagonal(self, data):
         """Return the topographic error for hexagonal grid"""
-        b2mu_inds = argsort(self.som._distance_from_weights(data), axis=1)[:, :2]
-        b2mu_coords = [[self.idx_to_coord(bmu[0]), self.idx_to_coord(bmu[1])] 
+        b2mu_inds = argsort(self._distance_from_weights(data), axis=1)[:, :2]
+        b2mu_coords = [[self.get_euclidean_coordinates_from_index(bmu[0]), 
+                        self.get_euclidean_coordinates_from_index(bmu[1])] 
                             for bmu in b2mu_inds]
         b2mu_coords = array(b2mu_coords)
         b2mu_neighbors = [(bmu1 >= bmu2-1) & ((bmu1 <= bmu2+1)) 
@@ -556,7 +557,7 @@ class MiniSom(object):
         if index < 0:
             return (-1, -1)
         y = self._weights.shape[1]
-        coords = self.som.convert_map_to_euclidean((index%y, int(index/y)))
+        coords = self.convert_map_to_euclidean((index%y, int(index/y)))
         return coords
 
     def win_map(self, data, return_indices=False):
@@ -730,8 +731,18 @@ class TestMinisom(unittest.TestCase):
         assert self.som.topographic_error([[15]]) == 1.0
 
         self.som.topology = 'hexagonal'
-        with self.assertRaises(NotImplementedError):
-            assert self.som.topographic_error([[5]]) == 0.0
+        # 10 will have bmu_1 in (0, 4) and bmu_2 in (1, 3)
+        # which are in the same neighborhood on a hexagonal grid
+        self.som._weights[0, 4] = 10.0
+        self.som._weights[1, 3] = 9.0
+        # 3 will have bmu_1 in (2, 0) and bmu_2 in (1, 1)
+        # which are in the same neighborhood on a hexagonal grid
+        self.som._weights[2, 0] = 3.0
+        assert self.som.topographic_error([[10]]) == 0.0
+        assert self.som.topographic_error([[3]]) == 0.0
+        # True for both hexagonal and rectangular grids
+        assert self.som.topographic_error([[5]]) == 0.0
+        assert self.som.topographic_error([[15]]) == 1.0
         self.som.topology = 'rectangular'
 
     def test_quantization(self):
