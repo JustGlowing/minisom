@@ -536,7 +536,7 @@ class MiniSom(object):
         b2mu_inds = argsort(self._distance_from_weights(data), axis=1)[:, :2]
         b2mu_coords = [[self._get_euclidean_coordinates_from_index(bmu[0]),
                         self._get_euclidean_coordinates_from_index(bmu[1])]
-                        for bmu in b2mu_inds]
+                       for bmu in b2mu_inds]
         b2mu_coords = array(b2mu_coords)
         b2mu_neighbors = [(bmu1 >= bmu2-1) & ((bmu1 <= bmu2+1))
                           for bmu1, bmu2 in b2mu_coords]
