@@ -530,20 +530,20 @@ class MiniSom(object):
             return self._topographic_error_hexagonal(data)
         else:
             return self._topographic_error_rectangular(data)
-    
+
     def _topographic_error_hexagonal(self, data):
         """Return the topographic error for hexagonal grid"""
         b2mu_inds = argsort(self._distance_from_weights(data), axis=1)[:, :2]
-        b2mu_coords = [[self._get_euclidean_coordinates_from_index(bmu[0]), 
-                        self._get_euclidean_coordinates_from_index(bmu[1])] 
-                            for bmu in b2mu_inds]
+        b2mu_coords = [[self._get_euclidean_coordinates_from_index(bmu[0]),
+                        self._get_euclidean_coordinates_from_index(bmu[1])]
+                        for bmu in b2mu_inds]
         b2mu_coords = array(b2mu_coords)
-        b2mu_neighbors = [(bmu1 >= bmu2-1) & ((bmu1 <= bmu2+1)) 
-                            for bmu1, bmu2 in b2mu_coords]
+        b2mu_neighbors = [(bmu1 >= bmu2-1) & ((bmu1 <= bmu2+1))
+                          for bmu1, bmu2 in b2mu_coords]
         b2mu_neighbors = [neighbors.prod() for neighbors in b2mu_neighbors]
         te = 1 - mean(b2mu_neighbors)
         return te
-    
+
     def _topographic_error_rectangular(self, data):
         """Return the topographic error for rectangular grid"""
         t = 1.42
@@ -554,14 +554,14 @@ class MiniSom(object):
         dxdy = hstack([diff(b2mu_x), diff(b2mu_y)])
         distance = norm(dxdy, axis=1)
         return (distance > t).mean()
-        
+
     def _get_euclidean_coordinates_from_index(self, index):
         """Returns the Euclidean coordinated of a neuron using its
         index as the input"""
         if index < 0:
             return (-1, -1)
         y = self._weights.shape[1]
-        coords = self.convert_map_to_euclidean((index%y, int(index/y)))
+        coords = self.convert_map_to_euclidean((index % y, int(index/y)))
         return coords
 
     def win_map(self, data, return_indices=False):
