@@ -557,14 +557,30 @@ class MiniSom(object):
         If the topographic error is 0, no error occurred.
         If 1, the topology was not preserved for any of the samples."""
         self._check_input_len(data)
-        if self.topology == 'hexagonal':
-            msg = 'Topographic error not implemented for hexagonal topology.'
-            raise NotImplementedError(msg)
         total_neurons = prod(self._activation_map.shape)
         if total_neurons == 1:
             warn('The topographic error is not defined for a 1-by-1 map.')
             return nan
+        if self.topology == 'hexagonal':
+            return self._topographic_error_hexagonal(data)
+        else:
+            return self._topographic_error_rectangular(data)
 
+    def _topographic_error_hexagonal(self, data):
+        """Return the topographic error for hexagonal grid"""
+        b2mu_inds = argsort(self._distance_from_weights(data), axis=1)[:, :2]
+        b2mu_coords = [[self._get_euclidean_coordinates_from_index(bmu[0]),
+                        self._get_euclidean_coordinates_from_index(bmu[1])]
+                       for bmu in b2mu_inds]
+        b2mu_coords = array(b2mu_coords)
+        b2mu_neighbors = [(bmu1 >= bmu2-1) & ((bmu1 <= bmu2+1))
+                          for bmu1, bmu2 in b2mu_coords]
+        b2mu_neighbors = [neighbors.prod() for neighbors in b2mu_neighbors]
+        te = 1 - mean(b2mu_neighbors)
+        return te
+
+    def _topographic_error_rectangular(self, data):
+        """Return the topographic error for rectangular grid"""
         t = 1.42
         # b2mu: best 2 matching units
         b2mu_inds = argsort(self._distance_from_weights(data), axis=1)[:, :2]
@@ -573,6 +589,15 @@ class MiniSom(object):
         dxdy = hstack([diff(b2mu_x), diff(b2mu_y)])
         distance = norm(dxdy, axis=1)
         return (distance > t).mean()
+
+    def _get_euclidean_coordinates_from_index(self, index):
+        """Returns the Euclidean coordinated of a neuron using its
+        index as the input"""
+        if index < 0:
+            return (-1, -1)
+        y = self._weights.shape[1]
+        coords = self.convert_map_to_euclidean((index % y, int(index/y)))
+        return coords
 
     def win_map(self, data, return_indices=False):
         """Returns a dictionary wm where wm[(i,j)] is a list with:
@@ -745,8 +770,18 @@ class TestMinisom(unittest.TestCase):
         assert self.som.topographic_error([[15]]) == 1.0
 
         self.som.topology = 'hexagonal'
-        with self.assertRaises(NotImplementedError):
-            assert self.som.topographic_error([[5]]) == 0.0
+        # 10 will have bmu_1 in (0, 4) and bmu_2 in (1, 3)
+        # which are in the same neighborhood on a hexagonal grid
+        self.som._weights[0, 4] = 10.0
+        self.som._weights[1, 3] = 9.0
+        # 3 will have bmu_1 in (2, 0) and bmu_2 in (1, 1)
+        # which are in the same neighborhood on a hexagonal grid
+        self.som._weights[2, 0] = 3.0
+        assert self.som.topographic_error([[10]]) == 0.0
+        assert self.som.topographic_error([[3]]) == 0.0
+        # True for both hexagonal and rectangular grids
+        assert self.som.topographic_error([[5]]) == 0.0
+        assert self.som.topographic_error([[15]]) == 1.0
         self.som.topology = 'rectangular'
 
     def test_quantization(self):
