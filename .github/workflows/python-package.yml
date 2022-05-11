@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install pycodestyle pytest
+        python -m pip install numpy pycodestyle pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
       run: |
