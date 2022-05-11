@@ -49,6 +49,7 @@ def _build_iteration_indexes(data_len, num_iterations,
         return iterations
 
 
+
 def _wrap_index__in_verbose(iterations):
     """Yields the values in iterations printing the status on the stdout."""
     m = len(iterations)
