@@ -832,6 +832,7 @@ class TestMinisom(unittest.TestCase):
         q1 = som.quantization_error(data)
         som.train(data, 10, use_epochs=True)
         assert q1 > som.quantization_error(data)
+        assert 1 == 2
 
     def test_use_epochs_variables(self):
         len_data = 100000
