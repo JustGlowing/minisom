@@ -31,7 +31,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Checking style
       run: |
-        pycodestyle minisom.py
+        pycodestyle *.py
     - name: Unit testing
       run: |
         pytest minisom.py
