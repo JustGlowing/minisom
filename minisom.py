@@ -163,6 +163,7 @@ class MiniSom(object):
         random_seed : int, optional (default=None)
             Random seed to use.
         """
+        print('test')
         if sigma >= x or sigma >= y:
             warn('Warning: sigma is too high for the dimension of the map.')
 
