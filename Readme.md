@@ -1,3 +1,5 @@
+[![Python package](https://github.com/JustGlowing/minisom/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/JustGlowing/minisom/actions/workflows/python-package.yml)
+
 <h1>MiniSom<img src='https://3.bp.blogspot.com/-_6UDGEHzIrs/WSfiyjmoeRI/AAAAAAAABHw/3UQylcCBEhUfHNhf56WSHBBmQ6g_lXQhwCLcB/s320/minisom_logo.png' align='right'></h1>
 
 Self Organizing Maps
