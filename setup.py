@@ -5,7 +5,7 @@ description = 'Minimalistic implementation of the Self Organizing Maps (SOM)'
 keywords = ['machine learning', 'neural networks',
             'clustering', 'dimentionality reduction']
 
-long_description='See the github page https://github.com/JustGlowing/minisom'
+long_description = 'See the github page https://github.com/JustGlowing/minisom'
 
 setup(name='MiniSom',
       version='2.3.0',
