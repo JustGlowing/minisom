@@ -808,6 +808,7 @@ class TestMinisom(unittest.TestCase):
         q1 = som.quantization_error(data)
         som.train(data, 10)
         assert q1 > som.quantization_error(data)
+        assert 0 == 100
 
         data = array([[1, 5], [6, 7]])
         q1 = som.quantization_error(data)
