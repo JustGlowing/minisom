@@ -29,9 +29,9 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install numpy pycodestyle pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Lint with flake8
+    - name: Checking style
       run: |
         pycodestyle minisom.py
-    - name: Test with pytest
+    - name: Unit testing
       run: |
         pytest minisom.py
