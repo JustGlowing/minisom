@@ -1,11 +1,8 @@
-from math import sqrt
-
 from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
-                   power, exp, pi, zeros, ones, arange, outer, meshgrid, dot,
-                   logical_and, mean, std, cov, argsort, linspace, transpose,
+                   power, exp, zeros, ones, arange, outer, meshgrid, dot,
+                   logical_and, mean, cov, argsort, linspace, transpose,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
                    nanmean, nansum, tile, array_equal)
-from numpy import sum as npsum
 from numpy.linalg import norm
 from collections import defaultdict, Counter
 from warnings import warn
@@ -423,12 +420,12 @@ class MiniSom(object):
         iterations = _build_iteration_indexes(len(data), num_iteration,
                                               verbose, random_generator,
                                               use_epochs)
-
-        def get_decay_rate(iteration_index, data_len):
-            return int(iteration_index)
         if use_epochs:
             def get_decay_rate(iteration_index, data_len):
                 return int(iteration_index / data_len)
+        else:
+            def get_decay_rate(iteration_index, data_len):
+                return int(iteration_index)
         for t, iteration in enumerate(iterations):
             decay_rate = get_decay_rate(t, len(data))
             self.update(data[iteration], self.winner(data[iteration]),
