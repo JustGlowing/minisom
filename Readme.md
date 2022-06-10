@@ -129,3 +129,4 @@ pytest minisom.py
 pycodestyle minisom.py
 ```
 5. Make sure your code is properly commented and documented. Each public method needs to be documented as the existing ones.
+
