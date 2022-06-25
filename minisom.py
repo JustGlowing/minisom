@@ -124,7 +124,7 @@ class MiniSom(object):
             learning_rate(t) = learning_rate / (1 + t/T)
             where T is #num_iteration/2)
 
-        decay_function : function (default=None)
+        decay_function : function (default=asymptotic_decay)
             Function that reduces learning_rate and sigma at each iteration
             the default function is:
                         learning_rate / (1+t/(max_iterarations/2))
