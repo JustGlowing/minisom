@@ -90,8 +90,8 @@ def asymptotic_decay(learning_rate, t, max_iter):
 
 
 class MiniSom(object):
-    def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
-                 decay_function=asymptotic_decay,
+    def __init__(self, x, y, input_len, sigma=1.0,
+                 learning_rate=0.5, decay_function=asymptotic_decay,
                  neighborhood_function='gaussian', topology='rectangular',
                  activation_distance='euclidean', random_seed=None):
         """Initializes a Self Organizing Maps.
@@ -119,6 +119,7 @@ class MiniSom(object):
             to the dimensions of the map.
             (at the iteration t we have sigma(t) = sigma / (1 + t/T)
             where T is #num_iteration/2)
+
         learning_rate : initial learning rate
             (at the iteration t we have
             learning_rate(t) = learning_rate / (1 + t/T)
@@ -166,6 +167,8 @@ class MiniSom(object):
         self._random_generator = random.RandomState(random_seed)
 
         self._learning_rate = learning_rate
+        self._decay_function = decay_function
+
         self._sigma = sigma
         self._input_len = input_len
         # random initialization
@@ -188,8 +191,6 @@ class MiniSom(object):
             if neighborhood_function in ['triangle']:
                 warn('triangle neighborhood function does not ' +
                      'take in account hexagonal topology')
-
-        self._decay_function = decay_function
 
         neig_functions = {'gaussian': self._gaussian,
                           'mexican_hat': self._mexican_hat,
@@ -385,8 +386,9 @@ class MiniSom(object):
             for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
                 self._weights[i, j] = c1*pc[pc_order[0]] + c2*pc[pc_order[1]]
 
-    def train(self, data, num_iteration,
-              random_order=False, verbose=False, use_epochs=False):
+    def train(self, data, num_iteration, learning_rate=0.5,
+              decay_function=asymptotic_decay, random_order=False,
+              verbose=False, use_epochs=False):
         """Trains the SOM.
 
         Parameters
@@ -398,6 +400,28 @@ class MiniSom(object):
             If use_epochs is False, the weights will be
             updated num_iteration times. Otherwise they will be updated
             len(data)*num_iteration times.
+
+        learning_rate : initial learning rate
+            (at the iteration t we have
+            learning_rate(t) = learning_rate / (1 + t/T)
+            where T is #num_iteration/2)
+
+        decay_function : function (default=asymptotic_decay)
+            Function that reduces learning_rate and sigma at each iteration
+            the default function is:
+                        learning_rate / (1+t/(max_iterarations/2))
+
+            A custom decay function will need to to take in input
+            three parameters in the following order:
+
+            1. learning rate
+            2. current iteration
+            3. maximum number of iterations allowed
+
+
+            Note that if a lambda function is used to define the decay
+            MiniSom will not be pickable anymore.
+
 
         random_order : bool (default=False)
             If True, samples are picked in random order.
@@ -415,6 +439,8 @@ class MiniSom(object):
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
         random_generator = None
+        self._learning_rate = learning_rate
+        self._decay_function = decay_function
         if random_order:
             random_generator = self._random_generator
         iterations = _build_iteration_indexes(len(data), num_iteration,
@@ -433,7 +459,8 @@ class MiniSom(object):
         if verbose:
             print('\n quantization error:', self.quantization_error(data))
 
-    def train_random(self, data, num_iteration, verbose=False):
+    def train_random(self, data, num_iteration, learning_rate=0.5,
+                     decay_function=asymptotic_decay, verbose=False):
         """Trains the SOM picking samples at random from data.
 
         Parameters
@@ -444,13 +471,37 @@ class MiniSom(object):
         num_iteration : int
             Maximum number of iterations (one iteration per sample).
 
+        learning_rate : initial learning rate
+            (at the iteration t we have
+            learning_rate(t) = learning_rate / (1 + t/T)
+            where T is #num_iteration/2)
+
+        decay_function : function (default=asymptotic_decay)
+            Function that reduces learning_rate and sigma at each iteration
+            the default function is:
+                        learning_rate / (1+t/(max_iterarations/2))
+
+            A custom decay function will need to to take in input
+            three parameters in the following order:
+
+            1. learning rate
+            2. current iteration
+            3. maximum number of iterations allowed
+
+
+            Note that if a lambda function is used to define the decay
+            MiniSom will not be pickable anymore.
+
         verbose : bool (default=False)
             If True the status of the training
             will be printed at each time the weights are updated.
         """
-        self.train(data, num_iteration, random_order=True, verbose=verbose)
+        self.train(data, num_iteration, random_order=True,
+                   learning_rate=learning_rate, decay_function=decay_function,
+                   verbose=verbose)
 
-    def train_batch(self, data, num_iteration, verbose=False):
+    def train_batch(self, data, num_iteration, learning_rate=0.5,
+                    decay_function=asymptotic_decay, verbose=False):
         """Trains the SOM using all the vectors in data sequentially.
 
         Parameters
@@ -461,11 +512,34 @@ class MiniSom(object):
         num_iteration : int
             Maximum number of iterations (one iteration per sample).
 
+        learning_rate : initial learning rate
+            (at the iteration t we have
+            learning_rate(t) = learning_rate / (1 + t/T)
+            where T is #num_iteration/2)
+
+        decay_function : function (default=asymptotic_decay)
+            Function that reduces learning_rate and sigma at each iteration
+            the default function is:
+                        learning_rate / (1+t/(max_iterarations/2))
+
+            A custom decay function will need to to take in input
+            three parameters in the following order:
+
+            1. learning rate
+            2. current iteration
+            3. maximum number of iterations allowed
+
+
+            Note that if a lambda function is used to define the decay
+            MiniSom will not be pickable anymore.
+
         verbose : bool (default=False)
             If True the status of the training
             will be printed at each time the weights are updated.
         """
-        self.train(data, num_iteration, random_order=False, verbose=verbose)
+        self.train(data, num_iteration, random_order=False,
+                   learning_rate=learning_rate, decay_function=decay_function,
+                   verbose=verbose)
 
     def distance_map(self, scaling='sum'):
         """Returns the distance map of the weights.
