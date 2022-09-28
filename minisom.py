@@ -67,8 +67,6 @@ def _wrap_index__in_verbose(iterations):
 
 def fast_norm(x):
     """Returns norm-2 of a 1-D numpy array.
-
-    * faster than linalg.norm in case of 1-D arrays (numpy 1.9.2rc1).
     """
     return sqrt(dot(x, x.T))
 
