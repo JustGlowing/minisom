@@ -747,7 +747,7 @@ class TestMinisom(unittest.TestCase):
         distances = self.som._distance_from_weights(data)
         for i in range(len(data)):
             for j in range(len(weights)):
-                assert(distances[i][j] == norm(data[i] - weights[j]))
+                assert (distances[i][j] == norm(data[i] - weights[j]))
 
     def test_quantization_error(self):
         assert self.som.quantization_error([[5], [2]]) == 0.0
