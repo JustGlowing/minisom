@@ -121,13 +121,13 @@ MiniSom has been cited more than 200 times, check out the research where MiniSom
 
 Guidelines to contribute
 ---------------------
-1. In the description of your Pull Request explain clearly what does it implements/fixes and your changes. Possibly give an example in the description of the PR. In cases that the PR is about a code speedup, report a reproducible example and quantify the speedup.
+1. In the description of your Pull Request explain clearly what it implements or fixes. In cases that the PR is about a code speedup, report a reproducible example and quantify the speedup.
 2. Give your pull request a helpful title that summarises what your contribution does. 
-3. Write unit tests for your code and make sure the existing tests are up to date. `pytest` can be used for this:
+3. Write unit tests for your code and make sure the existing ones are up to date. `pytest` can be used for this:
 ```
 pytest minisom.py
 ```
-4. Make sure that there a no stylistic issues using `pycodestyle`:
+4. Make sure that there are no stylistic issues using `pycodestyle`:
 ```
 pycodestyle minisom.py
 ```
