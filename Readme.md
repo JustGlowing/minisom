@@ -9,6 +9,8 @@ MiniSom is a minimalistic and Numpy based implementation of the Self Organizing 
 
 Updates about MiniSom are posted on <a href="https://twitter.com/JustGlowing">Twitter</a>.
 
+Juping into using MiniSom via Google Colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://githubtocolab.com/JustGlowing/minisom/blob/master/examples/BasicUsage.ipynb)
+
 Installation
 ---------------------
 
