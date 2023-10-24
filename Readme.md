@@ -95,6 +95,7 @@ Color quantization ![](https://github.com/JustGlowing/minisom/raw/master/example
 Other tutorials
 ------------
 - <a href="https://glowingpython.blogspot.com/2013/09/self-organizing-maps.html">Self Organizing Maps on the Glowing Python</a>
+- <a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.5_TSP_SOM.ipynb">How to solve the Travelling Salesman Problem</a> from the book <i>Optimization Algorithms:Optimization Algorithms: AI techniques for design, planning, and control problems. Manning Publications, 2023.</i>
 - <a href="http://aa.ssdi.di.fct.unl.pt/files/AA-16_notes.pdf">Lecture notes from the Machine Learning course at the University of Lisbon</a>
 - <a href="https://heartbeat.fritz.ai/introduction-to-self-organizing-maps-soms-98e88b568f5d">Introduction to Self-Organizing</a> by Derrick Mwiti
 - <a href="http://inphronesys.com/?p=625">Self Organizing Maps on gapminder data</a> [in German]
@@ -116,17 +117,17 @@ How to cite MiniSom
 }
 ```
 
-MiniSom has been cited more than 100 times, check out the research where MiniSom was used  <a href="https://scholar.google.co.uk/scholar?hl=en&as_sdt=2007&q=%22JustGlowing%2Fminisom%22+OR+%22minisom+library%22+OR+%22minisom+python%22+OR+%22minisom+vettigli%22&btnG=">here</a>.
+MiniSom has been cited more than 200 times, check out the research where MiniSom was used  <a href="https://scholar.google.co.uk/scholar?hl=en&as_sdt=2007&q=%22JustGlowing%2Fminisom%22+OR+%22minisom+library%22+OR+%22minisom+python%22+OR+%22minisom+vettigli%22&btnG=">here</a>.
 
 Guidelines to contribute
 ---------------------
-1. In the description of your Pull Request explain clearly what does it implements/fixes and your changes. Possibly give an example in the description of the PR. In cases that the PR is about a code speedup, report a reproducible example and quantify the speedup.
+1. In the description of your Pull Request explain clearly what it implements or fixes. In cases that the PR is about a code speedup, report a reproducible example and quantify the speedup.
 2. Give your pull request a helpful title that summarises what your contribution does. 
-3. Write unit tests for your code and make sure the existing tests are up to date. `pytest` can be used for this:
+3. Write unit tests for your code and make sure the existing ones are up to date. `pytest` can be used for this:
 ```
 pytest minisom.py
 ```
-4. Make sure that there a no stylistic issues using `pycodestyle`:
+4. Make sure that there are no stylistic issues using `pycodestyle`:
 ```
 pycodestyle minisom.py
 ```
