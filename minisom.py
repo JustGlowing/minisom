@@ -377,12 +377,13 @@ class MiniSom(object):
             msg = 'PCA initialization inappropriate:' + \
                   'One of the dimensions of the map is 1.'
             warn(msg)
-        pc_length, pc = linalg.eig(cov(transpose(data)))
+        pc_length, eigvecs = linalg.eig(cov(data))
+	pc = (eigvecs.T @ data)
         pc_order = argsort(-pc_length)
         for i, c1 in enumerate(linspace(-1, 1, len(self._neigx))):
             for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
-                self._weights[i, j] = c1*pc[:, pc_order[0]] + \
-                                      c2*pc[:, pc_order[1]]
+                self._weights[i, j] = c1*pc[pc_order[0]] + \
+                                      c2*pc[pc_order[1]]
 
     def train(self, data, num_iteration,
               random_order=False, verbose=False, use_epochs=False):
