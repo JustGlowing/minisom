@@ -97,6 +97,7 @@ Color quantization ![](https://github.com/JustGlowing/minisom/raw/master/example
 Other tutorials
 ------------
 - <a href="https://glowingpython.blogspot.com/2013/09/self-organizing-maps.html">Self Organizing Maps on the Glowing Python</a>
+- <a href="http://syllabus.cs.manchester.ac.uk/pgt/2021/COMP61021/reference/new-SOM.pdf">Essentials of the self-organizing map</a> by Teuvo Kohonen
 - <a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.5_TSP_SOM.ipynb">How to solve the Travelling Salesman Problem</a> from the book <i>Optimization Algorithms:Optimization Algorithms: AI techniques for design, planning, and control problems. Manning Publications, 2023.</i>
 - <a href="http://aa.ssdi.di.fct.unl.pt/files/AA-16_notes.pdf">Lecture notes from the Machine Learning course at the University of Lisbon</a>
 - <a href="https://heartbeat.fritz.ai/introduction-to-self-organizing-maps-soms-98e88b568f5d">Introduction to Self-Organizing</a> by Derrick Mwiti
@@ -106,7 +107,7 @@ Other tutorials
 - Video tutorial <a href="https://www.youtube.com/watch?v=0qtvb_Nx2tA">Self Organizing Maps: Introduction</a> by Art of Visualization
 - Video tutorial <a href="https://www.youtube.com/watch?v=O6nzwAc_hrQ">Self Organizing Maps Hyperparameter tuning</a> by 
 SuperDataScience Machine Learning
-- <a href="http://docs.unigrafia.fi/publications/kohonen_teuvo/">MATLAB Implementations and Applications of the Self-Organizing Map</a> by Teuvo Kohonen (Inventor of SOM)
+- <a href="http://docs.unigrafia.fi/publications/kohonen_teuvo/">MATLAB Implementations and Applications of the Self-Organizing Map</a> by Teuvo Kohonen
 
 How to cite MiniSom
 ------------
