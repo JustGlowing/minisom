@@ -378,7 +378,7 @@ class MiniSom(object):
                   'One of the dimensions of the map is 1.'
             warn(msg)
         pc_length, eigvecs = linalg.eig(cov(data))
-	pc = (eigvecs.T @ data)
+        pc = (eigvecs.T @ data)
         pc_order = argsort(-pc_length)
         for i, c1 in enumerate(linspace(-1, 1, len(self._neigx))):
             for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
