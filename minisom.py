@@ -644,6 +644,11 @@ class TestMinisom(unittest.TestCase):
         self.som._weights[2, 3] = 5.0
         self.som._weights[1, 1] = 2.0
         self.hex_som = MiniSom(5, 5, 1, topology='hexagonal')
+        for i in range(5):
+            for j in range(5):
+                # checking weights normalization
+                assert_almost_equal(1.0, linalg.norm(
+                    self.hex_som._weights[i, j]))
         self.hex_som._weights = zeros((5, 5, 1))  # fake weights
         self.hex_som._weights[2, 3] = 5.0
         self.hex_som._weights[1, 1] = 2.0
@@ -770,22 +775,6 @@ class TestMinisom(unittest.TestCase):
         self.som._weights[0, 0] = 14.
         assert self.som.topographic_error([[5]]) == 0.0
         assert self.som.topographic_error([[15]]) == 1.0
-
-        self.som.topology = 'hexagonal'
-        # 10 will have bmu_1 in (0, 4) and bmu_2 in (1, 3)
-        # which are in the same neighborhood on a hexagonal grid
-        self.som._weights[0, 4] = 10.0
-        self.som._weights[1, 3] = 9.0
-        # 3 will have bmu_1 in (2, 0) and bmu_2 in (1, 1)
-        # which are in the same neighborhood on a hexagonal grid
-        self.som._weights[2, 0] = 3.0
-        # This will fail as we do not re-initialise with hexagonal
-        assert self.som.topographic_error([[10]]) == 0.0
-        assert self.som.topographic_error([[3]]) == 0.0
-        # True for both hexagonal and rectangular grids
-        assert self.som.topographic_error([[5]]) == 0.0
-        assert self.som.topographic_error([[15]]) == 1.0
-        self.som.topology = 'rectangular'
 
     def test_hexagonal_topographic_error(self):
         self.hex_som._weights[2, 4] = 6.0
