@@ -2,7 +2,7 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, cov, argsort, linspace, transpose,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
-                   nanmean, nansum, tile, array_equal)
+                   nanmean, nansum, tile, array_equal, isclose)
 from numpy.linalg import norm
 from collections import defaultdict, Counter
 from warnings import warn
@@ -88,6 +88,8 @@ def asymptotic_decay(learning_rate, t, max_iter):
 
 
 class MiniSom(object):
+    Y_HEX_CONV_FACTOR = (3.0 / 2.0) / sqrt(3)
+
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
                  decay_function=asymptotic_decay,
                  neighborhood_function='gaussian', topology='rectangular',
@@ -183,6 +185,7 @@ class MiniSom(object):
         self._yy = self._yy.astype(float)
         if topology == 'hexagonal':
             self._xx[::-2] -= 0.5
+            self._yy *= self.Y_HEX_CONV_FACTOR
             if neighborhood_function in ['triangle']:
                 warn('triangle neighborhood function does not ' +
                      'take in account hexagonal topology')
@@ -569,9 +572,8 @@ class MiniSom(object):
                         self._get_euclidean_coordinates_from_index(bmu[1])]
                        for bmu in b2mu_inds]
         b2mu_coords = array(b2mu_coords)
-        b2mu_neighbors = [(bmu1 >= bmu2-1) & ((bmu1 <= bmu2+1))
+        b2mu_neighbors = [isclose(1, norm(bmu1 - bmu2))
                           for bmu1, bmu2 in b2mu_coords]
-        b2mu_neighbors = [neighbors.prod() for neighbors in b2mu_neighbors]
         te = 1 - mean(b2mu_neighbors)
         return te
 
@@ -641,6 +643,10 @@ class TestMinisom(unittest.TestCase):
         self.som._weights = zeros((5, 5, 1))  # fake weights
         self.som._weights[2, 3] = 5.0
         self.som._weights[1, 1] = 2.0
+        self.hex_som = MiniSom(5, 5, 1, topology='hexagonal')
+        self.hex_som._weights = zeros((5, 5, 1))  # fake weights
+        self.hex_som._weights[2, 3] = 5.0
+        self.hex_som._weights[1, 1] = 2.0
 
     def test_decay_function(self):
         assert self.som._decay_function(1., 2., 3.) == 1./(1.+2./(3./2))
@@ -773,12 +779,32 @@ class TestMinisom(unittest.TestCase):
         # 3 will have bmu_1 in (2, 0) and bmu_2 in (1, 1)
         # which are in the same neighborhood on a hexagonal grid
         self.som._weights[2, 0] = 3.0
+        # This will fail as we do not re-initialise with hexagonal
         assert self.som.topographic_error([[10]]) == 0.0
         assert self.som.topographic_error([[3]]) == 0.0
         # True for both hexagonal and rectangular grids
         assert self.som.topographic_error([[5]]) == 0.0
         assert self.som.topographic_error([[15]]) == 1.0
         self.som.topology = 'rectangular'
+
+    def test_hexagonal_topographic_error(self):
+        self.hex_som._weights[2, 4] = 6.0
+        # # 15 will have bmu_1 in (4, 4) and bmu_2 in (0, 0)
+        # # which are not in the same neighborhood
+        self.hex_som._weights[4, 4] = 15.0
+        self.hex_som._weights[0, 0] = 14.
+        self.hex_som._weights[0, 4] = 10.0
+        self.hex_som._weights[1, 3] = 9.0
+        # 3 will have bmu_1 in (2, 0) and bmu_2 in (1, 1)
+        # which are in the same neighborhood on a hexagonal grid
+        self.hex_som._weights[2, 0] = 3.0
+        assert self.hex_som.topographic_error([[10]]) == 0.0
+        # (2,0) and (1,1) are not neighbours in hex,
+        # the neigbours of (2,0) are: (1,0), (2,1) and (3,0)
+        assert self.hex_som.topographic_error([[3]]) == 1.0
+        # True for both hexagonal and rectangular grids
+        assert self.hex_som.topographic_error([[5]]) == 0.0
+        assert self.hex_som.topographic_error([[15]]) == 1.0
 
     def test_quantization(self):
         q = self.som.quantization(array([[4], [2]]))
