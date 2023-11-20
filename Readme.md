@@ -9,7 +9,7 @@ MiniSom is a minimalistic and Numpy based implementation of the Self Organizing 
 
 Updates about MiniSom are posted on <a href="https://twitter.com/JustGlowing">Twitter</a>.
 
-Juping into using MiniSom via Google Colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://githubtocolab.com/JustGlowing/minisom/blob/master/examples/BasicUsage.ipynb)
+Jump into using MiniSom via Google Colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://githubtocolab.com/JustGlowing/minisom/blob/master/examples/BasicUsage.ipynb)
 
 Installation
 ---------------------
@@ -91,7 +91,7 @@ Here are some of the charts you'll see how to generate in the [examples](https:/
 | | |
 :-------------------------:|:-------------------------:
 Seeds map ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_seed.png)  | Class assignment ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_seed_pies.png)
-Handwritteng digits mapping ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_digts.png)  |  Hexagonal Topology <img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_seed_hex.png" alt="som hexagonal toplogy" width=450>
+Handwritten digits mapping ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_digts.png)  |  Hexagonal Topology <img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_seed_hex.png" alt="som hexagonal toplogy" width=450>
 Color quantization ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_color_quantization.png)  |  Outliers detection ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_outliers_detection_circle.png)
 
 Other tutorials
