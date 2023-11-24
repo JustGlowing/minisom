@@ -1,3 +1,5 @@
+[![PyPI version fury.io](https://badge.fury.io/py/minisom.svg)](https://pypi.org/project/MiniSom/)
+[![Downloads](https://static.pepy.tech/personalized-badge/minisom?period=total&units=international_system&left_color=black&right_color=blue&left_text=Downloads)](https://pepy.tech/project/MiniSom)
 [![Python package](https://github.com/JustGlowing/minisom/actions/workflows/python-package.yml/badge.svg?branch=master&event=push)](https://github.com/JustGlowing/minisom/actions/workflows/python-package.yml)
 
 <h1>MiniSom<img src='https://3.bp.blogspot.com/-_6UDGEHzIrs/WSfiyjmoeRI/AAAAAAAABHw/3UQylcCBEhUfHNhf56WSHBBmQ6g_lXQhwCLcB/s320/minisom_logo.png' align='right'></h1>
@@ -8,6 +10,8 @@ Self Organizing Maps
 MiniSom is a minimalistic and Numpy based implementation of the Self Organizing Maps (SOM). SOM is a type of Artificial Neural Network able to convert complex, nonlinear statistical relationships between high-dimensional data items into simple geometric relationships on a low-dimensional display. Minisom is designed to allow researchers to easily build on top of it and to give students the ability to quickly grasp its details.
 
 Updates about MiniSom are posted on <a href="https://twitter.com/JustGlowing">Twitter</a>.
+
+Jump into using MiniSom via Google Colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://githubtocolab.com/JustGlowing/minisom/blob/master/examples/BasicUsage.ipynb)
 
 Installation
 ---------------------
@@ -89,12 +93,13 @@ Here are some of the charts you'll see how to generate in the [examples](https:/
 | | |
 :-------------------------:|:-------------------------:
 Seeds map ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_seed.png)  | Class assignment ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_seed_pies.png)
-Handwritteng digits mapping ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_digts.png)  |  Hexagonal Topology <img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_seed_hex.png" alt="som hexagonal toplogy" width=450>
+Handwritten digits mapping ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_digts.png)  |  Hexagonal Topology <img src="https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_seed_hex.png" alt="som hexagonal toplogy" width=450>
 Color quantization ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_color_quantization.png)  |  Outliers detection ![](https://github.com/JustGlowing/minisom/raw/master/examples/resulting_images/som_outliers_detection_circle.png)
 
 Other tutorials
 ------------
 - <a href="https://glowingpython.blogspot.com/2013/09/self-organizing-maps.html">Self Organizing Maps on the Glowing Python</a>
+- <a href="http://syllabus.cs.manchester.ac.uk/pgt/2021/COMP61021/reference/new-SOM.pdf">Essentials of the self-organizing map</a> by Teuvo Kohonen
 - <a href="https://github.com/Optimization-Algorithms-Book/Code-Listings/blob/main/Chapter%2011/Listing%2011.5_TSP_SOM.ipynb">How to solve the Travelling Salesman Problem</a> from the book <i>Optimization Algorithms:Optimization Algorithms: AI techniques for design, planning, and control problems. Manning Publications, 2023.</i>
 - <a href="http://aa.ssdi.di.fct.unl.pt/files/AA-16_notes.pdf">Lecture notes from the Machine Learning course at the University of Lisbon</a>
 - <a href="https://heartbeat.fritz.ai/introduction-to-self-organizing-maps-soms-98e88b568f5d">Introduction to Self-Organizing</a> by Derrick Mwiti
@@ -104,7 +109,7 @@ Other tutorials
 - Video tutorial <a href="https://www.youtube.com/watch?v=0qtvb_Nx2tA">Self Organizing Maps: Introduction</a> by Art of Visualization
 - Video tutorial <a href="https://www.youtube.com/watch?v=O6nzwAc_hrQ">Self Organizing Maps Hyperparameter tuning</a> by 
 SuperDataScience Machine Learning
-- <a href="http://docs.unigrafia.fi/publications/kohonen_teuvo/">MATLAB Implementations and Applications of the Self-Organizing Map</a> by Teuvo Kohonen (Inventor of SOM)
+- <a href="http://docs.unigrafia.fi/publications/kohonen_teuvo/">MATLAB Implementations and Applications of the Self-Organizing Map</a> by Teuvo Kohonen
 
 How to cite MiniSom
 ------------
