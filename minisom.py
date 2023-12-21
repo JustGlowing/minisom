@@ -380,12 +380,13 @@ class MiniSom(object):
             msg = 'PCA initialization inappropriate:' + \
                   'One of the dimensions of the map is 1.'
             warn(msg)
-        pc_length, pc = linalg.eig(cov(transpose(data)))
+        pc_length, eigvecs = linalg.eig(cov(data))
+        pc = (eigvecs.T @ data)
         pc_order = argsort(-pc_length)
         for i, c1 in enumerate(linspace(-1, 1, len(self._neigx))):
             for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
-                self._weights[i, j] = c1*pc[:, pc_order[0]] + \
-                                      c2*pc[:, pc_order[1]]
+                self._weights[i, j] = c1*pc[pc_order[0]] + \
+                                      c2*pc[pc_order[1]]
 
     def train(self, data, num_iteration,
               random_order=False, verbose=False, use_epochs=False):
@@ -878,10 +879,10 @@ class TestMinisom(unittest.TestCase):
     def test_pca_weights_init(self):
         som = MiniSom(2, 2, 2)
         som.pca_weights_init(array([[1.,  0.], [0., 1.], [1., 0.], [0., 1.]]))
-        expected = array([[[-1.41421356,  0.],
-                           [0.,  1.41421356]],
-                          [[0., -1.41421356],
-                           [1.41421356,  0.]]])
+        expected = array([[[0.21132487, -1.78867513],
+                           [1.78867513, -0.21132487]],
+                          [[-1.78867513, 0.21132487],
+                           [-0.21132487, 1.78867513]]])
         assert_array_almost_equal(som._weights, expected)
 
     def test_distance_map(self):
