@@ -9,6 +9,8 @@ Self Organizing Maps
 
 MiniSom is a minimalistic and Numpy based implementation of the Self Organizing Maps (SOM). SOM is a type of Artificial Neural Network able to convert complex, nonlinear statistical relationships between high-dimensional data items into simple geometric relationships on a low-dimensional display. Minisom is designed to allow researchers to easily build on top of it and to give students the ability to quickly grasp its details.
 
+The project initially aimed for a minimalistic implementation of the Self-Organizing Map (SOM) algorithm, focusing on simplicity in features, dependencies, and code style. Although it has expanded in terms of features, it remains minimalistic by relying only on the numpy library and emphasizing vectorization in coding style.
+
 Updates about MiniSom are posted on <a href="https://twitter.com/JustGlowing">Twitter</a>.
 
 Jump into using MiniSom via Google Colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://githubtocolab.com/JustGlowing/minisom/blob/master/examples/BasicUsage.ipynb)
