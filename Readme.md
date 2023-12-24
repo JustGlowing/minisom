@@ -111,7 +111,6 @@ Other tutorials
 - Video tutorial <a href="https://www.youtube.com/watch?v=0qtvb_Nx2tA">Self Organizing Maps: Introduction</a> by Art of Visualization
 - Video tutorial <a href="https://www.youtube.com/watch?v=O6nzwAc_hrQ">Self Organizing Maps Hyperparameter tuning</a> by 
 SuperDataScience Machine Learning
-[comment]: <> (- <a href="http://docs.unigrafia.fi/publications/kohonen_teuvo/">MATLAB Implementations and Applications of the Self-Organizing Map</a> by Teuvo Kohonen)
 
 How to cite MiniSom
 ------------
