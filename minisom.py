@@ -595,7 +595,7 @@ class MiniSom(object):
         if index < 0:
             return (-1, -1)
         y = self._weights.shape[1]
-        coords = self.convert_map_to_euclidean((index % y, int(index/y)))
+        coords = self.convert_map_to_euclidean((int(index/y), index % y)))
         return coords
 
     def win_map(self, data, return_indices=False):
