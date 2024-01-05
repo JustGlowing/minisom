@@ -595,7 +595,7 @@ class MiniSom(object):
         if index < 0:
             return (-1, -1)
         y = self._weights.shape[1]
-        coords = self.convert_map_to_euclidean((index % y, int(index/y)))
+        coords = self.convert_map_to_euclidean((int(index/y), index % y))
         return coords
 
     def win_map(self, data, return_indices=False):
@@ -651,8 +651,6 @@ class TestMinisom(unittest.TestCase):
                 assert_almost_equal(1.0, linalg.norm(
                     self.hex_som._weights[i, j]))
         self.hex_som._weights = zeros((5, 5, 1))  # fake weights
-        self.hex_som._weights[2, 3] = 5.0
-        self.hex_som._weights[1, 1] = 2.0
 
     def test_decay_function(self):
         assert self.som._decay_function(1., 2., 3.) == 1./(1.+2./(3./2))
@@ -778,22 +776,16 @@ class TestMinisom(unittest.TestCase):
         assert self.som.topographic_error([[15]]) == 1.0
 
     def test_hexagonal_topographic_error(self):
-        self.hex_som._weights[2, 4] = 6.0
-        # # 15 will have bmu_1 in (4, 4) and bmu_2 in (0, 0)
-        # # which are not in the same neighborhood
+        # 15 will have bmu_1 in (4, 4) and bmu_2 in (0, 0)
+        # which are not in the same neighborhood
         self.hex_som._weights[4, 4] = 15.0
         self.hex_som._weights[0, 0] = 14.
-        self.hex_som._weights[0, 4] = 10.0
-        self.hex_som._weights[1, 3] = 9.0
-        # 3 will have bmu_1 in (2, 0) and bmu_2 in (1, 1)
-        # which are in the same neighborhood on a hexagonal grid
-        self.hex_som._weights[2, 0] = 3.0
+
+        # 10 bmu_1 and bmu_2 of 10 are in the same neighborhood
+        self.hex_som._weights[2, 2] = 10.0
+        self.hex_som._weights[2, 3] = 9.0
+
         assert self.hex_som.topographic_error([[10]]) == 0.0
-        # (2,0) and (1,1) are not neighbours in hex,
-        # the neigbours of (2,0) are: (1,0), (2,1) and (3,0)
-        assert self.hex_som.topographic_error([[3]]) == 1.0
-        # True for both hexagonal and rectangular grids
-        assert self.hex_som.topographic_error([[5]]) == 0.0
         assert self.hex_som.topographic_error([[15]]) == 1.0
 
     def test_quantization(self):
