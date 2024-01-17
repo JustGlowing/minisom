@@ -33,5 +33,6 @@ jobs:
         pytest --nbval-lax examples/Classification.ipynb
         pytest --nbval-lax examples/ColorQuantization.ipynb
         pytest --nbval-lax examples/ColorSpaceMapping.ipynb
+        pytest --nbval-lax examples/OutliersDetection.ipynb
         pytest --nbval-lax examples/TravellingSalesmanProblem.ipynb
         pytest --nbval-lax examples/HexagonalTopology.ipynb
