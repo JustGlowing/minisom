@@ -24,11 +24,12 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install numpy flake8 pycodestyle pytest nbval pandas minisom matplotlib
+        python -m pip install numpy flake8 pycodestyle pytest nbval pandas minisom matplotlib scikit-learn
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Running notebooks with examples
       run: |
         pytest --nbval-lax examples/BasicUsage.ipynb
         pytest --nbval-lax examples/Clustering.ipynb
+        pytest --nbval-lax examples/Classification.ipynb
         pytest --nbval-lax examples/ColorQuantization.ipynb
         pytest --nbval-lax examples/TravellingSalesmanProblem.ipynb
