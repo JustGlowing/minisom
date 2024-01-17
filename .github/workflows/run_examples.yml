@@ -29,6 +29,6 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install numpy flake8 pycodestyle pytest nbval pandas minisom
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Unit testing
+    - name: Running BasicUsage.ipynb
       run: |
         pytest --nbval examples/BasicUsage.ipynb
