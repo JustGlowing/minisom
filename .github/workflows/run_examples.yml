@@ -26,6 +26,9 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install numpy flake8 pycodestyle pytest nbval pandas minisom matplotlib
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Running BasicUsage.ipynb
+    - name: Running notebooks with examples
       run: |
-        pytest --nbval-lax examples/*.ipynb
+        pytest --nbval-lax examples/BasicUsage.ipynb
+        pytest --nbval-lax examples/Clustering.ipynb
+        pytest --nbval-lax examples/ColorQuantization.ipynb
+        pytest --nbval-lax examples/TravellingSalesmanProblem.ipynb
