@@ -28,4 +28,4 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Running BasicUsage.ipynb
       run: |
-        pytest --nbval-lax examples/BasicUsage.ipynb
+        pytest --nbval-lax examples/*.ipynb
