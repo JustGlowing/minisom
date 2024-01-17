@@ -13,8 +13,7 @@ jobs:
       env:
         RUNNER: ${{ toJson(runner) }}
       with:
-        notebook: "PATHTONOTEBOOK.ipynb"
-        params: "PATHTOPARAMS.json"
+        notebook: "examples/BasicUsage.ipynb"
         isReport: False
         poll: True
     - uses: actions/upload-artifact@v3
