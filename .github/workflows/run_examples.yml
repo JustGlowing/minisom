@@ -38,4 +38,5 @@ jobs:
         pytest --nbval-lax examples/HexagonalTopology.ipynb
         pytest --nbval-lax examples/HandwrittenDigits.ipynb
         pytest --nbval-lax examples/TopicModeling.ipynb
+        pytest --nbval-lax examples/DemocracyIndex.ipynb
         
