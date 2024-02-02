@@ -1,8 +1,22 @@
 version: '3.8'
 
+#For this docker compose file successfully run, you need to set the following env variables
+#in the host system:
+#
+# - USER_ID: the user id in the host environment (uid value after issuing the "id" command in linux systems.)
+# - USER_GROUP_ID: the user group id in the host environment (gid value after issuing the "id" command in linux systems.)
+#
+#Additionally, you may set the following env vars.
+#
+# - COMPOSE_PROJECT_NAME : unique name for the project (defaults to minisom)
+# - HOST_SSH_KEYS_DIR : the path within the host to the SSH public keys so you can authenticate with GitHub from
+#                       within the docker image. (defaults to $HOME/.ssh)
+# - PYTHON_PATH : additional python paths to be added to the PYTHONPATH within the image (defaults to None).
+
+
 services:
     main:
-        container_name: ${COMPOSE_PROJECT_NAME?err}
+        container_name: ${COMPOSE_PROJECT_NAME-minisom?err}
         image: ${COMPOSE_PROJECT_NAME?err}
         build:
             context: .
@@ -17,8 +31,7 @@ services:
             PYTHONPATH: /work:${PYTHON_PATH-}
 
 
-        #Habilitando os drivers da GPU, caso uma esteja presente.
-        #Se não tiver, não precisa remover esta seção. 
+        #GPU enablement (for a potential future gpu-based version of MiniSom). 
         deploy:
             resources:
                 reservations:
