@@ -43,3 +43,5 @@ nosetests.xml
 # Notebooks checkpoints
 examples/.ipynb_checkpoints/
 
+#Environment related files
+.env
