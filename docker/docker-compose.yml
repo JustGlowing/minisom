@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+    main:
+        container_name: ${COMPOSE_PROJECT_NAME?err}
+        image: ${COMPOSE_PROJECT_NAME?err}
+        build:
+            context: .
+            args:
+                USER_ID: ${USER_ID?err}
+                USER_GROUP_ID: ${USER_GROUP_ID?err}
+        entrypoint: tail -f /dev/null
+        volumes:
+            - ..:/work
+            - ${HOST_SSH_KEYS_DIR-$HOME/.ssh}:/home/ds/.ssh
+        environment:
+            PYTHONPATH: /work:${PYTHON_PATH-}
+
+
+        #Habilitando os drivers da GPU, caso uma esteja presente.
+        #Se não tiver, não precisa remover esta seção. 
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: all
+                          capabilities: [gpu]
