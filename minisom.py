@@ -1,16 +1,14 @@
 from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, zeros, ones, arange, outer, meshgrid, dot,
-                   logical_and, mean, cov, argsort, linspace, transpose,
+                   logical_and, mean, cov, argsort, linspace,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
-                   nanmean, nansum, tile, array_equal, isclose)
+                   nanmean, nansum, tile, isclose)
 from numpy.linalg import norm
 from collections import defaultdict, Counter
 from warnings import warn
 from sys import stdout
 from time import time
 from datetime import timedelta
-import pickle
-import os
 
 
 """
