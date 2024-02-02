@@ -45,3 +45,5 @@ examples/.ipynb_checkpoints/
 
 #Environment related files
 .env
+.vscode
+
