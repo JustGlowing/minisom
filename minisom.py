@@ -1,6 +1,6 @@
 from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, zeros, ones, arange, outer, meshgrid, dot,
-                   logical_and, mean, cov, argsort, linspace, transpose,
+                   logical_and, mean, cov, argsort, linspace,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
                    nanmean, nansum, tile, array_equal, isclose)
 from numpy.linalg import norm
