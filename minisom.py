@@ -170,8 +170,8 @@ class MiniSom(object):
         random_seed : int, optional (default=None)
             Random seed to use.
         """
-        if sigma >= x or sigma >= y:
-            warn('Warning: sigma is too high for the dimension of the map.')
+        if sigma > sqrt(x*x + y*y):
+            warn('Warning: sigma might be too high for the dimension of the map.')
 
         self._random_generator = random.RandomState(random_seed)
 
