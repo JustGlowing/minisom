@@ -87,13 +87,23 @@ def asymptotic_decay(learning_rate, t, max_iter):
     return learning_rate / (1+t/(max_iter/2))
 
 
+def linear_decay(learning_rate, t, max_iter):
+    return learning_rate * (1 - t/max_iter)
+
+
+def inverse_time_decay(learning_rate, t, max_iter):
+    C = max_iter / 100.0
+    return learning_rate * C / (C+t)
+
+
 class MiniSom(object):
     Y_HEX_CONV_FACTOR = (3.0 / 2.0) / sqrt(3)
 
     def __init__(self, x, y, input_len, sigma=1.0, learning_rate=0.5,
                  decay_function=asymptotic_decay,
                  neighborhood_function='gaussian', topology='rectangular',
-                 activation_distance='euclidean', random_seed=None):
+                 activation_distance='euclidean', random_seed=None,
+                 sigma_decay_function=asymptotic_decay):
         """Initializes a Self Organizing Maps.
 
         A rule of thumb to set the size of the grid for a dimensionality
@@ -191,6 +201,7 @@ class MiniSom(object):
                      'take in account hexagonal topology')
 
         self._decay_function = decay_function
+        self._sigma_decay_function = sigma_decay_function
 
         neig_functions = {'gaussian': self._gaussian,
                           'mexican_hat': self._mexican_hat,
@@ -339,7 +350,7 @@ class MiniSom(object):
         """
         eta = self._decay_function(self._learning_rate, t, max_iteration)
         # sigma and learning rate decrease with the same rule
-        sig = self._decay_function(self._sigma, t, max_iteration)
+        sig = self._sigma_decay_function(self._sigma, t, max_iteration)
         # improves the performances
         g = self.neighborhood(win, sig)*eta
         # w_new = eta * neighborhood_function * (x-w)
@@ -652,8 +663,15 @@ class TestMinisom(unittest.TestCase):
                     self.hex_som._weights[i, j]))
         self.hex_som._weights = zeros((5, 5, 1))  # fake weights
 
-    def test_decay_function(self):
-        assert self.som._decay_function(1., 2., 3.) == 1./(1.+2./(3./2))
+    def test_asymptotic_decay_function(self):
+        assert asymptotic_decay(1., 2., 3.) == 1./(1.+2./(3./2))
+
+    def test_linear_decay_function(self):
+        assert linear_decay(1., 2., 3.) == 1.*(1.-2./3)
+
+    def test_inverse_time_function(self):
+        C = 3 / 100.
+        assert inverse_time_decay(1., 2., 3.) == 1. * C / (C + 2)
 
     def test_fast_norm(self):
         assert fast_norm(array([1, 3])) == sqrt(1+9)
