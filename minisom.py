@@ -135,7 +135,7 @@ class MiniSom(object):
             where T is #num_iteration/2)
 
         decay_function : function (default=asymptotic_decay)
-            Function that reduces learning_rate and sigma at each iteration
+            Function that reduces learning_rate at each iteration
             the default function is:
                         learning_rate / (1+t/(max_iterarations/2))
 
@@ -169,6 +169,9 @@ class MiniSom(object):
 
         random_seed : int, optional (default=None)
             Random seed to use.
+
+        sigma_decay_function : function (default=asymptotic_decay)
+            Function that reduces sigma at each iteration.
         """
         if sigma > sqrt(x*x + y*y):
             warn('Warning: sigma might be too high' +
