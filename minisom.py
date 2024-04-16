@@ -76,7 +76,7 @@ def learning_rate_inverse_time_decay(learning_rate, t, max_iter):
     approaches zero.
 
     This function should NOT be used for the sigma_decay_function
-    parameter of the MiniSom class as decay functions that decrease 
+    parameter of the MiniSom class as decay functions that decrease
     to zero can lead to overfitting.
 
     Parameters
@@ -99,7 +99,7 @@ def learning_rate_linear_decay(learning_rate, t, max_iter):
     decreases to zero.
 
     This function should NOT be used for the sigma_decay_function
-    parameter of the MiniSom class as decay functions that decrease 
+    parameter of the MiniSom class as decay functions that decrease
     to zero can lead to overfitting.
 
     Parameters
@@ -137,7 +137,7 @@ def sigma_inverse_time_decay(sigma, t, max_iter):
 class MiniSom(object):
     Y_HEX_CONV_FACTOR = (3.0 / 2.0) / sqrt(3)
 
-    def __init__(self, x, y, input_len, sigma='som_hypotenuse', learning_rate=0.5,
+    def __init__(self, x, y, input_len, sigma='hypotenuse', learning_rate=0.5,
                  learning_rate_decay_function=learning_rate_inverse_time_decay,
                  neighborhood_function='gaussian', topology='rectangular',
                  activation_distance='euclidean', random_seed=None,
@@ -164,11 +164,11 @@ class MiniSom(object):
 
         sigma : float, optional (default=sqrt(x^2 + y^2))
             Spread of the neighborhood function.
-            
+
             Needs to be adequate to the dimensions of the map.
 
             By default, at the iteration t, we have:
-                        sigma(t) = sigma / (1 + (t * (sigma - 1) / max_iter))
+                sigma(t) = sigma / (1 + (t * (sigma - 1) / max_iter))
 
         learning_rate : float, optional (default=0.5)
             Initial learning rate.
@@ -176,13 +176,14 @@ class MiniSom(object):
             Adequate values are dependent on the data used for training.
 
             By default, at the iteration t, we have:
-                        learning_rate(t) = learning_rate / (1 + t * (100 / max_iter))
+                learning_rate(t) = learning_rate / (1 + t * (100 / max_iter))
 
-        learning_rate_decay_function : function, optional (default=learning_rate_inverse_time_decay)
+        learning_rate_decay_function : function, optional
+        (default=learning_rate_inverse_time_decay)
             Function that reduces learning_rate at each iteration.
 
             The default function is:
-                        learning_rate(t) = learning_rate / (1 + t * (100 / max_iter))
+                learning_rate(t) = learning_rate / (1 + t * (100 / max_iter))
 
             A custom decay function will need to to take in input
             three parameters in the following order:
@@ -214,11 +215,12 @@ class MiniSom(object):
         random_seed : int, optional (default=None)
             Random seed to use.
 
-        sigma_decay_function : function, optional (default=sigma_inverse_time_decay)
+        sigma_decay_function : function, optional
+        (default=sigma_inverse_time_decay)
             Function that reduces sigma at each iteration.
 
             The default function is:
-                        sigma(t) = sigma / (1 + (t * (sigma - 1) / max_iter))
+                sigma(t) = sigma / (1 + (t * (sigma - 1) / max_iter))
 
             A custom decay function will need to to take in input
             three parameters in the following order:
@@ -230,7 +232,7 @@ class MiniSom(object):
             Note that if a lambda function is used to define the decay
             MiniSom will not be pickable anymore.
         """
-        if sigma == 'som_hypotenuse':
+        if sigma == 'hypotenuse':
             sigma = sqrt(x*x + y*y)
         if sigma > sqrt(x*x + y*y):
             warn('Warning: Sigma might be too high ' +
@@ -411,7 +413,8 @@ class MiniSom(object):
             If use_epochs is False:
                 Maximum number of iterations (one iteration per sample).
         """
-        eta = self._learning_rate_decay_function(self._learning_rate, t, max_iteration)
+        eta = self._learning_rate_decay_function(self._learning_rate,
+                                                 t, max_iteration)
         sig = self._sigma_decay_function(self._sigma, t, max_iteration)
         # improves the performances
         g = self.neighborhood(win, sig)*eta
@@ -501,7 +504,7 @@ class MiniSom(object):
                 return int(iteration_index / data_len)
         else:
             def get_decay_rate(iteration_index, data_len):
-                return int(iteration_index) 
+                return int(iteration_index)
         for t, iteration in enumerate(iterations):
             decay_rate = get_decay_rate(t, len(data))
             self.update(data[iteration], self.winner(data[iteration]),
@@ -726,15 +729,15 @@ class TestMinisom(unittest.TestCase):
         self.hex_som._weights = zeros((5, 5, 1))  # fake weights
 
     def test_learning_rate_linear_decay_function(self):
-        assert learning_rate_linear_decay(1., 2., 3.) == 1. * (1. -2. / 3.)
+        assert learning_rate_linear_decay(1, 2, 3) == 1 * (1 - 2 / 3)
 
     def test_learning_rate_inverse_time_decay_function(self):
-        C = 3. / 100.
-        assert learning_rate_inverse_time_decay(1., 2., 3.) == 1. * C / (C + 2.)
+        C = 3 / 100
+        assert learning_rate_inverse_time_decay(1, 2, 3) == 1 * C / (C + 2)
 
-    def test_sigma_inverse_time_decay_function(self):    
-        C = (1. - 1.) / 3.
-        assert sigma_inverse_time_decay(1., 2., 3.) == 1. / (1. + (2. * C))
+    def test_sigma_inverse_time_decay_function(self):
+        C = (1 - 1) / 3
+        assert sigma_inverse_time_decay(1, 2, 3) == 1 / (1 + (2 * C))
 
     def test_fast_norm(self):
         assert fast_norm(array([1, 3])) == sqrt(1+9)
