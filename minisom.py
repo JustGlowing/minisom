@@ -128,9 +128,9 @@ def inverse_decay_to_one(sigma, t, max_iter):
 
 def asymptotic_decay(dynamic_parameter, t, max_iter):
     """Legacy default decay function of the learning process
-    and sigma that decays these values asymptotically to 1/3 
+    and sigma that decays these values asymptotically to 1/3
     of their original values.
-    
+
     Using this function may lead to overfitting for sigma values
     less than three or poor solution convergence for sigma values
     greater than three.
@@ -251,7 +251,7 @@ class MiniSom(object):
             Note that if a lambda function is used to define the decay
             MiniSom will not be pickable anymore.
         """
-        if sigma == None:
+        if sigma is None:
             sigma = sqrt(x*x + y*y)
         if sigma > sqrt(x*x + y*y):
             warn('Warning: sigma might be too high ' +
@@ -284,31 +284,32 @@ class MiniSom(object):
                 warn('triangle neighborhood function does not ' +
                      'take in account hexagonal topology')
 
-        learning_rate_decay_functions = {'inverse_decay_to_zero': inverse_decay_to_zero,
-                                         'linear_decay_to_zero': linear_decay_to_zero,
-                                         'asymptotic_decay': asymptotic_decay}
+        lr_decay_functions = {'inverse_decay_to_zero': inverse_decay_to_zero,
+                              'linear_decay_to_zero': linear_decay_to_zero,
+                              'asymptotic_decay': asymptotic_decay}
 
-        if learning_rate_decay_function not in learning_rate_decay_functions:
+        if learning_rate_decay_function not in lr_decay_functions:
             msg = '%s not supported. Functions available: %s'
             raise ValueError(msg % (learning_rate_decay_function,
-                                    ', '.join(learning_rate_decay_functions.keys())))
+                                    ', '.join(lr_decay_functions.keys())))
 
-        self._learning_rate_decay_function = learning_rate_decay_functions[learning_rate_decay_function]
+        self._learning_rate_decay_function = \
+            lr_decay_functions[learning_rate_decay_function]
 
-        sigma_decay_functions = {'inverse_decay_to_one': inverse_decay_to_one,
-                                 'asymptotic_decay': asymptotic_decay}
+        sig_decay_functions = {'inverse_decay_to_one': inverse_decay_to_one,
+                               'asymptotic_decay': asymptotic_decay}
 
-        if sigma_decay_function not in sigma_decay_functions:
+        if sigma_decay_function not in sig_decay_functions:
             msg = '%s not supported. Functions available: %s'
             raise ValueError(msg % (sigma_decay_function,
-                                    ', '.join(sigma_decay_functions.keys())))
+                                    ', '.join(sig_decay_functions.keys())))
 
         if sigma_decay_function in ['asymptotic_decay']:
             warn('using this legacy function may lead to overfitting for ' +
                  'sigma values less than three or poor solution convergence ' +
                  'for sigma values greater than three')
 
-        self._sigma_decay_function = sigma_decay_functions[sigma_decay_function]
+        self._sigma_decay_function = sig_decay_functions[sigma_decay_function]
 
         neig_functions = {'gaussian': self._gaussian,
                           'mexican_hat': self._mexican_hat,
