@@ -71,102 +71,6 @@ def fast_norm(x):
     return sqrt(dot(x, x.T))
 
 
-def inverse_decay_to_zero(learning_rate, t, max_iter):
-    """Decay function of the learning process that asymptotically
-    approaches zero.
-
-    Parameters
-    ----------
-    learning_rate : float
-        Current learning rate.
-
-    t : int
-        Current iteration.
-
-    max_iter : int
-        Maximum number of iterations for the training.
-    """
-    C = max_iter / 100.0
-    return learning_rate * C / (C + t)
-
-
-def linear_decay_to_zero(learning_rate, t, max_iter):
-    """Decay function of the learning process that linearly
-    decreases to zero.
-
-    Parameters
-    ----------
-    learning_rate : float
-        Current learning rate.
-
-    t : int
-        Current iteration.
-
-    max_iter : int
-        Maximum number of iterations for the training.
-    """
-    return learning_rate * (1 - t / max_iter)
-
-
-def inverse_decay_to_one(sigma, t, max_iter):
-    """Decay function of sigma that asymptotically approaches one.
-
-    Parameters
-    ----------
-    sigma : float
-        Current sigma.
-
-    t : int
-        Current iteration.
-
-    max_iter : int
-        Maximum number of iterations for the training.
-    """
-    C = (sigma - 1) / max_iter
-    return sigma / (1 + (t * C))
-
-
-def linear_decay_to_one(sigma, t, max_iter):
-    """Decay function of sigma that linearly decreases
-    to one.
-
-    Parameters
-    ----------
-    sigma : float
-        Current sigma.
-
-    t : int
-        Current iteration.
-
-    max_iter : int
-        Maximum number of iterations for the training.
-    """
-    return sigma + (t * (1 - sigma) / max_iter)
-
-
-def asymptotic_decay(dynamic_parameter, t, max_iter):
-    """Legacy default decay function of the learning process
-    and sigma that decays these values asymptotically to 1/3
-    of their original values.
-
-    Using this function may lead to overfitting for sigma values
-    less than three or poor solution convergence for sigma values
-    greater than three.
-
-    Parameters
-    ----------
-    dynamic_parameter : float
-        Current learning rate/sigma.
-
-    t : int
-        Current iteration.
-
-    max_iter : int
-        Maximum number of iterations for the training.
-    """
-    return dynamic_parameter / (1 + t / (max_iter / 2))
-
-
 class MiniSom(object):
     Y_HEX_CONV_FACTOR = (3.0 / 2.0) / sqrt(3)
 
@@ -214,6 +118,8 @@ class MiniSom(object):
         learning_rate_decay_function : string, optional
         (default='inverse_decay_to_zero')
             Function that reduces learning_rate at each iteration.
+            Possible values: 'inverse_decay_to_zero', 'linear_decay_to_zero',
+                             'asymptotic_decay'
 
             The default function is:
                 learning_rate(t) = learning_rate / (1 + t * (100 / max_iter))
@@ -241,6 +147,8 @@ class MiniSom(object):
         sigma_decay_function : string, optional
         (default='inverse_decay_to_one')
             Function that reduces sigma at each iteration.
+            Possible values: 'inverse_decay_to_one', 'linear_decay_to_one',
+                             'asymptotic_decay'
 
             The default function is:
                 sigma(t) = sigma / (1 + (t * (sigma - 1) / max_iter))
@@ -278,9 +186,10 @@ class MiniSom(object):
                 warn('triangle neighborhood function does not ' +
                      'take in account hexagonal topology')
 
-        lr_decay_functions = {'inverse_decay_to_zero': inverse_decay_to_zero,
-                              'linear_decay_to_zero': linear_decay_to_zero,
-                              'asymptotic_decay': asymptotic_decay}
+        lr_decay_functions = {
+            'inverse_decay_to_zero': self._inverse_decay_to_zero,
+            'linear_decay_to_zero': self._linear_decay_to_zero,
+            'asymptotic_decay': self._asymptotic_decay}
 
         if learning_rate_decay_function not in lr_decay_functions:
             msg = '%s not supported. Functions available: %s'
@@ -290,19 +199,15 @@ class MiniSom(object):
         self._learning_rate_decay_function = \
             lr_decay_functions[learning_rate_decay_function]
 
-        sig_decay_functions = {'inverse_decay_to_one': inverse_decay_to_one,
-                               'linear_decay_to_one': linear_decay_to_one,
-                               'asymptotic_decay': asymptotic_decay}
+        sig_decay_functions = {
+            'inverse_decay_to_one': self._inverse_decay_to_one,
+            'linear_decay_to_one': self._linear_decay_to_one,
+            'asymptotic_decay': self._asymptotic_decay}
 
         if sigma_decay_function not in sig_decay_functions:
             msg = '%s not supported. Functions available: %s'
             raise ValueError(msg % (sigma_decay_function,
                                     ', '.join(sig_decay_functions.keys())))
-
-        if sigma_decay_function in ['asymptotic_decay']:
-            warn('using this legacy function may lead to overfitting for ' +
-                 'sigma values less than three or poor solution convergence ' +
-                 'for sigma values greater than three')
 
         self._sigma_decay_function = sig_decay_functions[sigma_decay_function]
 
@@ -370,6 +275,93 @@ class MiniSom(object):
         """Returns the activation map to x."""
         self._activate(x)
         return self._activation_map
+
+    def _inverse_decay_to_zero(self, learning_rate, t, max_iter):
+        """Decay function of the learning process that asymptotically
+        approaches zero.
+
+        Parameters
+        ----------
+        learning_rate : float
+            Current learning rate.
+
+        t : int
+            Current iteration.
+
+        max_iter : int
+            Maximum number of iterations for the training.
+        """
+        C = max_iter / 100.0
+        return learning_rate * C / (C + t)
+
+    def _linear_decay_to_zero(self, learning_rate, t, max_iter):
+        """Decay function of the learning process that linearly
+        decreases to zero.
+
+        Parameters
+        ----------
+        learning_rate : float
+            Current learning rate.
+
+        t : int
+            Current iteration.
+
+        max_iter : int
+            Maximum number of iterations for the training.
+        """
+        return learning_rate * (1 - t / max_iter)
+
+    def _inverse_decay_to_one(self, sigma, t, max_iter):
+        """Decay function of sigma that asymptotically approaches one.
+
+        Parameters
+        ----------
+        sigma : float
+            Current sigma.
+
+        t : int
+            Current iteration.
+
+        max_iter : int
+            Maximum number of iterations for the training.
+        """
+        C = (sigma - 1) / max_iter
+        return sigma / (1 + (t * C))
+
+    def _linear_decay_to_one(self, sigma, t, max_iter):
+        """Decay function of sigma that linearly decreases
+        to one.
+
+        Parameters
+        ----------
+        sigma : float
+            Current sigma.
+
+        t : int
+            Current iteration.
+
+        max_iter : int
+            Maximum number of iterations for the training.
+        """
+        return sigma + (t * (1 - sigma) / max_iter)
+
+    def _asymptotic_decay(self, dynamic_parameter, t, max_iter):
+        """Legacy default decay function of the learning process
+        and sigma that decays these values asymptotically to 1/3
+        of their original values.
+
+        Parameters
+        ----------
+        dynamic_parameter : float
+            Current learning rate/sigma.
+
+        t : int
+            Current iteration.
+
+        max_iter : int
+            Maximum number of iterations for the training.
+        """
+        return dynamic_parameter / (1 + t / (max_iter / 2))
 
     def _gaussian(self, c, sigma):
         """Returns a Gaussian centered in c."""
@@ -768,20 +760,20 @@ class TestMinisom(unittest.TestCase):
 
     def test_inverse_decay_to_zero_function(self):
         C = 3 / 100
-        assert inverse_decay_to_zero(1, 2, 3) == 1 * C / (C + 2)
+        assert self.som._inverse_decay_to_zero(1, 2, 3) == 1 * C / (C + 2)
 
     def test_linear_decay_to_zero_function(self):
-        assert linear_decay_to_zero(1, 2, 3) == 1 * (1 - 2 / 3)
+        assert self.som._linear_decay_to_zero(1, 2, 3) == 1 * (1 - 2 / 3)
 
     def test_inverse_decay_to_one_function(self):
         C = (1 - 1) / 3
-        assert inverse_decay_to_one(1, 2, 3) == 1 / (1 + (2 * C))
+        assert self.som._inverse_decay_to_one(1, 2, 3) == 1 / (1 + (2 * C))
 
     def test_linear_decay_to_one_function(self):
-        assert linear_decay_to_one(1, 2, 3) == 1 + (2 * (1 - 1) / 3)
+        assert self.som._linear_decay_to_one(1, 2, 3) == 1 + (2 * (1 - 1) / 3)
 
     def test_asymptotic_decay_function(self):
-        assert asymptotic_decay(1, 2, 3) == 1 / (1 + 2 / (3 / 2))
+        assert self.som._asymptotic_decay(1, 2, 3) == 1 / (1 + 2 / (3 / 2))
 
     def test_fast_norm(self):
         assert fast_norm(array([1, 3])) == sqrt(1+9)
