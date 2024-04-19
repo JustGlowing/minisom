@@ -125,6 +125,7 @@ def inverse_decay_to_one(sigma, t, max_iter):
     C = (sigma - 1) / max_iter
     return sigma / (1 + (t * C))
 
+
 def linear_decay_to_one(sigma, t, max_iter):
     """Decay function of sigma that linearly decreases
     to one.
