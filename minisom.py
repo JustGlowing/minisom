@@ -125,6 +125,23 @@ def inverse_decay_to_one(sigma, t, max_iter):
     C = (sigma - 1) / max_iter
     return sigma / (1 + (t * C))
 
+def linear_decay_to_one(sigma, t, max_iter):
+    """Decay function of sigma that linearly decreases
+    to one.
+
+    Parameters
+    ----------
+    sigma : float
+        Current sigma.
+
+    t : int
+        Current iteration.
+
+    max_iter : int
+        Maximum number of iterations for the training.
+    """
+    return sigma + (t * (1 - sigma) / max_iter)
+
 
 def asymptotic_decay(dynamic_parameter, t, max_iter):
     """Legacy default decay function of the learning process
@@ -200,16 +217,6 @@ class MiniSom(object):
             The default function is:
                 learning_rate(t) = learning_rate / (1 + t * (100 / max_iter))
 
-            A custom decay function will need to to take in input
-            three parameters in the following order:
-
-            1. Learning rate
-            2. Current iteration
-            3. Maximum number of iterations allowed
-
-            Note that if a lambda function is used to define the decay
-            MiniSom will not be pickable anymore.
-
         neighborhood_function : string, optional (default='gaussian')
             Function that weights the neighborhood of a position in the map.
             Possible values: 'gaussian', 'mexican_hat', 'bubble', 'triangle'
@@ -236,20 +243,6 @@ class MiniSom(object):
 
             The default function is:
                 sigma(t) = sigma / (1 + (t * (sigma - 1) / max_iter))
-
-            A custom decay function will need to to take in input
-            three parameters in the following order:
-
-            1. Sigma
-            2. Current iteration
-            3. Maximum number of iterations allowed
-
-            To prevent overfitting, custom decay functions should not
-            decay to zero. Ending with a sigma value greater than one
-            may also lead to poor solutions.
-
-            Note that if a lambda function is used to define the decay
-            MiniSom will not be pickable anymore.
         """
         if sigma is None:
             sigma = sqrt(x*x + y*y)
@@ -297,6 +290,7 @@ class MiniSom(object):
             lr_decay_functions[learning_rate_decay_function]
 
         sig_decay_functions = {'inverse_decay_to_one': inverse_decay_to_one,
+                               'linear_decay_to_one': linear_decay_to_one,
                                'asymptotic_decay': asymptotic_decay}
 
         if sigma_decay_function not in sig_decay_functions:
@@ -771,16 +765,19 @@ class TestMinisom(unittest.TestCase):
                     self.hex_som._weights[i, j]))
         self.hex_som._weights = zeros((5, 5, 1))  # fake weights
 
-    def test_linear_decay_to_zero_function(self):
-        assert linear_decay_to_zero(1, 2, 3) == 1 * (1 - 2 / 3)
-
     def test_inverse_decay_to_zero_function(self):
         C = 3 / 100
         assert inverse_decay_to_zero(1, 2, 3) == 1 * C / (C + 2)
 
+    def test_linear_decay_to_zero_function(self):
+        assert linear_decay_to_zero(1, 2, 3) == 1 * (1 - 2 / 3)
+
     def test_inverse_decay_to_one_function(self):
         C = (1 - 1) / 3
         assert inverse_decay_to_one(1, 2, 3) == 1 / (1 + (2 * C))
+
+    def test_linear_decay_to_one_function(self):
+        assert linear_decay_to_one(1, 2, 3) == 1 + (2 * (1 - 1) / 3)
 
     def test_asymptotic_decay_function(self):
         assert asymptotic_decay(1, 2, 3) == 1 / (1 + 2 / (3 / 2))
