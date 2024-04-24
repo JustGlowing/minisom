@@ -75,10 +75,10 @@ class MiniSom(object):
     Y_HEX_CONV_FACTOR = (3.0 / 2.0) / sqrt(3)
 
     def __init__(self, x, y, input_len, sigma=None, learning_rate=0.5,
-                 learning_rate_decay_function='inverse_decay_to_zero',
+                 learning_rate_decay_function='asymptotic_decay',
                  neighborhood_function='gaussian', topology='rectangular',
                  activation_distance='euclidean', random_seed=None,
-                 sigma_decay_function='inverse_decay_to_one'):
+                 sigma_decay_function='asymptotic_decay'):
         """Initializes a Self Organizing Maps.
 
         A rule of thumb to set the size of the grid for a dimensionality
