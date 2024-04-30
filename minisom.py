@@ -74,7 +74,7 @@ def fast_norm(x):
 class MiniSom(object):
     Y_HEX_CONV_FACTOR = (3.0 / 2.0) / sqrt(3)
 
-    def __init__(self, x, y, input_len, sigma=None, learning_rate=0.5,
+    def __init__(self, x, y, input_len, sigma=1, learning_rate=0.5,
                  learning_rate_decay_function='asymptotic_decay',
                  neighborhood_function='gaussian', topology='rectangular',
                  activation_distance='euclidean', random_seed=None,
@@ -99,13 +99,11 @@ class MiniSom(object):
         input_len : int
             Number of the elements of the vectors in input.
 
-        sigma : float, optional (default=sqrt(x^2 + y^2))
+        sigma : float, optional (default=1)
             Spread of the neighborhood function.
 
-            Needs to be adequate to the dimensions of the map.
-
-            By default, at the iteration t, we have:
-                sigma(t) = sigma / (1 + (t * (sigma - 1) / max_iter))
+            Needs to be adequate to the dimensions of the map
+            and the neighborhood function.
 
         learning_rate : float, optional (default=0.5)
             Initial learning rate.
@@ -153,8 +151,6 @@ class MiniSom(object):
             The default function is:
                 sigma(t) = sigma / (1 + (t * (sigma - 1) / max_iter))
         """
-        if sigma is None:
-            sigma = sqrt(x*x + y*y)
         if sigma > sqrt(x*x + y*y):
             warn('Warning: sigma might be too high ' +
                  'for the dimension of the map.')
