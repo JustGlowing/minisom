@@ -103,7 +103,8 @@ class MiniSom(object):
             Spread of the neighborhood function.
 
             Needs to be adequate to the dimensions of the map
-            and the neighborhood function.
+            and the neighborhood function. In some cases it
+            helps to set sigma as sqrt(x^2 +y^2).
 
         learning_rate : float, optional (default=0.5)
             Initial learning rate.
