@@ -114,20 +114,19 @@ class MiniSom(object):
             By default, at the iteration t, we have:
                 learning_rate(t) = learning_rate / (1 + t * (100 / max_iter))
 
-        decay_function : string or function, optional
+        decay_function : string or callable, optional
         (default='inverse_decay_to_zero')
             Function that reduces learning_rate at each iteration.
             Possible values: 'inverse_decay_to_zero', 'linear_decay_to_zero',
                              'asymptotic_decay' or callable
 
-            If a custom decay function is passed
+            If a custom decay function using a callable
             it will need to to take in input
             three parameters in the following order:
 
             1. learning rate
             2. current iteration
             3. maximum number of iterations allowed
-
 
             Note that if a lambda function is used to define the decay
             MiniSom will not be pickable anymore.
@@ -993,4 +992,10 @@ class TestMinisom(unittest.TestCase):
             MiniSom(5, 5, 2, decay_function='strawberry')
         MiniSom(5, 5, 2, decay_function='linear_decay_to_zero')
         som1 = MiniSom(5, 5, 2, decay_function=lambda x, y, z: 1)
+        som1.train(random.rand(100, 2), 10)
+
+    def test_sigma_decay_function_value(self):
+        with self.assertRaises(ValueError):
+            MiniSom(5, 5, 2, sigma_decay_function='strawberry')
+        som1 = MiniSom(5, 5, 2, sigma_decay_function='linear_decay_to_one')
         som1.train(random.rand(100, 2), 10)
