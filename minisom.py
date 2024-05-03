@@ -75,7 +75,7 @@ class MiniSom(object):
     Y_HEX_CONV_FACTOR = (3.0 / 2.0) / sqrt(3)
 
     def __init__(self, x, y, input_len, sigma=1, learning_rate=0.5,
-                 learning_rate_decay_function='asymptotic_decay',
+                 decay_function='asymptotic_decay',
                  neighborhood_function='gaussian', topology='rectangular',
                  activation_distance='euclidean', random_seed=None,
                  sigma_decay_function='asymptotic_decay'):
@@ -114,14 +114,23 @@ class MiniSom(object):
             By default, at the iteration t, we have:
                 learning_rate(t) = learning_rate / (1 + t * (100 / max_iter))
 
-        learning_rate_decay_function : string, optional
+        decay_function : string or function, optional
         (default='inverse_decay_to_zero')
             Function that reduces learning_rate at each iteration.
             Possible values: 'inverse_decay_to_zero', 'linear_decay_to_zero',
-                             'asymptotic_decay'
+                             'asymptotic_decay' or callable
 
-            The default function is:
-                learning_rate(t) = learning_rate / (1 + t * (100 / max_iter))
+            If a custom decay function is passed
+            it will need to to take in input
+            three parameters in the following order:
+
+            1. learning rate
+            2. current iteration
+            3. maximum number of iterations allowed
+
+
+            Note that if a lambda function is used to define the decay
+            MiniSom will not be pickable anymore.
 
         neighborhood_function : string, optional (default='gaussian')
             Function that weights the neighborhood of a position in the map.
@@ -188,13 +197,16 @@ class MiniSom(object):
             'linear_decay_to_zero': self._linear_decay_to_zero,
             'asymptotic_decay': self._asymptotic_decay}
 
-        if learning_rate_decay_function not in lr_decay_functions:
-            msg = '%s not supported. Functions available: %s'
-            raise ValueError(msg % (learning_rate_decay_function,
-                                    ', '.join(lr_decay_functions.keys())))
+        if isinstance(decay_function, str):
+            if decay_function not in lr_decay_functions:
+                msg = '%s not supported. Functions available: %s'
+                raise ValueError(msg % (decay_function,
+                                        ', '.join(lr_decay_functions.keys())))
 
-        self._learning_rate_decay_function = \
-            lr_decay_functions[learning_rate_decay_function]
+            self._learning_rate_decay_function = \
+                lr_decay_functions[decay_function]
+        elif callable(decay_function):
+            self._learning_rate_decay_function = decay_function
 
         sig_decay_functions = {
             'inverse_decay_to_one': self._inverse_decay_to_one,
@@ -276,17 +288,6 @@ class MiniSom(object):
     def _inverse_decay_to_zero(self, learning_rate, t, max_iter):
         """Decay function of the learning process that asymptotically
         approaches zero.
-
-        Parameters
-        ----------
-        learning_rate : float
-            Current learning rate.
-
-        t : int
-            Current iteration.
-
-        max_iter : int
-            Maximum number of iterations for the training.
         """
         C = max_iter / 100.0
         return learning_rate * C / (C + t)
@@ -294,33 +295,11 @@ class MiniSom(object):
     def _linear_decay_to_zero(self, learning_rate, t, max_iter):
         """Decay function of the learning process that linearly
         decreases to zero.
-
-        Parameters
-        ----------
-        learning_rate : float
-            Current learning rate.
-
-        t : int
-            Current iteration.
-
-        max_iter : int
-            Maximum number of iterations for the training.
         """
         return learning_rate * (1 - t / max_iter)
 
     def _inverse_decay_to_one(self, sigma, t, max_iter):
         """Decay function of sigma that asymptotically approaches one.
-
-        Parameters
-        ----------
-        sigma : float
-            Current sigma.
-
-        t : int
-            Current iteration.
-
-        max_iter : int
-            Maximum number of iterations for the training.
         """
         C = (sigma - 1) / max_iter
         return sigma / (1 + (t * C))
@@ -328,35 +307,13 @@ class MiniSom(object):
     def _linear_decay_to_one(self, sigma, t, max_iter):
         """Decay function of sigma that linearly decreases
         to one.
-
-        Parameters
-        ----------
-        sigma : float
-            Current sigma.
-
-        t : int
-            Current iteration.
-
-        max_iter : int
-            Maximum number of iterations for the training.
         """
         return sigma + (t * (1 - sigma) / max_iter)
 
     def _asymptotic_decay(self, dynamic_parameter, t, max_iter):
-        """Legacy default decay function of the learning process
+        """Decay function of the learning process
         and sigma that decays these values asymptotically to 1/3
         of their original values.
-
-        Parameters
-        ----------
-        dynamic_parameter : float
-            Current learning rate/sigma.
-
-        t : int
-            Current iteration.
-
-        max_iter : int
-            Maximum number of iterations for the training.
         """
         return dynamic_parameter / (1 + t / (max_iter / 2))
 
@@ -1030,3 +987,10 @@ class TestMinisom(unittest.TestCase):
         som2.train_random(data, 10)
         # same state after training
         assert_array_almost_equal(som1._weights, som2._weights)
+
+    def test_decay_function_value(self):
+        with self.assertRaises(ValueError):
+            MiniSom(5, 5, 2, decay_function='strawberry')
+        MiniSom(5, 5, 2, decay_function='linear_decay_to_zero')
+        som1 = MiniSom(5, 5, 2, decay_function=lambda x, y, z: 1)
+        som1.train(random.rand(100, 2), 10)
