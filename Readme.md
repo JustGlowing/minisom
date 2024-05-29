@@ -122,7 +122,7 @@ How to cite MiniSom
 }
 ```
 
-MiniSom has been cited more than 200 times, check out the research where MiniSom was used  <a href="https://scholar.google.co.uk/scholar?hl=en&as_sdt=2007&q=%22JustGlowing%2Fminisom%22+OR+%22minisom+library%22+OR+%22minisom+python%22+OR+%22minisom+vettigli%22&btnG=">here</a>.
+MiniSom has been cited more than 300 times, check out the research where MiniSom was used  <a href="https://scholar.google.co.uk/scholar?hl=en&as_sdt=2007&q=%22JustGlowing%2Fminisom%22+OR+%22minisom+library%22+OR+%22minisom+python%22+OR+%22minisom+vettigli%22&btnG=">here</a>.
 
 Guidelines to contribute
 ---------------------
