@@ -499,8 +499,8 @@ class MiniSom(object):
         if fixed_points:
             for k in fixed_points.keys():
                 if not isinstance(k, int):
-                    raise TypeError(f'fixed points indexes must ' + 
-                                     'be integers.')
+                    raise TypeError(f'fixed points indexes must ' +
+                                    'be integers.')
                 if k >= len(data) or k < 0:
                     raise ValueError(f'an index of a fixed point ' +
                                      'cannot be grater than len(data)' +
@@ -953,7 +953,6 @@ class TestMinisom(unittest.TestCase):
             som.train(data, 10, fixed_points={-1: (0, 0)})
         with self.assertRaises(TypeError):
             som.train(data, 10, fixed_points={'oops': (0, 0)})
-        
 
     def test_use_epochs_variables(self):
         len_data = 100000
