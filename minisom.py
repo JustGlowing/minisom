@@ -447,6 +447,23 @@ class MiniSom(object):
                 self._weights[i, j] = c1*pc[pc_order[0]] + \
                                       c2*pc[pc_order[1]]
 
+    def _check_fixed_points(self, fixed_points, data):
+        for k in fixed_points.keys():
+            if not isinstance(k, int):
+                raise TypeError(f'fixed points indexes must ' +
+                                'be integers.')
+            if k >= len(data) or k < 0:
+                raise ValueError(f'an index of a fixed point ' +
+                                 'cannot be grater than len(data)' +
+                                 ' or less than 0.')
+            if fixed_points[k][0] >= self._weights.shape[0] or \
+               fixed_points[k][1] >= self._weights.shape[1]:
+                raise ValueError(f'coordinates for fixed point' +
+                                 ' are out of boundaries.')
+            if fixed_points[k][0] < 0 or \
+               fixed_points[k][1] < 0:
+                raise ValueError(f'coordinates cannot be negative.')
+
     def train(self, data, num_iteration,
               random_order=False, verbose=False,
               use_epochs=False, fixed_points=None):
@@ -497,21 +514,7 @@ class MiniSom(object):
                 return int(iteration_index)
 
         if fixed_points:
-            for k in fixed_points.keys():
-                if not isinstance(k, int):
-                    raise TypeError(f'fixed points indexes must ' +
-                                    'be integers.')
-                if k >= len(data) or k < 0:
-                    raise ValueError(f'an index of a fixed point ' +
-                                     'cannot be grater than len(data)' +
-                                     ' or less than 0.')
-                if fixed_points[k][0] >= self._weights.shape[0] or \
-                   fixed_points[k][1] >= self._weights.shape[1]:
-                    raise ValueError(f'coordinates for fixed point' +
-                                     ' are out of boundaries.')
-                if fixed_points[k][0] < 0 or \
-                   fixed_points[k][1] < 0:
-                    raise ValueError(f'coordinates cannot be negative.')
+            self._check_fixed_points(fixed_points, data)
         else:
             fixed_points = {}
 
