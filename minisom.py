@@ -495,7 +495,7 @@ class MiniSom(object):
         fixed_points : dict (default=None)
             A dictionary k : (c_1, c_2), that will force the
             training algorithm to use the neuron with coordinates
-            (c_1, c_2) as winner for the samples k instead of
+            (c_1, c_2) as winner for the sample k instead of
             the best matching unit.
         """
         self._check_iteration_number(num_iteration)
