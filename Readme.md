@@ -11,7 +11,7 @@ MiniSom is a minimalistic and Numpy based implementation of the Self Organizing 
 
 The project initially aimed for a minimalistic implementation of the Self-Organizing Map (SOM) algorithm, focusing on simplicity in features, dependencies, and code style. Although it has expanded in terms of features, it remains minimalistic by relying only on the numpy library and emphasizing vectorization in coding style.
 
-Updates about MiniSom are posted on <a href="https://twitter.com/JustGlowing">Twitter</a>.
+Updates about MiniSom are posted on <a href="https://x.com/JustGlowing">X</a>.
 
 Jump into using MiniSom via Google Colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://githubtocolab.com/JustGlowing/minisom/blob/master/examples/BasicUsage.ipynb)
 
