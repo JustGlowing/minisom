@@ -636,6 +636,18 @@ class MiniSom(object):
         self._check_input_len(data)
         return norm(data-self.quantization(data), axis=1).mean()
 
+    def divergence_measure(self, data):
+        """Returns the divergence measure computed as
+           sum_i, sum_c (neighborhood(c, sigma) * || d_i - w_c ||^2
+        """
+        divergence = []
+        for d in data:
+            divergence.append(multiply(self.neighborhood(self.winner(d),
+                                                         self._sigma),
+                                       norm(d-self.get_weights(),
+                                            axis=2)).sum())
+        return sum(divergence)
+
     def topographic_error(self, data):
         """Returns the topographic error computed by finding
         the best-matching and second-best-matching neuron in the map
