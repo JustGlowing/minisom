@@ -911,6 +911,8 @@ class TestMinisom(unittest.TestCase):
 
     def test_divergence_measure(self):
         test_data = array([[4], [2]])
+
+        # test that doesn't use vectorization
         r = 0
         for d in test_data:
             for i in self.som._neigx:
@@ -920,6 +922,17 @@ class TestMinisom(unittest.TestCase):
                                               self.som._sigma)[i, j]
                     r += h * norm(d - w)
         assert_array_almost_equal(r, self.som.divergence_measure(test_data))
+
+        # handwritten test
+        som = MiniSom(2, 1, 2, random_seed=1)
+        som._weights = array([[[0.,  1.]], [[1., 0.]]])
+        test_data = array([[1., 0.], [0., 1.]])
+
+        h1 = som.neighborhood(som.winner(test_data[0]), som._sigma)
+        h2 = som.neighborhood(som.winner(test_data[1]), som._sigma)
+        r = h1[0][0] * sqrt(2) + h1[1][0] * 0
+        r += h2[0][0] * 0 + h2[1][0] * sqrt(2)
+        assert_array_almost_equal(r, som.divergence_measure(test_data))
 
     def test_random_seed(self):
         som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
