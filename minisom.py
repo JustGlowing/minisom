@@ -910,9 +910,8 @@ class TestMinisom(unittest.TestCase):
         assert q[1] == 2.0
 
     def test_divergence_measure(self):
-        test_data = array([[4], [2]])
-
         # test that doesn't use vectorization
+        test_data = array([[4], [2]])
         r = 0
         for d in test_data:
             for i in self.som._neigx:
@@ -927,7 +926,6 @@ class TestMinisom(unittest.TestCase):
         som = MiniSom(2, 1, 2, random_seed=1)
         som._weights = array([[[0.,  1.]], [[1., 0.]]])
         test_data = array([[1., 0.], [0., 1.]])
-
         h1 = som.neighborhood(som.winner(test_data[0]), som._sigma)
         h2 = som.neighborhood(som.winner(test_data[1]), som._sigma)
         r = h1[0][0] * sqrt(2) + h1[1][0] * 0
