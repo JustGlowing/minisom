@@ -914,10 +914,11 @@ class TestMinisom(unittest.TestCase):
         r = 0
         for d in test_data:
             for i in self.som._neigx:
-                for j in self.som._neigy:                    
+                for j in self.som._neigy:
                     w = self.som.get_weights()[i, j]
-                    h = self.som.neighborhood(self.som.winner(d), self.som._sigma)[i,j]
-                    r += h * norm(d-w)
+                    h = self.som.neighborhood(self.som.winner(d),
+                                              self.som._sigma)[i, j]
+                    r += h * norm(d - w)
         assert_array_almost_equal(r, self.som.divergence_measure(test_data))
 
     def test_random_seed(self):
