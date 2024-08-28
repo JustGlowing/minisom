@@ -640,13 +640,12 @@ class MiniSom(object):
         """Returns the divergence measure computed as
            sum_i, sum_c (neighborhood(c, sigma) * || d_i - w_c ||^2
         """
-        divergence = []
+        divergence = 0
         for d in data:
-            divergence.append(multiply(self.neighborhood(self.winner(d),
-                                                         self._sigma),
-                                       norm(d-self.get_weights(),
-                                            axis=2)).sum())
-        return sum(divergence)
+            divergence += multiply(self.neighborhood(self.winner(d),
+                                                     self._sigma),
+                                   norm(d - self.get_weights(), axis=2)).sum()
+        return divergence
 
     def topographic_error(self, data):
         """Returns the topographic error computed by finding
@@ -909,6 +908,17 @@ class TestMinisom(unittest.TestCase):
         q = self.som.quantization(array([[4], [2]]))
         assert q[0] == 5.0
         assert q[1] == 2.0
+
+    def test_divergence_measure(self):
+        test_data = array([[4], [2]])
+        r = 0
+        for d in test_data:
+            for i in self.som._neigx:
+                for j in self.som._neigy:                    
+                    w = self.som.get_weights()[i, j]
+                    h = self.som.neighborhood(self.som.winner(d), self.som._sigma)[i,j]
+                    r += h * norm(d-w)
+        assert_array_almost_equal(r, self.som.divergence_measure(test_data))
 
     def test_random_seed(self):
         som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
