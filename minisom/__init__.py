@@ -1,0 +1,1 @@
+from .minisom import MiniSom

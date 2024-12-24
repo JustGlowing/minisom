@@ -82,6 +82,60 @@ with open('som.p', 'rb') as infile:
 
 Note that if a lambda function is used to define the decay factor MiniSom will not be pickable anymore.
 
+Scikit-learn wrapper for MiniSom library
+---------------------
+
+Just use it like any other scikit-learn cluster algorithm.
+
+Let's start with importing required libraries and dataset.
+
+```python
+from sklearn.datasets import load_wine
+from minisom.sklearn import MiniSOM
+from sklearn.preprocessing import StandardScaler
+
+data = load_wine()
+X = data.data
+X = StandardScaler().fit_transform(X)
+```
+
+You can use fit and predict separately.
+```python
+som = MiniSOM(3, 1, random_seed=40)
+som.fit(X)
+y = som.predict(X)
+```
+
+Or simply use convenient function.
+```python
+som = MiniSOM(3, 1, random_seed=40)
+y = som.fit_predict(X)
+```
+Same for transform.
+```python
+som = MiniSOM(3, 1, random_seed=40)
+som.fit(X)
+y = som.transform(X)
+```
+
+```python
+som = MiniSOM(3, 1, random_seed=40)
+y = som.fit_transform(X)
+```
+
+Alternatively you can also use SciKit-learn pipelines.
+```python
+from sklearn.pipeline import Pipeline
+
+pipeline = ([
+    ('scaler', StandardScaler()),
+    ('classifier', MiniSOM(3, 1, random_seed=40))
+])
+
+y = pipeline.fit_predict(X)
+```
+
+
 Examples
 ---------------------
 
@@ -125,11 +179,11 @@ Guidelines to contribute
 2. Give your pull request a helpful title that summarises what your contribution does. 
 3. Write unit tests for your code and make sure the existing ones are up to date. `pytest` can be used for this:
 ```
-pytest minisom.py
+pytest minisom
 ```
 4. Make sure that there are no stylistic issues using `pycodestyle`:
 ```
-pycodestyle minisom.py
+pycodestyle minisom
 ```
 5. Make sure your code is properly commented and documented. Each public method needs to be documented as the existing ones.
 
