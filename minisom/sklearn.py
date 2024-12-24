@@ -3,9 +3,6 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from scipy import sparse
 from numpy import array, ravel_multi_index, all
 
-# for unit tests
-import unittest
-
 
 class MiniSOM(BaseEstimator, TransformerMixin):
     def __init__(self, x=10, y=10, sigma=1.0, learning_rate=0.5,
