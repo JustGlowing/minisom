@@ -1,11 +1,9 @@
 from .sklearn import MiniSOM
 from minisom import MiniSom
 from .minisom import _build_iteration_indexes, fast_norm
-from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
-                   power, exp, zeros, ones, arange, outer, meshgrid, dot,
-                   logical_and, mean, cov, argsort, linspace,
-                   einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
-                   nanmean, nansum, tile, array_equal, isclose)
+from numpy import (array, linalg, random, subtract, max,
+                   exp, zeros, ones, arange, mean, nan,
+                   sqrt, argmin, array_equal,)
 from numpy.linalg import norm
 from numpy.testing import assert_almost_equal, assert_array_almost_equal
 from numpy.testing import assert_array_equal

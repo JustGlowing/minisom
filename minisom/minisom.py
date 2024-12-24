@@ -9,10 +9,7 @@ from warnings import warn
 from sys import stdout
 from time import time
 from datetime import timedelta
-import pickle
 import os
-
-# for unit tests
 
 """
     Minimalistic implementation of the Self Organizing Maps (SOM).
