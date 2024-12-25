@@ -1,6 +1,5 @@
 from .sklearn import MiniSOM
-from minisom import MiniSom
-from .minisom import _build_iteration_indexes, fast_norm
+from minisom import MiniSom, _build_iteration_indexes, fast_norm
 from numpy import (array, linalg, random, subtract, max,
                    exp, zeros, ones, arange, mean, nan,
                    sqrt, argmin, array_equal,)
