@@ -1,7 +1,7 @@
 from minisom import MiniSom
 from sklearn.base import BaseEstimator, TransformerMixin
 from scipy import sparse
-from numpy import array, ravel_multi_index, all
+from numpy import array, ravel_multi_index, all, linalg
 
 
 class MiniSOM(BaseEstimator, TransformerMixin):
@@ -142,7 +142,6 @@ class MiniSOM(BaseEstimator, TransformerMixin):
         X : np.array or list
             Data matrix.
 
-
         y : Ignored
             Not used, present here for API consistency by convention.
         """
@@ -157,15 +156,46 @@ class MiniSOM(BaseEstimator, TransformerMixin):
                            topology=self.topology,
                            activation_distance=self.activation_distance,
                            random_seed=self.random_seed,
-                           sigma_decay_function=self.sigma_decay_function
-                           )
+                           sigma_decay_function=self.sigma_decay_function)
 
+        self.som.random_weights_init(X)
+        self.init_weights_ = self.som.get_weights()
+        """
+        init_weights_ : ndarray of shape (grid_size_x, grid_size_y, feature_size)
+
+        Returns the initial weights of the neural network.
+        """
         self.som.train(X, self.num_iteration,
                        random_order=self.random_order,
                        verbose=self.verbose,
                        use_epochs=self.use_epochs,
-                       fixed_points=self.fixed_points
-                       )
+                       fixed_points=self.fixed_points)
+
+        self.labels_ = self.predict(X)
+        """
+        labels_ : ndarray of shape (n_samples,)
+
+        Labels of each point.
+        """
+        self.weights_ = self.som.get_weights()
+        """
+        weights_ : ndarray of shape (grid_size_x, grid_size_y, feature_size)
+
+        Returns the weights of the neural network.
+        """
+        self.n_features_in_ = len(X[0])
+        """
+        n_features_in_ : int
+
+        Number of features seen during fit.
+        """
+        self.inertia_ = self._calculate_inertia(X=X)
+        """
+        inertia_ : float
+
+        Sum of squared distances of samples to their closest neuron weight
+        vector, which provides a measure of the quality of the mapping.
+        """
         return self
 
     def transform(self, X):
@@ -321,3 +351,27 @@ class MiniSOM(BaseEstimator, TransformerMixin):
         for param, value in params.items():
             setattr(self, param, value)
         return self
+
+    def _calculate_inertia(self, X):
+        """
+        Custom inertia function to measure the compactness of clusters
+        in the context of Self-Organizing Maps (SOM).
+
+        Parameters
+        ----------
+        X : np.array
+            Data matrix.
+
+        Returns
+        -------
+        float
+            The inertia score based on distances to nearest SOM neuron.
+        """
+        inertia = 0
+        for i in range(X.shape[0]):
+            bmu = self.som.winner(X[i])
+            distance = linalg.norm(X[i] - self.som.get_weights()[bmu[0],
+                                   bmu[1]])
+            inertia += distance ** 2
+
+        return inertia / X.shape[0]
