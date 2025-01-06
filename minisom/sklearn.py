@@ -161,7 +161,8 @@ class MiniSOM(BaseEstimator, TransformerMixin):
         self.som.random_weights_init(X)
         self.init_weights_ = self.som.get_weights()
         """
-        init_weights_ : ndarray of shape (grid_size_x, grid_size_y, feature_size)
+        init_weights_ : ndarray of shape (grid_size_x, grid_size_y,
+        feature_size)
 
         Returns the initial weights of the neural network.
         """
