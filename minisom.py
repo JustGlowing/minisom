@@ -636,16 +636,16 @@ class MiniSom(object):
         self._check_input_len(data)
         return norm(data-self.quantization(data), axis=1).mean()
 
-    def divergence_measure(self, data):
-        """Returns the divergence measure computed as
+    def distortion_measure(self, data):
+        """Returns the distortion measure computed as
            sum_i, sum_c (neighborhood(c, sigma) * || d_i - w_c ||^2
         """
-        divergence = 0
+        distortion = 0
         for d in data:
-            divergence += multiply(self.neighborhood(self.winner(d),
+            distortion += multiply(self.neighborhood(self.winner(d),
                                                      self._sigma),
                                    norm(d - self.get_weights(), axis=2)).sum()
-        return divergence
+        return distortion
 
     def topographic_error(self, data):
         """Returns the topographic error computed by finding
@@ -909,7 +909,7 @@ class TestMinisom(unittest.TestCase):
         assert q[0] == 5.0
         assert q[1] == 2.0
 
-    def test_divergence_measure(self):
+    def test_distortion_measure(self):
         # test that doesn't use vectorization
         test_data = array([[4], [2]])
         r = 0
@@ -920,7 +920,7 @@ class TestMinisom(unittest.TestCase):
                     h = self.som.neighborhood(self.som.winner(d),
                                               self.som._sigma)[i, j]
                     r += h * norm(d - w)
-        assert_array_almost_equal(r, self.som.divergence_measure(test_data))
+        assert_array_almost_equal(r, self.som.distortion_measure(test_data))
 
         # handwritten test
         som = MiniSom(2, 1, 2, random_seed=1)
@@ -930,7 +930,7 @@ class TestMinisom(unittest.TestCase):
         h2 = som.neighborhood(som.winner(test_data[1]), som._sigma)
         r = h1[0][0] * sqrt(2) + h1[1][0] * 0
         r += h2[0][0] * 0 + h2[1][0] * sqrt(2)
-        assert_array_almost_equal(r, som.divergence_measure(test_data))
+        assert_array_almost_equal(r, som.distortion_measure(test_data))
 
     def test_random_seed(self):
         som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
