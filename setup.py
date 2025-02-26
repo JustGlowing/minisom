@@ -8,7 +8,7 @@ keywords = ['machine learning', 'neural networks',
 long_description = 'See the github page https://github.com/JustGlowing/minisom'
 
 setup(name='MiniSom',
-      version='2.3.4',
+      version='2.3.4a',
       description=description,
       long_description=long_description,
       long_description_content_type='text/markdown',
