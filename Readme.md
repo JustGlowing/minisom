@@ -27,6 +27,8 @@ or download MiniSom to a directory of your choice and use the setup script:
     git clone https://github.com/JustGlowing/minisom.git
     python setup.py install
 
+Note that the commands above will install the latest version of MiniSom which might contain changes that are not parte of the stable release.
+
 How to use it
 ---------------------
 
