@@ -75,10 +75,10 @@ class MiniSom(object):
     Y_HEX_CONV_FACTOR = (3.0 / 2.0) / sqrt(3)
 
     def __init__(self, x, y, input_len, sigma=1, learning_rate=0.5,
-                 decay_function='inverse_decay_to_zero',
+                 decay_function='asymptotic_decay',
                  neighborhood_function='gaussian', topology='rectangular',
                  activation_distance='euclidean', random_seed=None,
-                 sigma_decay_function='inverse_decay_to_one'):
+                 sigma_decay_function='asymptotic_decay'):
         """Initializes a Self Organizing Maps.
 
         A rule of thumb to set the size of the grid for a dimensionality
@@ -115,7 +115,7 @@ class MiniSom(object):
                 learning_rate(t) = learning_rate / (1 + t * (100 / max_iter))
 
         decay_function : string or callable, optional
-        (default='inverse_decay_to_zero')
+        (default='asymptotic_decay')
             Function that reduces learning_rate at each iteration.
             Possible values: 'inverse_decay_to_zero', 'linear_decay_to_zero',
                              'asymptotic_decay' or callable
@@ -152,7 +152,7 @@ class MiniSom(object):
             Random seed to use.
 
         sigma_decay_function : string, optional
-        (default='inverse_decay_to_one')
+        (default='asymptotic_decay')
             Function that reduces sigma at each iteration.
             Possible values: 'inverse_decay_to_one', 'linear_decay_to_one',
                              'asymptotic_decay'
