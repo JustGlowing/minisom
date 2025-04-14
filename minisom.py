@@ -2,7 +2,7 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, cov, argsort, linspace,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
-                   nanmean, nansum, tile, array_equal, isclose)
+                   nanmean, nansum, tile, array_equal, isclose, int8)
 from numpy.linalg import norm
 from collections import defaultdict, Counter
 from warnings import warn
@@ -251,6 +251,8 @@ class MiniSom(object):
             self._activation_distance = distance_functions[activation_distance]
         elif callable(activation_distance):
             self._activation_distance = activation_distance
+
+        self._adjacency_matrix = self._create_adjacency_matrix()
 
     def get_weights(self):
         """Returns the weights of the neural network."""
@@ -663,33 +665,31 @@ class MiniSom(object):
         if total_neurons == 1:
             warn('The topographic error is not defined for a 1-by-1 map.')
             return nan
-        if self.topology == 'hexagonal':
-            return self._topographic_error_hexagonal(data)
-        else:
-            return self._topographic_error_rectangular(data)
+        return self._topographic_error(data)
 
-    def _topographic_error_hexagonal(self, data):
-        """Return the topographic error for hexagonal grid"""
+    def _topographic_error(self, data):
         b2mu_inds = argsort(self._distance_from_weights(data), axis=1)[:, :2]
-        b2mu_coords = [[self._get_euclidean_coordinates_from_index(bmu[0]),
-                        self._get_euclidean_coordinates_from_index(bmu[1])]
-                       for bmu in b2mu_inds]
-        b2mu_coords = array(b2mu_coords)
-        b2mu_neighbors = [isclose(1, norm(bmu1 - bmu2))
-                          for bmu1, bmu2 in b2mu_coords]
+        b2mu_neighbors = [self._adjacency_matrix[bmu[0]][bmu[1]]
+                          for bmu in b2mu_inds]
         te = 1 - mean(b2mu_neighbors)
         return te
 
-    def _topographic_error_rectangular(self, data):
-        """Return the topographic error for rectangular grid"""
-        t = 1.42
-        # b2mu: best 2 matching units
-        b2mu_inds = argsort(self._distance_from_weights(data), axis=1)[:, :2]
-        b2my_xy = unravel_index(b2mu_inds, self._weights.shape[:2])
-        b2mu_x, b2mu_y = b2my_xy[0], b2my_xy[1]
-        dxdy = hstack([diff(b2mu_x), diff(b2mu_y)])
-        distance = norm(dxdy, axis=1)
-        return (distance > t).mean()
+    def _create_adjacency_matrix(self):
+        x, y = len(self._neigx), len(self._neigy)
+        adj = zeros((x*y, x*y), dtype=int8)
+        for i in range(x*y):
+            for j in range(x*y):
+                adj[i, j] = self._is_neigh(
+                    self._get_euclidean_coordinates_from_index(i),
+                    self._get_euclidean_coordinates_from_index(j)
+                )
+        return adj
+
+    def _is_neigh(self, p1, p2):
+        p1, p2 = array(p1), array(p2)
+        if self.topology == 'hexagonal':
+            return isclose(1, norm(p1 - p2))
+        return ((p1 >= p2 - 1) & (p1 <= p2 + 1)).all()
 
     def _get_euclidean_coordinates_from_index(self, index):
         """Returns the Euclidean coordinated of a neuron using its
