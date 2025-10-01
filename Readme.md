@@ -27,6 +27,8 @@ or download MiniSom to a directory of your choice and use the setup script:
     git clone https://github.com/JustGlowing/minisom.git
     python setup.py install
 
+Note that the commands above will install the latest version of MiniSom which might contain changes that are not parte of the stable release.
+
 How to use it
 ---------------------
 
@@ -117,7 +119,7 @@ How to cite MiniSom
 }
 ```
 
-MiniSom has been cited more than 300 times, check out the research where MiniSom was used  <a href="https://scholar.google.co.uk/scholar?hl=en&as_sdt=2007&q=%22JustGlowing%2Fminisom%22+OR+%22minisom+library%22+OR+%22minisom+python%22+OR+%22minisom+vettigli%22&btnG=">here</a>.
+MiniSom has been cited more than 400 times, check out the research where MiniSom was used  <a href="https://scholar.google.co.uk/scholar?hl=en&as_sdt=2007&q=%22JustGlowing%2Fminisom%22+OR+%22minisom+library%22+OR+%22minisom+python%22+OR+%22minisom+vettigli%22&btnG=">here</a>.
 
 Guidelines to contribute
 ---------------------

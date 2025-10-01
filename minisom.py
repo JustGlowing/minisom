@@ -115,7 +115,7 @@ class MiniSom(object):
                 learning_rate(t) = learning_rate / (1 + t * (100 / max_iter))
 
         decay_function : string or callable, optional
-        (default='inverse_decay_to_zero')
+        (default='asymptotic_decay')
             Function that reduces learning_rate at each iteration.
             Possible values: 'inverse_decay_to_zero', 'linear_decay_to_zero',
                              'asymptotic_decay' or callable
@@ -152,7 +152,7 @@ class MiniSom(object):
             Random seed to use.
 
         sigma_decay_function : string, optional
-        (default='inverse_decay_to_one')
+        (default='asymptotic_decay')
             Function that reduces sigma at each iteration.
             Possible values: 'inverse_decay_to_one', 'linear_decay_to_one',
                              'asymptotic_decay'
