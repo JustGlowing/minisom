@@ -442,9 +442,9 @@ class MiniSom(object):
         pc_length, pc = linalg.eig(cov(data, rowvar=False))
         pc_order = argsort(-pc_length)
         for i, c1 in enumerate(linspace(-1, 1, len(self._neigx))):
-               for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
-                     self._weights[i, j] = c1*pc[:, pc_order[0]] + \
-                                           c2*pc[:, pc_order[1]]
+            for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
+                self._weights[i, j] = c1*pc[:, pc_order[0]] + \
+                                      c2*pc[:, pc_order[1]]
 
     def _check_fixed_points(self, fixed_points, data):
         for k in fixed_points.keys():
