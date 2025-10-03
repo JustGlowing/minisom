@@ -2,7 +2,7 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, cov, argsort, linspace,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
-                   nanmean, nansum, tile, array_equal, isclose)
+                   nanmean, nansum, tile, array_equal, isclose, maximum)
 from numpy.linalg import norm
 from collections import defaultdict, Counter
 from warnings import warn
@@ -627,7 +627,9 @@ class MiniSom(object):
         input_data_sq = power(input_data, 2).sum(axis=1, keepdims=True)
         weights_flat_sq = power(weights_flat, 2).sum(axis=1, keepdims=True)
         cross_term = dot(input_data, weights_flat.T)
-        return sqrt(-2 * cross_term + input_data_sq + weights_flat_sq.T)
+        return sqrt(
+            maximum(0, -2 * cross_term + input_data_sq + weights_flat_sq.T)
+        )
 
     def quantization_error(self, data):
         """Returns the quantization error computed as the average
