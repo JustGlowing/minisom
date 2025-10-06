@@ -627,6 +627,9 @@ class MiniSom(object):
         input_data_sq = power(input_data, 2).sum(axis=1, keepdims=True)
         weights_flat_sq = power(weights_flat, 2).sum(axis=1, keepdims=True)
         cross_term = dot(input_data, weights_flat.T)
+        # this subtracs nearly equal, relatively large terms to get a small
+        # residual and can be affected by rounding errors. Clipping negative
+        # values using maximum mitigates this issue.
         return sqrt(
             maximum(0, -2 * cross_term + input_data_sq + weights_flat_sq.T)
         )
