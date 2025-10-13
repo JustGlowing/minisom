@@ -1044,10 +1044,10 @@ class TestMinisom(unittest.TestCase):
     def test_pca_weights_init(self):
         som = MiniSom(2, 2, 2)
         som.pca_weights_init(array([[1.,  0.], [0., 1.], [1., 0.], [0., 1.]]))
-        expected = array([[[-1.41421356,  0.],
-                           [0.,  1.41421356]],
-                          [[0., -1.41421356],
-                           [1.41421356,  0.]]])
+        expected = array([[[1.91421356,  0.5],
+                           [0.5,  -0.91421356]],
+                          [[0.5, 1.91421356],
+                           [-0.91421356,  0.5]]])
         assert_array_almost_equal(som._weights, expected)
 
     def test_distance_map(self):
