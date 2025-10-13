@@ -439,12 +439,27 @@ class MiniSom(object):
             msg = 'PCA initialization inappropriate:' + \
                   'One of the dimensions of the map is 1.'
             warn(msg)
-        pc_length, pc = linalg.eig(cov(data, rowvar=False))
-        pc_order = argsort(-pc_length)
+        cov_mat = cov(data, rowvar=False)
+        # covariance matrix is symmetric, eigh is faster and guarantees real eigenvalues
+        eigvals, eigvecs = linalg.eigh(cov_mat)
+
+        # eigh returns eigenvalues in ascending order (smallest → largest)
+        # reverse the order so that the first elements correspond to the components
+        # explaining the largest variance
+        order = argsort(eigvals)[::-1]
+
+        # eigenvectors of the largest eigenvalues
+        pc1 = eigvecs[:, order[0]]
+        pc2 = eigvecs[:, order[1]]
+
+        data_mean = mean(data, axis=0)
+
+        # initialize weights along the plane spanned by the first two principal components,
+        # centered at the data mean
         for i, c1 in enumerate(linspace(-1, 1, len(self._neigx))):
             for j, c2 in enumerate(linspace(-1, 1, len(self._neigy))):
-                self._weights[i, j] = c1*pc[:, pc_order[0]] + \
-                                      c2*pc[:, pc_order[1]]
+                self._weights[i, j] = data_mean + c1 * pc1 + c2 * pc2
+
 
     def _check_fixed_points(self, fixed_points, data):
         for k in fixed_points.keys():
