@@ -2,7 +2,9 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, cov, argsort, linspace,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
-                   nanmean, nansum, tile, array_equal, isclose, maximum)
+                   nanmean, nansum, tile, array_equal, isclose, maximum,
+                   ravel_multi_index, divide, add, indices, column_stack,
+                   where, float32, uint16)
 from numpy.linalg import norm
 from collections import defaultdict, Counter
 from warnings import warn
@@ -575,6 +577,82 @@ class MiniSom(object):
         """
         self.train(data, num_iteration, random_order=False, verbose=verbose)
 
+    def train_batch_mode(self, data, num_iteration, verbose=False):
+        """Batch SOM training — Essentials of the Self-Organizing Map (Eq. 8).
+
+        As described by Kohonen, training in batch mode typically
+        converges faster and is recommended in most practical applications.
+        In this mode, the learning rate is not required.
+
+        Parameters
+        ----------
+        data : np.ndarray or list
+            Input data matrix of shape (n_samples, n_features).
+
+        num_iteration : int
+            Maximum number of iterations.
+            In practice, a few to a few dozen iterations (e.g., 10-30) are
+            often sufficient.
+
+        verbose : bool, optional (default=False)
+            If True, prints the quantization error every 10% of the
+            training progress.
+        """
+
+        self._check_input_len(data)
+        rows, cols, n_features = self._weights.shape
+        n_nodes = rows * cols
+
+        # precompute coordinates and distance matrix once
+        if not hasattr(self, '_dist_matrix'):
+            r, c = indices((rows, cols))
+            pos = column_stack((r.ravel(), c.ravel()))
+            self._dist_matrix = linalg.norm(
+                pos[:, None, :] - pos[None, :, :], axis=-1
+            )
+
+        # allocate memory once
+        x_means = zeros((n_nodes, n_features), dtype=float32)
+        # unsigned integer (16-bit) is sufficient for counting samples
+        # per neuron
+        counts = zeros(n_nodes, dtype=uint16)
+
+        for t in range(num_iteration):
+            # BMU computationn
+            bmu_indices = array([
+                ravel_multi_index(self.winner(x), (rows, cols)) for x in data
+            ])
+
+            # compute means and counts
+            x_means.fill(0)
+            counts.fill(0)
+            add.at(x_means, bmu_indices, data)
+            add.at(counts, bmu_indices, 1)
+            divide(
+                x_means,
+                counts[:, None],
+                out=x_means,
+                where=counts[:, None] > 0
+            )
+
+            # neighborhood
+            sigma_t = self._sigma_decay_function(self._sigma, t, num_iteration)
+            # currently using a Gaussian neighborhood (default SOM choice)
+            H = exp(-self._dist_matrix**2 / (2 * sigma_t**2))
+
+            # batch update
+            num = H.T @ (counts[:, None] * x_means)
+            den = H.T @ counts[:, None]
+            new_weights = where(den > 0, num / den, 0)
+
+            self._weights = new_weights.reshape(rows, cols, n_features)
+
+            if verbose and (t % max(1, num_iteration // 10) == 0):
+                print(
+                    f'Iteration {t}/{num_iteration} → '
+                    f'QE={self.quantization_error(data):.4f}'
+                )
+
     def distance_map(self, scaling='sum'):
         """Returns the distance map of the weights.
         If scaling is 'sum' (default), each cell is the normalised sum of
@@ -974,6 +1052,18 @@ class TestMinisom(unittest.TestCase):
         data = array([[1, 5], [6, 7]])
         q1 = som.quantization_error(data)
         som.train_batch(data, 10, verbose=True)
+        assert q1 > som.quantization_error(data)
+
+    def test_train_batch_mode(self):
+        som = MiniSom(5, 5, 2, sigma=1.0, random_seed=1)
+        data = array([[4, 2], [3, 1]])
+        q1 = som.quantization_error(data)
+        som.train(data, 10)
+        assert q1 > som.quantization_error(data)
+
+        data = array([[1, 5], [6, 7]])
+        q1 = som.quantization_error(data)
+        som.train_batch_mode(data, 1, verbose=True)
         assert q1 > som.quantization_error(data)
 
     def test_train_random(self):
