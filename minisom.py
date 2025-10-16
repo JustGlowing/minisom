@@ -617,7 +617,10 @@ class MiniSom(object):
         # per neuron
         counts = zeros(n_nodes, dtype=uint16)
 
-        for t in range(num_iteration):
+        iterations = _build_iteration_indexes(len(data), num_iteration,
+                                              verbose, False, False)
+
+        for t, iteration in enumerate(iterations):
             # BMU computationn
             bmu_indices = array([
                 ravel_multi_index(self.winner(x), (rows, cols)) for x in data
@@ -647,11 +650,8 @@ class MiniSom(object):
 
             self._weights = new_weights.reshape(rows, cols, n_features)
 
-            if verbose and (t % max(1, num_iteration // 10) == 0):
-                print(
-                    f'Iteration {t}/{num_iteration} → '
-                    f'QE={self.quantization_error(data):.4f}'
-                )
+        if verbose:
+            print('\n quantization error:', self.quantization_error(data))
 
     def distance_map(self, scaling='sum'):
         """Returns the distance map of the weights.
