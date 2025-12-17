@@ -47,5 +47,5 @@ jobs:
     - name: Upload coverage badge
       uses: actions/upload-artifact@v4
       with:
-          name: coverage-badge
-          path: coverage-badge.svg
+        name: coverage-badge
+        path: coverage-badge.svg
