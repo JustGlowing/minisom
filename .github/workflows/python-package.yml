@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install numpy flake8 pycodestyle pytest
+        python -m pip install numpy flake8 pycodestyle pytest pytest-cov
         pip install genbadge[all] coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
@@ -41,6 +41,6 @@ jobs:
         pycodestyle *.py
     - name: Unit testing
       run: |
-        pytest minisom.py
-        #coverage xml
-        #genbadge coverage -i coverage.xml
+        pytest --cov=minisom minisom.py
+        coverage xml
+        genbadge coverage -i coverage.xml
