@@ -47,8 +47,7 @@ jobs:
         git config user.email "vettigli@gmail.com"
         git config user.name "Justglowing"
         git pull
-        mv coverage-badge.svg .github/workflows
-        git add .github/workflows/coverage-badge.svg
+        git add coverage-badge.svg
         git commit -m "coverage-badge.svg"
         git push
     #- name: Upload coverage badge
