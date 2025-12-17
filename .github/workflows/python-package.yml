@@ -42,5 +42,5 @@ jobs:
     - name: Unit testing
       run: |
         pytest minisom.py
-        coverage xml
-        genbadge coverage -i coverage.xml
+        #coverage xml
+        #genbadge coverage -i coverage.xml
