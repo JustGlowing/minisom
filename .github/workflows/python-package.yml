@@ -46,11 +46,13 @@ jobs:
         genbadge coverage -i coverage.xml
         git config user.email "vettigli@gmail.com"
         git config user.name "Justglowing"
-        git add coverage-badge.svg
+        git pull
+        mv coverage-badge.svg .github/workflows
+        git add .github/workflows/coverage-badge.svg
         git commit -m "coverage-badge.svg"
         git push
-    - name: Upload coverage badge
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-badge-${{ strategy.job-index }}
-        path: coverage-badge.svg
+    #- name: Upload coverage badge
+    #  uses: actions/upload-artifact@v4
+    #  with:
+    #    name: coverage-badge-${{ strategy.job-index }}
+    #    path: coverage-badge.svg
