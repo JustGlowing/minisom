@@ -1,7 +1,7 @@
 [![PyPI version fury.io](https://badge.fury.io/py/minisom.svg)](https://pypi.org/project/MiniSom/)
 [![Downloads](https://static.pepy.tech/personalized-badge/minisom?period=total&units=international_system&left_color=black&right_color=blue&left_text=Downloads)](https://pepy.tech/project/MiniSom)
 [![Python package](https://github.com/JustGlowing/minisom/actions/workflows/python-package.yml/badge.svg?branch=master&event=push)](https://github.com/JustGlowing/minisom/actions/workflows/python-package.yml)
-![Coverage](https://raw.githubusercontent.com/JustGlowing/minisom/refs/heads/master/.github/workflows/coverage-badge.svg)
+![Coverage](https://raw.githubusercontent.com/JustGlowing/minisom/refs/heads/master/coverage-badge.svg)
 
 <h1>MiniSom<img src='https://3.bp.blogspot.com/-_6UDGEHzIrs/WSfiyjmoeRI/AAAAAAAABHw/3UQylcCBEhUfHNhf56WSHBBmQ6g_lXQhwCLcB/s320/minisom_logo.png' align='right'></h1>
 
