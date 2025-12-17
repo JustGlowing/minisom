@@ -43,6 +43,8 @@ jobs:
       run: |
         pytest --cov=minisom minisom.py
         coverage xml
+    - name: Push coverage badge
+      run: |
         genbadge coverage -i coverage.xml
         git config user.email "vettigli@gmail.com"
         git config user.name "Justglowing"
