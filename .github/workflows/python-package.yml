@@ -44,6 +44,11 @@ jobs:
         pytest --cov=minisom minisom.py
         coverage xml
         genbadge coverage -i coverage.xml
+        git config user.email "vettigli@gmail.com"
+        git config user.name "Justglowing"
+        git add coverage-badge.svg
+        git commit -m "coverage-badge.svg"
+        git push
     - name: Upload coverage badge
       uses: actions/upload-artifact@v4
       with:
