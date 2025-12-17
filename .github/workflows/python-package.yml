@@ -44,3 +44,8 @@ jobs:
         pytest --cov=minisom minisom.py
         coverage xml
         genbadge coverage -i coverage.xml
+    - name: Upload coverage badge
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-badge
+          path: coverage-badge.svg
