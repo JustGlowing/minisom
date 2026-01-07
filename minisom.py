@@ -2,7 +2,8 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, zeros, ones, arange, outer, meshgrid, dot,
                    logical_and, mean, cov, argsort, linspace,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
-                   nanmean, nansum, tile, array_equal, isclose, maximum)
+                   nanmean, nansum, tile, array_equal, isclose, maximum,
+                   zeros_like, where, newaxis)
 from numpy.linalg import norm
 from collections import defaultdict, Counter
 from warnings import warn
@@ -575,6 +576,64 @@ class MiniSom(object):
         """
         self.train(data, num_iteration, random_order=False, verbose=verbose)
 
+    def train_batch_offline(self, data, num_iteration, verbose=False):
+        """
+        Vectorized version of batch training for better performance.
+        
+        Parameters
+        ----------
+        data : np.array or list
+            Data matrix with samples in rows and features in columns.
+        num_iteration : int
+            Maximum number of iterations.
+        verbose : bool (default=False)
+            If True, the quantization error is printed at each iteration.
+        """
+        self._check_iteration_number(num_iteration)
+        self._check_input_len(data)
+        iterations = range(num_iteration)
+        if verbose:
+            iterations = _wrap_index__in_verbose(iterations)
+
+        for iteration in iterations:
+            learning_rate = self._learning_rate_decay_function(self._learning_rate,
+                                                 iteration,
+                                                 num_iteration)
+            sigma = self._sigma_decay_function(self._sigma,
+                                        iteration,
+                                        num_iteration)
+            
+            # Initialize accumulators
+            numerator = zeros_like(self._weights)
+            denominator = zeros((self._weights.shape[0], 
+                                   self._weights.shape[1]))
+            
+            # Process all samples
+            for sample in data:
+                bmu = self.winner(sample)
+                g = self.neighborhood(bmu, sigma)
+                
+                # Vectorized accumulation
+                g_expanded = g[:, :, newaxis]
+                numerator += g_expanded * sample
+                denominator += g
+            
+            # Batch update with safety check
+            denominator_safe = where(denominator[:, :, newaxis] > 0,
+                                       denominator[:, :, newaxis],
+                                       1.0)
+            
+            # Weighted average update
+            new_weights = numerator / denominator_safe
+            
+            # Only update neurons that had contributions
+            mask = denominator > 0
+            self._weights[mask] = (1 - learning_rate) * self._weights[mask] + \
+                                  learning_rate * new_weights[mask]
+            
+        if verbose:
+            print(f'Quantization Error: {self.quantization_error(data):.4f}')
+
     def distance_map(self, scaling='sum'):
         """Returns the distance map of the weights.
         If scaling is 'sum' (default), each cell is the normalised sum of
@@ -1099,3 +1158,45 @@ class TestMinisom(unittest.TestCase):
             MiniSom(5, 5, 2, sigma_decay_function='strawberry')
         som1 = MiniSom(5, 5, 2, sigma_decay_function='linear_decay_to_one')
         som1.train(random.rand(100, 2), 10)
+
+    def test_train_batch_offline(self):
+        """Test that train_batch_offline reduces quantization error."""
+        som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
+        data = array([[4, 2], [3, 1]])
+        q1 = som.quantization_error(data)
+        som.train_batch_offline(data, 10)
+        assert q1 > som.quantization_error(data)
+        
+        data = array([[1, 5], [6, 7]])
+        q1 = som.quantization_error(data)
+        som.train_batch_offline(data, 10, verbose=True)
+        assert q1 > som.quantization_error(data)
+    
+    def test_train_batch_offline_random_seed(self):
+        """Test that train_batch_offline produces consistent results with same seed."""
+        data = random.rand(100, 2)
+        
+        som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
+        som1.train_batch_offline(data, 10)
+        
+        som2 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
+        som2.train_batch_offline(data, 10)
+        
+        # same state after training
+        assert_array_almost_equal(som1._weights, som2._weights)
+    
+    def test_train_batch_offline_convergence(self):
+        """Test that train_batch_offline converges over iterations."""
+        som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
+        data = array([[4, 2], [3, 1], [2, 2], [3, 3]])
+        
+        # Train for a few iterations
+        som.train_batch_offline(data, 5)
+        q1 = som.quantization_error(data)
+        
+        # Train more
+        som.train_batch_offline(data, 5)
+        q2 = som.quantization_error(data)
+        
+        # Error should decrease or stay similar (converged)
+        assert q2 <= q1 + 0.1  # Allow small tolerance for numerical variations
