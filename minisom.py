@@ -578,7 +578,11 @@ class MiniSom(object):
 
     def train_batch_offline(self, data, num_iteration, verbose=False):
         """
-        Vectorized version of batch training for better performance.
+        Implementation of the batch training algorithm described in
+        Essentials of the Self-Organizing Map, Kohonen, 2013.
+
+        This algorithm changes the weights once per iteration after
+        considering all the data.
 
         Parameters
         ----------
