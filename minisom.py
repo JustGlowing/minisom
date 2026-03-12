@@ -12,6 +12,21 @@ from time import time
 from datetime import timedelta
 import pickle
 import os
+import numpy as np
+
+try:
+    from numba import njit
+    NUMBA_AVAILABLE = True
+except ImportError:
+    NUMBA_AVAILABLE = False
+
+    def njit(*args, **kwargs):
+        """Identity decorator fallback when Numba is not installed."""
+        def decorator(func):
+            return func
+        if len(args) == 1 and callable(args[0]):
+            return args[0]
+        return decorator
 
 # for unit tests
 from numpy.testing import assert_almost_equal, assert_array_almost_equal
@@ -70,6 +85,48 @@ def fast_norm(x):
     """Returns norm-2 of a 1-D numpy array.
     """
     return sqrt(dot(x, x.T))
+
+
+@njit(fastmath=True, cache=True)
+def _accumulate_batch(data, weights, bmu_indices, xx, yy, sigma):
+    """JIT-compiled accumulation of numerator/denominator
+    for the batch SOM update (Gaussian neighborhood only).
+
+    Parameters
+    ----------
+    data : 2D float64 array (n_samples, input_len)
+    weights : 3D float64 array (map_x, map_y, input_len)
+    bmu_indices : 1D int64 array (n_samples,) — flat BMU index per sample
+    xx, yy : 2D float64 arrays — meshgrid coordinates
+    sigma : float64
+
+    Returns
+    -------
+    numerator : 3D array (map_x, map_y, input_len)
+    denominator : 2D array (map_x, map_y)
+    """
+    map_x, map_y, input_len = weights.shape
+    numerator = np.zeros((map_x, map_y, input_len))
+    denominator = np.zeros((map_x, map_y))
+    d = 2.0 * sigma * sigma
+
+    for s in range(data.shape[0]):
+        bi = bmu_indices[s] // map_y
+        bj = bmu_indices[s] % map_y
+
+        cx = xx[bj, bi]
+        cy = yy[bj, bi]
+
+        for i in range(map_x):
+            for j in range(map_y):
+                dx = xx[j, i] - cx
+                dy = yy[j, i] - cy
+                g = np.exp(-(dx * dx + dy * dy) / d)
+                denominator[i, j] += g
+                for k in range(input_len):
+                    numerator[i, j, k] += g * data[s, k]
+
+    return numerator, denominator
 
 
 class MiniSom(object):
@@ -595,6 +652,7 @@ class MiniSom(object):
         """
         self._check_iteration_number(num_iteration)
         self._check_input_len(data)
+        data = array(data, dtype=float)
         iterations = range(num_iteration)
         if verbose:
             iterations = _wrap_index__in_verbose(iterations)
@@ -608,19 +666,29 @@ class MiniSom(object):
                                                iteration,
                                                num_iteration)
 
-            # Initialize accumulators
-            numerator = zeros_like(self._weights)
-            denominator = zeros((self._weights.shape[0],
-                                 self._weights.shape[1]))
+            if NUMBA_AVAILABLE:
+                # Fast path: vectorized BMU search + Numba JIT accumulation
+                dists = self._distance_from_weights(data)
+                bmu_indices = argmin(dists, axis=1)
 
-            # Process all samples
-            for sample in data:
-                bmu = self.winner(sample)
-                g = self.neighborhood(bmu, sigma)
-                # Vectorized accumulation
-                g_expanded = g[:, :, newaxis]
-                numerator += g_expanded * sample
-                denominator += g
+                numerator, denominator = _accumulate_batch(
+                    data, self._weights,
+                    bmu_indices.astype(np.int64),
+                    self._xx.astype(np.float64),
+                    self._yy.astype(np.float64),
+                    float(sigma))
+            else:
+                # Fallback: original pure-NumPy implementation
+                numerator = zeros_like(self._weights)
+                denominator = zeros((self._weights.shape[0],
+                                     self._weights.shape[1]))
+
+                for sample in data:
+                    bmu = self.winner(sample)
+                    g = self.neighborhood(bmu, sigma)
+                    g_expanded = g[:, :, newaxis]
+                    numerator += g_expanded * sample
+                    denominator += g
 
             # Batch update with safety check
             denominator_safe = where(denominator[:, :, newaxis] > 0,
