@@ -1,6 +1,6 @@
 from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    power, exp, zeros, ones, arange, outer, meshgrid, dot,
-                   logical_and, mean, cov, argsort, linspace,
+                   logical_and, mean, cov, argsort, linspace, float64,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
                    nanmean, nansum, tile, array_equal, isclose, maximum,
                    zeros_like, where, newaxis)
@@ -70,6 +70,151 @@ def fast_norm(x):
     """Returns norm-2 of a 1-D numpy array.
     """
     return sqrt(dot(x, x.T))
+
+
+try:
+    from numba import njit
+
+    # coverage.py traces Python bytecode, but @njit compiles this
+    # function to native machine code via LLVM — the Python tracer
+    # never sees its execution, so lines always appear uncovered.
+    @njit
+    def _batch_offline_iteration_numba(  # pragma: no cover
+            data, weights, xx, yy,
+            neigx, neigy, sigma,
+            neighborhood_type,
+            distance_type):
+        """Compute one batch offline iteration using Numba.
+
+        Processes all samples to find BMUs and accumulate neighborhood-
+        weighted contributions. Returns the numerator and denominator
+        arrays used for the batch weight update.
+
+        Parameters
+        ----------
+        data : ndarray, shape (n_samples, n_features)
+        weights : ndarray, shape (n_x, n_y, n_features)
+        xx : ndarray, shape (n_y, n_x) - meshgrid for x coordinates
+        yy : ndarray, shape (n_y, n_x) - meshgrid for y coordinates
+        neigx : ndarray, shape (n_x,) - x indices
+        neigy : ndarray, shape (n_y,) - y indices
+        sigma : float - neighborhood spread
+        neighborhood_type : int
+            0=gaussian, 1=mexican_hat, 2=bubble, 3=triangle
+        distance_type : int
+            0=euclidean, 1=cosine, 2=manhattan, 3=chebyshev
+
+        Returns
+        -------
+        numerator : ndarray, shape (n_x, n_y, n_features)
+        denominator : ndarray, shape (n_x, n_y)
+        """
+        n_x, n_y, n_features = weights.shape
+        n_samples = data.shape[0]
+        numerator = zeros((n_x, n_y, n_features))
+        denominator = zeros((n_x, n_y))
+        xx_T = xx.T
+        yy_T = yy.T
+
+        for s in range(n_samples):
+            sample = data[s]
+
+            # --- Find BMU (winner neuron) ---
+            min_dist = float64(1e308)
+            bmu_x = 0
+            bmu_y = 0
+            for i in range(n_x):
+                for j in range(n_y):
+                    if distance_type == 0:  # euclidean
+                        d = 0.0
+                        for f in range(n_features):
+                            d += (sample[f] - weights[i, j, f]) ** 2
+                        d = sqrt(d)
+                    elif distance_type == 1:  # cosine
+                        dot_sw = 0.0
+                        norm_w = 0.0
+                        norm_s = 0.0
+                        for f in range(n_features):
+                            dot_sw += weights[i, j, f] * sample[f]
+                            norm_w += weights[i, j, f] ** 2
+                            norm_s += sample[f] ** 2
+                        d = 1.0 - dot_sw / (sqrt(norm_w) *
+                                            sqrt(norm_s) + 1e-8)
+                    elif distance_type == 2:  # manhattan
+                        d = 0.0
+                        for f in range(n_features):
+                            diff_val = sample[f] - weights[i, j, f]
+                            if diff_val < 0:
+                                d -= diff_val
+                            else:
+                                d += diff_val
+                    else:  # chebyshev
+                        d = -1e308
+                        for f in range(n_features):
+                            diff_val = sample[f] - weights[i, j, f]
+                            if diff_val > d:
+                                d = diff_val
+
+                    if d < min_dist:
+                        min_dist = d
+                        bmu_x = i
+                        bmu_y = j
+
+            # --- Compute neighborhood ---
+            if neighborhood_type == 0:  # gaussian
+                d2 = 2.0 * sigma * sigma
+                cx = xx_T[bmu_x, bmu_y]
+                cy = yy_T[bmu_x, bmu_y]
+                for i in range(n_x):
+                    for j in range(n_y):
+                        ax = exp(-(xx[j, i] - cx) ** 2 / d2)
+                        ay = exp(-(yy[j, i] - cy) ** 2 / d2)
+                        g_val = ax * ay
+                        denominator[i, j] += g_val
+                        for f in range(n_features):
+                            numerator[i, j, f] += g_val * sample[f]
+            elif neighborhood_type == 1:  # mexican_hat
+                d2 = 2.0 * sigma * sigma
+                cx = xx_T[bmu_x, bmu_y]
+                cy = yy_T[bmu_x, bmu_y]
+                for i in range(n_x):
+                    for j in range(n_y):
+                        p = ((xx[j, i] - cx) ** 2 +
+                             (yy[j, i] - cy) ** 2)
+                        g_val = exp(-p / d2) * (1.0 - 2.0 / d2 * p)
+                        denominator[i, j] += g_val
+                        for f in range(n_features):
+                            numerator[i, j, f] += g_val * sample[f]
+            elif neighborhood_type == 2:  # bubble
+                for i in range(n_x):
+                    if neigx[i] > bmu_x - sigma and \
+                       neigx[i] < bmu_x + sigma:
+                        for j in range(n_y):
+                            if neigy[j] > bmu_y - sigma and \
+                               neigy[j] < bmu_y + sigma:
+                                denominator[i, j] += 1.0
+                                for f in range(n_features):
+                                    numerator[i, j, f] += sample[f]
+            else:  # triangle
+                for i in range(n_x):
+                    tx = (-abs(bmu_x - neigx[i])) + sigma
+                    if tx < 0.0:
+                        tx = 0.0
+                    for j in range(n_y):
+                        ty = (-abs(bmu_y - neigy[j])) + sigma
+                        if ty < 0.0:
+                            ty = 0.0
+                        g_val = tx * ty
+                        if g_val > 0.0:
+                            denominator[i, j] += g_val
+                            for f in range(n_features):
+                                numerator[i, j, f] += g_val * sample[f]
+
+        return numerator, denominator
+
+    _NUMBA_AVAILABLE = True
+except ImportError:
+    _NUMBA_AVAILABLE = False
 
 
 class MiniSom(object):
@@ -638,6 +783,95 @@ class MiniSom(object):
         if verbose:
             print(f'Quantization Error: {self.quantization_error(data):.4f}')
 
+    def train_batch_offline_fast(self, data, num_iteration, verbose=False):
+        """Numba-accelerated version of the batch training algorithm
+        described in Essentials of the Self-Organizing Map, Kohonen, 2013.
+
+        Requires the ``numba`` package to be installed. The inner loop
+        over samples is compiled to native code via ``numba.njit``,
+        which can provide significant speedups on large datasets.
+
+        The first call will be slower due to JIT compilation; subsequent
+        calls reuse the compiled code.
+
+        Only built-in neighborhood functions (``gaussian``,
+        ``mexican_hat``, ``bubble``, ``triangle``) and activation
+        distances (``euclidean``, ``cosine``, ``manhattan``,
+        ``chebyshev``) are supported.
+
+        Parameters
+        ----------
+        data : np.array or list
+            Data matrix with samples in rows and features in columns.
+        num_iteration : int
+            Maximum number of iterations.
+        verbose : bool (default=False)
+            If True, the quantization error is printed at each iteration.
+        """
+        if not _NUMBA_AVAILABLE:
+            raise ImportError(
+                'numba is required for train_batch_offline_fast. '
+                'Install it with: pip install numba')
+
+        self._check_iteration_number(num_iteration)
+        self._check_input_len(data)
+        data = array(data, dtype=float64)
+
+        neighborhood_map = {
+            '_gaussian': 0, '_mexican_hat': 1,
+            '_bubble': 2, '_triangle': 3}
+        distance_map = {
+            '_euclidean_distance': 0, '_cosine_distance': 1,
+            '_manhattan_distance': 2, '_chebyshev_distance': 3}
+
+        neigh_name = getattr(self.neighborhood, '__name__', '')
+        if neigh_name not in neighborhood_map:
+            raise ValueError(
+                'train_batch_offline_fast only supports built-in '
+                'neighborhood functions: gaussian, mexican_hat, '
+                'bubble, triangle')
+        neighborhood_type = neighborhood_map[neigh_name]
+
+        dist_name = getattr(self._activation_distance, '__name__', '')
+        if dist_name not in distance_map:
+            raise ValueError(
+                'train_batch_offline_fast only supports built-in '
+                'activation distances: euclidean, cosine, '
+                'manhattan, chebyshev')
+        distance_type = distance_map[dist_name]
+
+        iterations = range(num_iteration)
+        if verbose:
+            iterations = _wrap_index__in_verbose(iterations)
+
+        for iteration in iterations:
+            learning_rate = self._learning_rate_decay_function(
+                                                 self._learning_rate,
+                                                 iteration,
+                                                 num_iteration)
+            sigma = self._sigma_decay_function(self._sigma,
+                                               iteration,
+                                               num_iteration)
+
+            numerator, denominator = _batch_offline_iteration_numba(
+                data, self._weights,
+                self._xx, self._yy,
+                self._neigx.astype(float64),
+                self._neigy.astype(float64),
+                sigma, neighborhood_type, distance_type)
+
+            denominator_safe = where(denominator[:, :, newaxis] > 0,
+                                     denominator[:, :, newaxis],
+                                     1.0)
+            new_weights = numerator / denominator_safe
+            mask = denominator > 0
+            self._weights[mask] = \
+                (1 - learning_rate) * self._weights[mask] + \
+                learning_rate * new_weights[mask]
+
+        if verbose:
+            print(f'Quantization Error: {self.quantization_error(data):.4f}')
+
     def distance_map(self, scaling='sum'):
         """Returns the distance map of the weights.
         If scaling is 'sum' (default), each cell is the normalised sum of
@@ -1198,3 +1432,133 @@ class TestMinisom(unittest.TestCase):
         q2 = som.quantization_error(data)
         # Error should decrease or stay similar (converged)
         assert q2 <= q1 + 0.1  # Allow small tolerance for numerical variations
+
+    @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
+    def test_train_batch_offline_fast(self):
+        """Test that train_batch_offline_fast reduces quantization error."""
+        som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
+        data = array([[4, 2], [3, 1]])
+        q1 = som.quantization_error(data)
+        som.train_batch_offline_fast(data, 10)
+        assert q1 > som.quantization_error(data)
+        data = array([[1, 5], [6, 7]])
+        q1 = som.quantization_error(data)
+        som.train_batch_offline_fast(data, 10, verbose=True)
+        assert q1 > som.quantization_error(data)
+
+    @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
+    def test_train_batch_offline_fast_random_seed(self):
+        """Test that train_batch_offline_fast produces
+        consistent results with same seed."""
+        data = random.rand(100, 2)
+        som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
+        som1.train_batch_offline_fast(data, 10)
+        som2 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
+        som2.train_batch_offline_fast(data, 10)
+        assert_array_almost_equal(som1._weights, som2._weights)
+
+    @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
+    def test_train_batch_offline_fast_convergence(self):
+        """Test that train_batch_offline_fast converges over iterations."""
+        som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
+        data = array([[4, 2], [3, 1], [2, 2], [3, 3]])
+        som.train_batch_offline_fast(data, 5)
+        q1 = som.quantization_error(data)
+        som.train_batch_offline_fast(data, 5)
+        q2 = som.quantization_error(data)
+        assert q2 <= q1 + 0.1
+
+    @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
+    def test_train_batch_offline_fast_matches_non_numba(self):
+        """Test that numba and non-numba versions produce similar results."""
+        data = random.rand(50, 3)
+        som1 = MiniSom(5, 5, 3, sigma=1.0, learning_rate=0.5, random_seed=1)
+        som1.train_batch_offline(data, 10)
+        som2 = MiniSom(5, 5, 3, sigma=1.0, learning_rate=0.5, random_seed=1)
+        som2.train_batch_offline_fast(data, 10)
+        assert_array_almost_equal(som1._weights, som2._weights, decimal=5)
+
+    @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
+    def test_train_batch_offline_fast_all_neighborhoods(self):
+        """Test numba training with all neighborhood functions."""
+        data = random.rand(30, 2)
+        for neigh in ['gaussian', 'mexican_hat', 'bubble', 'triangle']:
+            som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5,
+                          neighborhood_function=neigh, random_seed=1)
+            q1 = som.quantization_error(data)
+            som.train_batch_offline_fast(data, 5)
+            q2 = som.quantization_error(data)
+            assert q2 <= q1, (
+                f'Quantization error did not decrease for '
+                f'neighborhood={neigh}')
+
+    @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
+    def test_train_batch_offline_fast_all_distances(self):
+        """Test numba training with all distance functions."""
+        data = random.rand(30, 2)
+        for dist in ['euclidean', 'cosine', 'manhattan', 'chebyshev']:
+            som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5,
+                          activation_distance=dist, random_seed=1)
+            q1 = som.quantization_error(data)
+            som.train_batch_offline_fast(data, 5)
+            q2 = som.quantization_error(data)
+            assert q2 <= q1, (
+                f'Quantization error did not decrease for '
+                f'distance={dist}')
+
+    @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
+    def test_train_batch_offline_fast_all_combos_match(self):
+        """Test numba matches non-numba for all neigh/dist combos."""
+        data = random.rand(20, 2)
+        for neigh in ['gaussian', 'mexican_hat', 'bubble', 'triangle']:
+            for dist in ['euclidean', 'cosine', 'manhattan', 'chebyshev']:
+                som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5,
+                               neighborhood_function=neigh,
+                               activation_distance=dist, random_seed=42)
+                som1.train_batch_offline(data, 3)
+                som2 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5,
+                               neighborhood_function=neigh,
+                               activation_distance=dist, random_seed=42)
+                som2.train_batch_offline_fast(data, 3)
+                assert_array_almost_equal(
+                    som1._weights, som2._weights, decimal=5,
+                    err_msg=f'Mismatch for neigh={neigh}, dist={dist}')
+
+    @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
+    def test_train_batch_offline_fast_unsupported_neighborhood(self):
+        """Test that unsupported neighborhood raises ValueError."""
+        som = MiniSom(5, 5, 2, sigma=1.0, random_seed=1)
+        som.neighborhood = lambda *args: None
+        som.neighborhood.__name__ = '_custom'
+        data = array([[1, 2], [3, 4]])
+        with self.assertRaises(ValueError):
+            som.train_batch_offline_fast(data, 1)
+
+    @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
+    def test_train_batch_offline_fast_unsupported_distance(self):
+        """Test that unsupported distance raises ValueError."""
+        som = MiniSom(5, 5, 2, sigma=1.0, random_seed=1)
+        som._activation_distance = lambda *args: None
+        som._activation_distance.__name__ = '_custom'
+        data = array([[1, 2], [3, 4]])
+        with self.assertRaises(ValueError):
+            som.train_batch_offline_fast(data, 1)
+
+    @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
+    def test_batch_offline_iteration_numba_direct(self):
+        """Test _batch_offline_iteration_numba directly returns
+        valid numerator/denominator arrays."""
+        som = MiniSom(5, 5, 2, sigma=1.0, random_seed=1)
+        data = array([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
+        numerator, denominator = _batch_offline_iteration_numba(
+            data, som._weights,
+            som._xx, som._yy,
+            som._neigx.astype(float64),
+            som._neigy.astype(float64),
+            1.0, 0, 0)
+        assert numerator.shape == som._weights.shape
+        assert denominator.shape == (5, 5)
+        # All samples contribute, so denominator should be positive
+        assert (denominator > 0).all()
+        # Numerator should not be all zeros
+        assert numerator.sum() > 0

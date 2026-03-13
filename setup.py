@@ -18,6 +18,7 @@ setup(name='MiniSom',
       license="MIT",
       py_modules=['minisom'],
       requires=['numpy'],
+      extras_require={'fast': ['numba']},
       url='https://github.com/JustGlowing/minisom',
       download_url='https://github.com/JustGlowing/minisom/archive/master.zip',
       keywords=keywords)

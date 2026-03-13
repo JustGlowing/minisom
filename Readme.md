@@ -8,7 +8,7 @@
 Self Organizing Maps
 --------------------
 
-MiniSom is a minimalistic and Numpy based implementation of the Self Organizing Maps (SOM). SOM is a type of Artificial Neural Network able to convert complex, nonlinear statistical relationships between high-dimensional data items into simple geometric relationships on a low-dimensional display. Minisom is designed to allow researchers to easily build on top of it and to give students the ability to quickly grasp its details.
+MiniSom is a minimalistic and Numpy based implementation of the Self Organizing Maps (SOM) with optional JIT acceleration via Numba. SOM is a type of Artificial Neural Network able to convert complex, nonlinear statistical relationships between high-dimensional data items into simple geometric relationships on a low-dimensional display. Minisom is designed to allow researchers to easily build on top of it and to give students the ability to quickly grasp its details.
 
 The project initially aimed for a minimalistic implementation of the Self-Organizing Map (SOM) algorithm, focusing on simplicity in features, dependencies, and code style. Although it has expanded in terms of features, it remains minimalistic by relying only on the numpy library and emphasizing vectorization in coding style.
 
@@ -22,6 +22,10 @@ Installation
 Just use pip:
 
     pip install minisom
+
+To include Numba for JIT-accelerated training:
+
+    pip install minisom[fast]
 
 or download MiniSom to a directory of your choice and use the setup script:
 
@@ -52,6 +56,15 @@ from minisom import MiniSom
 som = MiniSom(6, 6, 4, sigma=0.3, learning_rate=0.5) # initialization of 6x6 SOM
 som.train(data, 100) # trains the SOM with 100 iterations
 ```
+
+MiniSom also supports JIT-accelerated training via [Numba](https://numba.pydata.org/). If Numba is installed (see [installation](#installation)), you can use `train_batch_offline_fast` for significant speedups on large datasets:
+
+```python
+som = MiniSom(6, 6, 4, sigma=0.3, learning_rate=0.5)
+som.train_batch_offline_fast(data, 100) # JIT-accelerated batch training
+```
+
+The first call will be slightly slower due to JIT compilation; subsequent calls reuse the compiled code. All built-in neighborhood functions (`gaussian`, `mexican_hat`, `bubble`, `triangle`) and distance metrics (`euclidean`, `cosine`, `manhattan`, `chebyshev`) are supported.
 
 You can obtain the position of the winning neuron on the map for a given sample as follows:
 
