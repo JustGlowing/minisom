@@ -64,7 +64,7 @@ som = MiniSom(6, 6, 4, sigma=0.3, learning_rate=0.5)
 som.train_batch_offline_fast(data, 100) # JIT-accelerated batch training
 ```
 
-The first call will be slightly slower due to JIT compilation; subsequent calls reuse the compiled code. All built-in neighborhood functions (`gaussian`, `mexican_hat`, `bubble`, `triangle`) and distance metrics (`euclidean`, `cosine`, `manhattan`, `chebyshev`) are supported.
+The first call will be slightly slower due to JIT compilation; subsequent calls reuse the compiled code.
 
 You can obtain the position of the winning neuron on the map for a given sample as follows:
 
