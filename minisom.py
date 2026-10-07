@@ -3,7 +3,7 @@ from numpy import (array, unravel_index, nditer, linalg, random, subtract, max,
                    logical_and, mean, cov, argsort, linspace, float64,
                    einsum, prod, nan, sqrt, hstack, diff, argmin, multiply,
                    nanmean, nansum, tile, array_equal, isclose, maximum,
-                   zeros_like, where, newaxis)
+                   zeros_like, where, newaxis, absolute)
 from numpy.linalg import norm
 from collections import defaultdict, Counter
 from warnings import warn
@@ -149,9 +149,9 @@ try:
                             else:
                                 d += diff_val
                     else:  # chebyshev
-                        d = -1e308
+                        d = 0.0
                         for f in range(n_features):
-                            diff_val = sample[f] - weights[i, j, f]
+                            diff_val = abs(sample[f] - weights[i, j, f])
                             if diff_val > d:
                                 d = diff_val
 
@@ -505,7 +505,7 @@ class MiniSom(object):
         return linalg.norm(subtract(x, w), ord=1, axis=-1)
 
     def _chebyshev_distance(self, x, w):
-        return max(subtract(x, w), axis=-1)
+        return max(absolute(subtract(x, w)), axis=-1)
 
     def _check_iteration_number(self, num_iteration):
         if num_iteration < 1:
@@ -1117,6 +1117,16 @@ class TestMinisom(unittest.TestCase):
         d = self.som._chebyshev_distance(x, w)
         assert_array_almost_equal(d, [[2., 2.],
                                       [2., 2.]])
+        # the largest difference in absolute value, also when x < w
+        w = ones((2, 2, 2)) * 5
+        d = self.som._chebyshev_distance(x, w)
+        assert_array_almost_equal(d, [[4., 4.],
+                                      [4., 4.]])
+
+    def test_chebyshev_winner(self):
+        som = MiniSom(1, 2, 2, activation_distance='chebyshev')
+        som._weights = array([[[.1, .1], [10., 10.]]])
+        assert som.winner(array([0., 0.])) == (0, 0)
 
     def test_check_input_len(self):
         with self.assertRaises(ValueError):
