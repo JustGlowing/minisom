@@ -905,7 +905,9 @@ class MiniSom(object):
         for x in range(self._weights.shape[0]):
             for y in range(self._weights.shape[1]):
                 w_2 = self._weights[x, y]
-                e = y % 2 == 0   # only used on hexagonal topology
+                # only used on hexagonal topology, True for the rows
+                # shifted by half a cell in _xx (counted from the last row)
+                e = (self._weights.shape[1] - 1 - y) % 2 == 0
                 for k, (i, j) in enumerate(zip(ii[e], jj[e])):
                     if (x+i >= 0 and x+i < self._weights.shape[0] and
                             y+j >= 0 and y+j < self._weights.shape[1]):
@@ -1385,7 +1387,16 @@ class TestMinisom(unittest.TestCase):
 
         som = MiniSom(2, 2, 2, topology='hexagonal', random_seed=1)
         som._weights = array([[[1.,  0.], [0., 1.]], [[1., 0.], [0., 1.]]])
-        assert_array_equal(som.distance_map(), array([[.5, 1.], [1., .5]]))
+        assert_array_equal(som.distance_map(), array([[1., .5], [.5, 1.]]))
+
+        # with weights equal to the euclidean coordinates of the neurons,
+        # every neuron is at distance 1 from each of its hexagonal neighbors
+        for x, y in [(4, 4), (5, 6), (5, 5)]:
+            som = MiniSom(x, y, 2, topology='hexagonal')
+            xx, yy = som.get_euclidean_coordinates()
+            som._weights = einsum('kij->ijk', array([xx, yy]))
+            assert_array_almost_equal(som.distance_map(scaling='mean'),
+                                      ones((x, y)))
 
         som = MiniSom(3, 3, 1, random_seed=1)
         som._weights = array([[1, 0, 1], [0, 1, 0], [1, 0, 1]])
