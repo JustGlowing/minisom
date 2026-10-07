@@ -931,10 +931,13 @@ class MiniSom(object):
         return a
 
     def _distance_from_weights(self, data):
-        """Returns a matrix d where d[i,j] is the euclidean distance between
-        data[i] and the j-th weight.
+        """Returns a matrix d where d[i,j] is the distance between
+        data[i] and the j-th weight, measured with the activation distance.
         """
         input_data = array(data)
+        if self._activation_distance != self._euclidean_distance:
+            return array([self._activation_distance(x, self._weights).ravel()
+                          for x in input_data])
         weights_flat = self._weights.reshape(-1, self._weights.shape[2])
         input_data_sq = power(input_data, 2).sum(axis=1, keepdims=True)
         weights_flat_sq = power(weights_flat, 2).sum(axis=1, keepdims=True)
@@ -1224,6 +1227,24 @@ class TestMinisom(unittest.TestCase):
         q = self.som.quantization(array([[4], [2]]))
         assert q[0] == 5.0
         assert q[1] == 2.0
+
+    def test_quantization_uses_activation_distance(self):
+        # with cosine distance the best matching unit of [1, 0] is [10, 0],
+        # while the euclidean one is [0, 1]
+        som = MiniSom(1, 2, 2, activation_distance='cosine')
+        som._weights = array([[[0., 1.], [10., 0.]]])
+        x = array([[1., 0.]])
+        assert som.winner(x[0]) == (0, 1)
+        assert_array_equal(som.quantization(x), [[10., 0.]])
+        assert_array_equal(som._distance_from_weights(x),
+                           [som.activate(x[0]).ravel()])
+
+    def test_topographic_error_uses_activation_distance(self):
+        # the two closest neurons in cosine distance are adjacent,
+        # the two closest in euclidean distance are not
+        som = MiniSom(1, 4, 2, activation_distance='cosine')
+        som._weights = array([[[0., 1.], [10., 0.], [10., 1.], [0., 1.1]]])
+        assert som.topographic_error(array([[1., 0.]])) == 0.0
 
     def test_distortion_measure(self):
         # test that doesn't use vectorization
