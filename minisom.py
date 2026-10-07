@@ -963,9 +963,10 @@ class MiniSom(object):
         """
         distortion = 0
         for d in data:
+            distances = norm(d - self.get_weights(), axis=2)
             distortion += multiply(self.neighborhood(self.winner(d),
                                                      self._sigma),
-                                   norm(d - self.get_weights(), axis=2)).sum()
+                                   distances**2).sum()
         return distortion
 
     def topographic_error(self, data):
@@ -1268,7 +1269,7 @@ class TestMinisom(unittest.TestCase):
                     w = self.som.get_weights()[i, j]
                     h = self.som.neighborhood(self.som.winner(d),
                                               self.som._sigma)[i, j]
-                    r += h * norm(d - w)
+                    r += h * norm(d - w)**2
         assert_array_almost_equal(r, self.som.distortion_measure(test_data))
 
         # handwritten test
@@ -1277,8 +1278,8 @@ class TestMinisom(unittest.TestCase):
         test_data = array([[1., 0.], [0., 1.]])
         h1 = som.neighborhood(som.winner(test_data[0]), som._sigma)
         h2 = som.neighborhood(som.winner(test_data[1]), som._sigma)
-        r = h1[0][0] * sqrt(2) + h1[1][0] * 0
-        r += h2[0][0] * 0 + h2[1][0] * sqrt(2)
+        r = h1[0][0] * 2 + h1[1][0] * 0
+        r += h2[0][0] * 0 + h2[1][0] * 2
         assert_array_almost_equal(r, som.distortion_measure(test_data))
 
     def test_random_seed(self):
