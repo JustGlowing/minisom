@@ -1286,7 +1286,9 @@ class TestMinisom(unittest.TestCase):
         som2 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
         # same initialization
         assert_array_almost_equal(som1._weights, som2._weights)
-        data = random.rand(100, 2)
+        data = array([[0.1, 0.2], [0.3, 0.8], [0.9, 0.4], [0.5, 0.7],
+                      [0.8, 0.1], [0.2, 0.9], [0.6, 0.3], [0.4, 0.5],
+                      [0.7, 0.6], [0.1, 0.8]])
         som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
         som1.train_random(data, 10)
         som2 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
@@ -1417,7 +1419,9 @@ class TestMinisom(unittest.TestCase):
         def euclidean(x, w):
             return linalg.norm(subtract(x, w), axis=-1)
 
-        data = random.rand(100, 2)
+        data = array([[0.1, 0.2], [0.3, 0.8], [0.9, 0.4], [0.5, 0.7],
+                      [0.8, 0.1], [0.2, 0.9], [0.6, 0.3], [0.4, 0.5],
+                      [0.7, 0.6], [0.1, 0.8]])
         som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5,
                        activation_distance=euclidean, random_seed=1)
         som1.train_random(data, 10)
@@ -1431,13 +1435,19 @@ class TestMinisom(unittest.TestCase):
             MiniSom(5, 5, 2, decay_function='strawberry')
         MiniSom(5, 5, 2, decay_function='linear_decay_to_zero')
         som1 = MiniSom(5, 5, 2, decay_function=lambda x, y, z: 1)
-        som1.train(random.rand(100, 2), 10)
+        data = array([[0.1, 0.2], [0.3, 0.8], [0.9, 0.4], [0.5, 0.7],
+                      [0.8, 0.1], [0.2, 0.9], [0.6, 0.3], [0.4, 0.5],
+                      [0.7, 0.6], [0.1, 0.8]])
+        som1.train(data, 10)
 
     def test_sigma_decay_function_value(self):
         with self.assertRaises(ValueError):
             MiniSom(5, 5, 2, sigma_decay_function='strawberry')
         som1 = MiniSom(5, 5, 2, sigma_decay_function='linear_decay_to_one')
-        som1.train(random.rand(100, 2), 10)
+        data = array([[0.1, 0.2], [0.3, 0.8], [0.9, 0.4], [0.5, 0.7],
+                      [0.8, 0.1], [0.2, 0.9], [0.6, 0.3], [0.4, 0.5],
+                      [0.7, 0.6], [0.1, 0.8]])
+        som1.train(data, 10)
 
     def test_train_batch_offline(self):
         """Test that train_batch_offline reduces quantization error."""
@@ -1454,7 +1464,9 @@ class TestMinisom(unittest.TestCase):
     def test_train_batch_offline_random_seed(self):
         """Test that train_batch_offline produces
         consistent results with same seed."""
-        data = random.rand(100, 2)
+        data = array([[0.1, 0.2], [0.3, 0.8], [0.9, 0.4], [0.5, 0.7],
+                      [0.8, 0.1], [0.2, 0.9], [0.6, 0.3], [0.4, 0.5],
+                      [0.7, 0.6], [0.1, 0.8]])
         som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
         som1.train_batch_offline(data, 10)
         som2 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
@@ -1492,7 +1504,9 @@ class TestMinisom(unittest.TestCase):
     def test_train_batch_offline_fast_random_seed(self):
         """Test that train_batch_offline_fast produces
         consistent results with same seed."""
-        data = random.rand(100, 2)
+        data = array([[0.1, 0.2], [0.3, 0.8], [0.9, 0.4], [0.5, 0.7],
+                      [0.8, 0.1], [0.2, 0.9], [0.6, 0.3], [0.4, 0.5],
+                      [0.7, 0.6], [0.1, 0.8]])
         som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
         som1.train_batch_offline_fast(data, 10)
         som2 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5, random_seed=1)
@@ -1513,7 +1527,10 @@ class TestMinisom(unittest.TestCase):
     @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
     def test_train_batch_offline_fast_matches_non_numba(self):
         """Test that numba and non-numba versions produce similar results."""
-        data = random.rand(50, 3)
+        data = array([[0.1, 0.2, 0.3], [0.3, 0.8, 0.5], [0.9, 0.4, 0.2],
+                      [0.5, 0.7, 0.9], [0.8, 0.1, 0.6], [0.2, 0.9, 0.4],
+                      [0.6, 0.3, 0.8], [0.4, 0.5, 0.1], [0.7, 0.6, 0.7],
+                      [0.1, 0.8, 0.9]])
         som1 = MiniSom(5, 5, 3, sigma=1.0, learning_rate=0.5, random_seed=1)
         som1.train_batch_offline(data, 10)
         som2 = MiniSom(5, 5, 3, sigma=1.0, learning_rate=0.5, random_seed=1)
@@ -1523,7 +1540,9 @@ class TestMinisom(unittest.TestCase):
     @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
     def test_train_batch_offline_fast_all_neighborhoods(self):
         """Test numba training with all neighborhood functions."""
-        data = random.rand(30, 2)
+        data = array([[0.1, 0.2], [0.3, 0.8], [0.9, 0.4], [0.5, 0.7],
+                      [0.8, 0.1], [0.2, 0.9], [0.6, 0.3], [0.4, 0.5],
+                      [0.7, 0.6], [0.1, 0.8]])
         for neigh in ['gaussian', 'mexican_hat', 'bubble', 'triangle']:
             som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5,
                           neighborhood_function=neigh, random_seed=1)
@@ -1537,7 +1556,9 @@ class TestMinisom(unittest.TestCase):
     @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
     def test_train_batch_offline_fast_all_distances(self):
         """Test numba training with all distance functions."""
-        data = random.rand(30, 2)
+        data = array([[0.1, 0.2], [0.3, 0.8], [0.9, 0.4], [0.5, 0.7],
+                      [0.8, 0.1], [0.2, 0.9], [0.6, 0.3], [0.4, 0.5],
+                      [0.7, 0.6], [0.1, 0.8]])
         for dist in ['euclidean', 'cosine', 'manhattan', 'chebyshev']:
             som = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5,
                           activation_distance=dist, random_seed=1)
@@ -1551,7 +1572,9 @@ class TestMinisom(unittest.TestCase):
     @unittest.skipUnless(_NUMBA_AVAILABLE, 'numba not installed')
     def test_train_batch_offline_fast_all_combos_match(self):
         """Test numba matches non-numba for all neigh/dist combos."""
-        data = random.rand(20, 2)
+        data = array([[0.1, 0.2], [0.3, 0.8], [0.9, 0.4], [0.5, 0.7],
+                      [0.8, 0.1], [0.2, 0.9], [0.6, 0.3], [0.4, 0.5],
+                      [0.7, 0.6], [0.1, 0.8]])
         for neigh in ['gaussian', 'mexican_hat', 'bubble', 'triangle']:
             for dist in ['euclidean', 'cosine', 'manhattan', 'chebyshev']:
                 som1 = MiniSom(5, 5, 2, sigma=1.0, learning_rate=0.5,
