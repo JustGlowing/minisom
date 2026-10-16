@@ -919,7 +919,10 @@ class MiniSom(object):
         if scaling == 'sum':
             um = nansum(um, axis=2)
 
-        return um/um.max()
+        um_max = um.max()
+        if um_max == 0:
+            return um
+        return um/um_max
 
     def activation_response(self, data):
         """
@@ -1408,6 +1411,14 @@ class TestMinisom(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             som.distance_map(scaling='puppies')
+
+    def test_distance_map_identical_weights(self):
+        for topology in ['rectangular', 'hexagonal']:
+            som = MiniSom(3, 2, 2, topology=topology, random_seed=1)
+            som.random_weights_init(array([[2., 3.], [2., 3.]]))
+            for scaling in ['sum', 'mean']:
+                assert_array_equal(som.distance_map(scaling=scaling),
+                                   zeros((3, 2)))
 
     def test_pickling(self):
         with open('som.p', 'wb') as outfile:
