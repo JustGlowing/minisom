@@ -938,11 +938,14 @@ class MiniSom(object):
     def _distance_from_weights(self, data):
         """Returns a matrix d where d[i,j] is the distance between
         data[i] and the j-th weight, measured with the activation distance.
+
+        Integer samples are converted to floating point before computing
+        Euclidean distances to avoid overflow when squaring the input.
         """
-        input_data = array(data)
         if self._activation_distance != self._euclidean_distance:
             return array([self._activation_distance(x, self._weights).ravel()
-                          for x in input_data])
+                          for x in array(data)])
+        input_data = array(data, dtype=float64)
         weights_flat = self._weights.reshape(-1, self._weights.shape[2])
         input_data_sq = power(input_data, 2).sum(axis=1, keepdims=True)
         weights_flat_sq = power(weights_flat, 2).sum(axis=1, keepdims=True)
@@ -1210,6 +1213,13 @@ class TestMinisom(unittest.TestCase):
         for i in range(len(data)):
             for j in range(len(weights)):
                 assert (distances[i][j] == norm(data[i] - weights[j]))
+
+    def test_distance_from_weights_uint8(self):
+        som = MiniSom(1, 2, 1, random_seed=1)
+        som._weights = array([[[16.], [32.]]])
+        data = array([[16], [32]], dtype='uint8')
+        assert_array_equal(som._distance_from_weights(data),
+                           [[0., 16.], [16., 0.]])
 
     def test_quantization_error(self):
         assert self.som.quantization_error([[5], [2]]) == 0.0
